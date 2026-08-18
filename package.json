@@ -1,0 +1,8 @@
+{
+  "name": "data-health-dashboard",
+  "private": true,
+  "description": "Không cần build/cài gì để dùng index.html (mở trực tiếp bằng browser). package.json này chỉ khai báo dev-dependency cho tools/test-in-jsdom.js (test tự động, chạy bằng `npm install` rồi `node tools/test-in-jsdom.js`).",
+  "devDependencies": {
+    "jsdom": "^30.0.0"
+  }
+}

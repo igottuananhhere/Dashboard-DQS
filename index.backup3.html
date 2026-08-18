@@ -90,6 +90,8 @@
   .ms-dropdown{position:relative;user-select:none;}
   .ms-dropdown .ms-label{white-space:nowrap;}
   .ms-dropdown.open{border-color:var(--link);}
+  .ms-dropdown.has-filter{border-color:var(--link);background:#eef2fc;color:var(--link-dark);font-weight:600;}
+  .ms-dropdown.has-filter .ms-label{color:var(--link-dark);}
   .ms-panel{
     display:none;position:absolute;top:calc(100% + 6px);left:0;min-width:200px;max-height:260px;
     overflow-y:auto;background:var(--card);border:1px solid var(--border);border-radius:8px;
@@ -314,62 +316,6 @@
 
   .view{display:none;}
   .view.active{display:block;}
-
-  /* ---------- Asset Detail drawer ---------- */
-  .drawer-overlay{
-    position:fixed;inset:0;background:rgba(15,17,23,0.45);z-index:100;
-    opacity:0;pointer-events:none;transition:opacity .18s;
-  }
-  .drawer-overlay.open{opacity:1;pointer-events:auto;}
-  .drawer{
-    position:fixed;top:0;right:0;height:100%;width:560px;max-width:100vw;
-    background:var(--card);box-shadow:-8px 0 24px rgba(16,24,40,0.18);z-index:101;
-    transform:translateX(100%);transition:transform .22s ease;
-    display:flex;flex-direction:column;outline:none;
-  }
-  .drawer.open{transform:translateX(0);}
-  @media (max-width:600px){.drawer{width:100vw;}}
-  .drawer-header{
-    display:flex;justify-content:space-between;align-items:center;gap:10px;
-    padding:14px 16px;border-bottom:1px solid var(--border);flex:none;
-  }
-  .drawer-header-title{font-size:15.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .drawer-nav{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);flex:none;white-space:nowrap;}
-  .drawer-nav button{
-    border:1px solid var(--border);background:var(--card);border-radius:6px;
-    padding:5px 10px;font-size:12px;cursor:pointer;color:var(--text);
-  }
-  .drawer-nav button:disabled{opacity:.35;cursor:default;}
-  .drawer-nav button:hover:not(:disabled){background:#f7f9fc;}
-  .drawer-close{
-    background:none;border:none;font-size:16px;cursor:pointer;color:var(--muted);
-    padding:4px 8px;border-radius:6px;flex:none;
-  }
-  .drawer-close:hover{background:var(--gray-bg);}
-  .drawer-body{overflow-y:auto;padding:18px 20px 40px;flex:1;}
-  .drawer-body h3{font-size:13px;font-weight:700;margin:22px 0 12px;color:var(--text);}
-  .drawer-body h3:first-child{margin-top:0;}
-  .drawer-kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-  .drawer-kpi{border:1px solid var(--border);border-radius:8px;padding:10px 12px;}
-  .drawer-kpi .label{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:4px;}
-  .drawer-kpi .value{font-size:18px;font-weight:700;}
-  .drawer-kpi .note{font-size:10.5px;color:var(--green);margin-top:3px;font-weight:600;}
-  .drawer-copy-btn{
-    border:1px solid var(--border);background:var(--card);border-radius:5px;
-    padding:2px 7px;font-size:10.5px;cursor:pointer;color:var(--muted);
-  }
-  .drawer-copy-btn:hover{background:#f7f9fc;color:var(--text);}
-  #drawerRuleTable{width:100%;border-collapse:collapse;font-size:12px;}
-  #drawerRuleTable th{text-align:left;color:var(--muted);font-weight:600;font-size:10.5px;padding:6px 8px;border-bottom:1px solid var(--border);white-space:nowrap;}
-  #drawerRuleTable td{padding:8px 8px;border-bottom:1px solid #eef0f3;vertical-align:middle;}
-
-  .toast{
-    position:fixed;bottom:20px;right:20px;background:#1c1f26;color:#fff;
-    padding:10px 16px;border-radius:8px;font-size:12.5px;box-shadow:0 4px 16px rgba(16,24,40,0.2);
-    z-index:200;opacity:0;transform:translateY(8px);transition:opacity .18s, transform .18s;
-    max-width:320px;pointer-events:none;
-  }
-  .toast.show{opacity:1;transform:translateY(0);}
 </style>
 <!-- Mock data đóng gói dạng JS global (không dùng fetch) — mở trực tiếp file:// vẫn chạy được,
      không bị Chrome chặn CORS như khi fetch() 1 file JSON cục bộ. -->
@@ -413,15 +359,15 @@
           <div class="value" id="ovKpiOverall">– / 100</div>
           <div class="delta" id="ovKpiOverallNote" style="color:var(--muted);">Trung bình healthScore trong tập đang lọc</div>
         </div>
-        <div class="card kpi clickable" onclick="switchTab('health'); applyHealthFilter('Healthy')">
+        <div class="card kpi clickable" onclick="toggleOverviewStatus('Healthy')">
           <div class="label">Healthy Assets</div>
           <div class="value" id="ovKpiHealthy">–</div>
         </div>
-        <div class="card kpi clickable" onclick="switchTab('health'); applyHealthFilter('Warning')">
+        <div class="card kpi clickable" onclick="toggleOverviewStatus('Warning')">
           <div class="label">Degraded Assets</div>
           <div class="value" id="ovKpiDegraded">–</div>
         </div>
-        <div class="card kpi clickable" onclick="switchTab('health'); applyHealthFilter('Critical')">
+        <div class="card kpi clickable" onclick="toggleOverviewStatus('Critical')">
           <div class="label">Critical Assets</div>
           <div class="value" id="ovKpiCritical">–</div>
         </div>
@@ -451,13 +397,12 @@
             <g id="labels-completeness"></g>
             <g id="labels-freshness"></g>
             <g id="hoverdots"></g>
-            <text x="30" y="178" font-size="9" fill="#9aa1ab">Jul 16, 2026</text>
-            <text x="200" y="178" font-size="9" fill="#9aa1ab">Jul 28, 2026</text>
-            <text x="380" y="178" font-size="9" fill="#9aa1ab">Aug 5, 2026</text>
-            <text x="555" y="178" font-size="9" fill="#9aa1ab">Aug 14, 2026</text>
+            <text id="trendDate0" x="30" y="178" font-size="9" fill="#9aa1ab"></text>
+            <text id="trendDate1" x="200" y="178" font-size="9" fill="#9aa1ab"></text>
+            <text id="trendDate2" x="380" y="178" font-size="9" fill="#9aa1ab"></text>
+            <text id="trendDate3" x="555" y="178" font-size="9" fill="#9aa1ab"></text>
           </svg>
           <div id="trendTooltip" style="font-size:11.5px;color:var(--muted);margin-top:4px;">Di chuột qua đường biểu đồ để xem điểm số từng dimension tại ngày đó.</div>
-          <div style="font-size:10.5px;color:var(--gray);margin-top:2px;">Biểu đồ xu hướng dùng dữ liệu tổng toàn hệ thống (mock không có lịch sử theo ngày cho từng subset filter) — không đổi theo filter bar phía trên.</div>
         </div>
 
         <div class="card panel">
@@ -466,26 +411,26 @@
           <div class="stackbar-row">
             <div>
               <div class="stackbar-track">
-                <div class="stackbar-seg" id="ovSegCritical" style="width:0%;background:#e0453f;" onclick="switchTab('health'); applyHealthFilter('Critical')" title="Critical · 0 assets">
+                <div class="stackbar-seg" id="ovSegCritical" style="width:0%;background:#e0453f;" onclick="toggleOverviewStatus('Critical')" title="Critical · 0 assets">
                   <span class="seg-label"></span>
                 </div>
-                <div class="stackbar-seg" id="ovSegDegraded" style="width:0%;background:#e8912b;" onclick="switchTab('health'); applyHealthFilter('Warning')" title="Degraded · 0 assets">
+                <div class="stackbar-seg" id="ovSegDegraded" style="width:0%;background:#e8912b;" onclick="toggleOverviewStatus('Warning')" title="Degraded · 0 assets">
                   <span class="seg-label"></span>
                 </div>
-                <div class="stackbar-seg" id="ovSegHealthy" style="width:0%;background:#2f9e5b;" onclick="switchTab('health'); applyHealthFilter('Healthy')" title="Healthy · 0 assets">
+                <div class="stackbar-seg" id="ovSegHealthy" style="width:0%;background:#2f9e5b;" onclick="toggleOverviewStatus('Healthy')" title="Healthy · 0 assets">
                   <span class="seg-label"></span>
                 </div>
-                <div class="stackbar-seg" id="ovSegUnknown" style="width:0%;background:#9aa1ab;" onclick="switchTab('health'); applyHealthFilter('Unknown')" title="Unknown · 0 assets">
+                <div class="stackbar-seg" id="ovSegUnknown" style="width:0%;background:#9aa1ab;" onclick="toggleOverviewStatus('Unknown')" title="Unknown · 0 assets">
                   <span class="seg-label"></span>
                 </div>
               </div>
               <div class="stackbar-scale"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>
             </div>
             <div class="legend-row">
-              <div class="item" onclick="switchTab('health'); applyHealthFilter('Critical')"><span class="dot" style="background:#e0453f"></span>Critical &nbsp;<span id="ovLegCritical">0</span></div>
-              <div class="item" onclick="switchTab('health'); applyHealthFilter('Warning')"><span class="dot" style="background:#e8912b"></span>Degraded &nbsp;<span id="ovLegDegraded">0</span></div>
-              <div class="item" onclick="switchTab('health'); applyHealthFilter('Healthy')"><span class="dot" style="background:#2f9e5b"></span>Healthy &nbsp;<span id="ovLegHealthy">0</span></div>
-              <div class="item" onclick="switchTab('health'); applyHealthFilter('Unknown')"><span class="dot" style="background:#9aa1ab"></span>Unknown &nbsp;<span id="ovLegUnknown">0</span></div>
+              <div class="item" onclick="toggleOverviewStatus('Critical')"><span class="dot" style="background:#e0453f"></span>Critical &nbsp;<span id="ovLegCritical">0</span></div>
+              <div class="item" onclick="toggleOverviewStatus('Warning')"><span class="dot" style="background:#e8912b"></span>Degraded &nbsp;<span id="ovLegDegraded">0</span></div>
+              <div class="item" onclick="toggleOverviewStatus('Healthy')"><span class="dot" style="background:#2f9e5b"></span>Healthy &nbsp;<span id="ovLegHealthy">0</span></div>
+              <div class="item" onclick="toggleOverviewStatus('Unknown')"><span class="dot" style="background:#9aa1ab"></span>Unknown &nbsp;<span id="ovLegUnknown">0</span></div>
             </div>
           </div>
         </div>
@@ -516,22 +461,22 @@
         <div class="card panel">
           <h3>Health by Dimension</h3>
           <div class="barlist">
-            <div class="barrow" onclick="switchTab('health'); applyDimensionFilter('Accuracy')">
+            <div class="barrow" onclick="toggleOverviewDimension('Accuracy')">
               <div class="lbl">Accuracy</div><div class="bartrack"><div class="barfill" id="ovDimFillAccuracy" style="width:0%;background:#9aa1ab;"></div></div><div class="num" id="ovDimNumAccuracy">–</div>
             </div>
-            <div class="barrow" onclick="switchTab('health'); applyDimensionFilter('Completeness')">
+            <div class="barrow" onclick="toggleOverviewDimension('Completeness')">
               <div class="lbl">Completeness</div><div class="bartrack"><div class="barfill" id="ovDimFillCompleteness" style="width:0%;background:#9aa1ab;"></div></div><div class="num" id="ovDimNumCompleteness">–</div>
             </div>
-            <div class="barrow" onclick="switchTab('health'); applyDimensionFilter('Uniqueness')">
+            <div class="barrow" onclick="toggleOverviewDimension('Uniqueness')">
               <div class="lbl">Uniqueness</div><div class="bartrack"><div class="barfill" id="ovDimFillUniqueness" style="width:0%;background:#9aa1ab;"></div></div><div class="num" id="ovDimNumUniqueness">–</div>
             </div>
-            <div class="barrow" onclick="switchTab('health'); applyDimensionFilter('Validity')">
+            <div class="barrow" onclick="toggleOverviewDimension('Validity')">
               <div class="lbl">Validity</div><div class="bartrack"><div class="barfill" id="ovDimFillValidity" style="width:0%;background:#9aa1ab;"></div></div><div class="num" id="ovDimNumValidity">–</div>
             </div>
-            <div class="barrow" onclick="switchTab('health'); applyDimensionFilter('Consistency')">
+            <div class="barrow" onclick="toggleOverviewDimension('Consistency')">
               <div class="lbl">Consistency</div><div class="bartrack"><div class="barfill" id="ovDimFillConsistency" style="width:0%;background:#9aa1ab;"></div></div><div class="num" id="ovDimNumConsistency">–</div>
             </div>
-            <div class="barrow" onclick="switchTab('health'); applyDimensionFilter('Freshness')">
+            <div class="barrow" onclick="toggleOverviewDimension('Freshness')">
               <div class="lbl">Freshness</div><div class="bartrack"><div class="barfill" id="ovDimFillFreshness" style="width:0%;background:#9aa1ab;"></div></div><div class="num" id="ovDimNumFreshness">–</div>
             </div>
           </div>
@@ -565,7 +510,10 @@
       <div class="caution-row" id="cautionBanner"></div>
 
       <div class="card">
-        <div style="padding:14px 16px 0;font-weight:700;font-size:14px;">Table Health</div>
+        <div style="padding:14px 16px 0;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-weight:700;font-size:14px;">Table Health</span>
+          <span id="healthCountBadge" style="font-size:12px;color:var(--muted);font-weight:600;">30 / 30</span>
+        </div>
         <div style="overflow-x:auto;">
         <table>
           <thead>
@@ -600,6 +548,7 @@
         <div class="ddown" onclick="clearRuleLifecycleFilters()">Clear</div>
         <div class="spacer"></div>
         <input class="search" id="ruleSearch" placeholder="Tìm theo rule hoặc table" oninput="renderRuleLifecycle()" style="max-width:220px;flex:none;">
+        <div class="range-pill" id="ruleCountBadge">30 / 30</div>
         <div class="range-pill">30 lần chạy</div>
       </div>
 
@@ -750,7 +699,7 @@
         <div class="detail-title" id="detailTitle"></div>
         <div class="detail-fqn" id="detailFqn"></div>
       </div>
-      <button class="btn-outline" onclick="showToast('Mở tab mới sang OpenMetadata cho asset này (demo placeholder).')">↗ Open in OpenMetadata</button>
+      <button class="btn-outline" onclick="alert('Mở tab mới sang OpenMetadata cho asset này (demo placeholder).')">↗ Open in OpenMetadata</button>
     </div>
 
     <div class="meta-row">
@@ -850,7 +799,7 @@
         <tbody id="sampleRowsBody"></tbody>
       </table>
       <div style="text-align:right;margin-top:8px;">
-        <span class="failed-rows-link" onclick="showToast('Mở Quarantine Viewer đã filter theo test này (demo placeholder).')">Xem toàn bộ trong Quarantine →</span>
+        <span class="failed-rows-link" onclick="alert('Mở Quarantine Viewer đã filter theo test này (demo placeholder).')">Xem toàn bộ trong Quarantine →</span>
       </div>
     </div>
 
@@ -862,10 +811,10 @@
         <div class="kv"><b>Trạng thái</b><span>Open</span></div>
         <div class="kv"><b>SLA / Due date</b><span>Còn 4 giờ</span></div>
         <div class="actions-row">
-          <button class="btn-outline" onclick="showToast('Mở dropdown chọn người/team để assign (demo placeholder).')">Assign</button>
-          <button class="btn-outline" onclick="showToast('Mở dropdown đổi trạng thái Open → Acknowledged/In Progress/Resolved/Won\'t Fix (demo placeholder).')">Change Status</button>
-          <button class="btn-outline" onclick="showToast('Mở form snooze cảnh báo (demo placeholder).')">Snooze</button>
-          <button class="btn-outline" onclick="showToast('Kích hoạt chạy lại rule ngay (demo placeholder).')">Re-run Test</button>
+          <button class="btn-outline" onclick="alert('Mở dropdown chọn người/team để assign (demo placeholder).')">Assign</button>
+          <button class="btn-outline" onclick="alert('Mở dropdown đổi trạng thái Open → Acknowledged/In Progress/Resolved/Won\'t Fix (demo placeholder).')">Change Status</button>
+          <button class="btn-outline" onclick="alert('Mở form snooze cảnh báo (demo placeholder).')">Snooze</button>
+          <button class="btn-outline" onclick="alert('Kích hoạt chạy lại rule ngay (demo placeholder).')">Re-run Test</button>
         </div>
       </div>
       <div class="card panel">
@@ -880,21 +829,6 @@
     </div>
   </div>
 
-</div>
-
-<!-- ======================= ASSET DETAIL DRAWER (side panel, không phải modal) ======================= -->
-<div id="assetDrawerOverlay" class="drawer-overlay" onclick="closeAssetDrawer()"></div>
-<div id="assetDrawer" class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerHeaderTitle" tabindex="-1">
-  <div class="drawer-header">
-    <div class="drawer-header-title" id="drawerHeaderTitle"></div>
-    <div class="drawer-nav">
-      <button id="drawerPrevBtn" onclick="navigateDrawer(-1)">‹ Trước</button>
-      <span id="drawerNavIndex"></span>
-      <button id="drawerNextBtn" onclick="navigateDrawer(1)">Sau ›</button>
-    </div>
-    <button class="drawer-close" onclick="closeAssetDrawer()" aria-label="Đóng">✕</button>
-  </div>
-  <div class="drawer-body" id="drawerBody"></div>
 </div>
 
 <script>
@@ -974,81 +908,37 @@ const lifecycleBadgeClass = {New:"degraded", Reopened:"reopened", Ongoing:"criti
 
 // Test tự động tối thiểu: đối chiếu số liệu load được với từng assertion trong Docs/COVERAGE.md.
 // Không có test runner trong repo (file tĩnh, không build tooling) nên chạy trong console thay cho tsc/jest.
-// Cập nhật theo Docs/COVERAGE.md bản mới (30 asset + 135 rule, ngày 2026-08-18) — bản cũ đối chiếu
-// với 30 rule đã lỗi thời sau khi mock-rules.json đổi sang 135 rule (mỗi asset có 3-6 rule join
-// bằng rule.assetId). Đếm PASS/FAIL tường minh để dễ đối chiếu, thay vì chỉ có tổng allPass boolean.
 function runCoverageChecks(assets, rules){
   const countBy = (arr, key) => arr.reduce((m,x)=>{ const v=x[key]; if(v!=null) m[v]=(m[v]||0)+1; return m; }, {});
   const countArrField = (arr, key, val) => arr.filter(x=>Array.isArray(x[key]) && x[key].includes(val)).length;
-  const recurBucket = r => r.recurrenceCount===0 ? '0' : r.recurrenceCount<=2 ? '1-2' : '>=3';
-  let pass = 0, fail = 0;
   const expect = (label, actual, expected) => {
-    const ok = actual===expected;
-    console[ok?'log':'error'](`${ok?'PASS':'FAIL'} ${label} expected ${expected} got ${actual}`);
-    ok ? pass++ : fail++;
-    return ok;
+    const pass = actual===expected;
+    console[pass?'log':'error'](`${pass?'✅':'❌'} ${label}: expected ${expected}, got ${actual}`);
+    return pass;
   };
-
-  console.group('COVERAGE.md checks — assets (30)');
+  let allPass = true;
+  console.group('COVERAGE.md checks — assets');
   const ah = countBy(assets,'healthStatus');
-  ['Critical','Healthy','Unknown','Warning'].forEach(k=>expect('healthStatus='+k, ah[k]||0, {Critical:6,Healthy:12,Unknown:3,Warning:9}[k]));
-  const ad = countBy(assets,'domain');
-  ({Compliance:4,Finance:4,Marketing:5,Operations:8,Risk:3,Sales:6}); // reference
-  Object.entries({Compliance:4,Finance:4,Marketing:5,Operations:8,Risk:3,Sales:6}).forEach(([k,v])=>expect('asset.domain='+k, ad[k]||0, v));
-  const as_ = countBy(assets,'service');
-  ['bigquery_mart','mysql_prod','postgres_dwh','s3_datalake','snowflake_analytics'].forEach(k=>expect('asset.service='+k, as_[k]||0, 6));
-  const ao = countBy(assets,'owner');
-  ['Analytics','Content','Data Platform','Finance Ops','Marketing Ops'].forEach(k=>expect('asset.owner='+k, ao[k]||0, 6));
-  const at = countBy(assets,'tier');
-  ['Tier1','Tier2','Tier3'].forEach(k=>expect('asset.tier='+k, at[k]||0, 10));
-  Object.entries({Accuracy:4,Completeness:4,Consistency:3,Freshness:3,Uniqueness:4,Validity:3}).forEach(([k,v])=>
-    expect('failingDimensions='+k, countArrField(assets,'failingDimensions',k), v));
+  allPass &= expect('healthStatus.Critical', ah.Critical||0, 6);
+  allPass &= expect('healthStatus.Healthy', ah.Healthy||0, 12);
+  allPass &= expect('healthStatus.Unknown', ah.Unknown||0, 3);
+  allPass &= expect('healthStatus.Warning', ah.Warning||0, 9);
+  allPass &= expect('failingDimensions.Accuracy', countArrField(assets,'failingDimensions','Accuracy'), 4);
+  allPass &= expect('failingDimensions.Completeness', countArrField(assets,'failingDimensions','Completeness'), 4);
+  allPass &= expect('failingDimensions.Uniqueness', countArrField(assets,'failingDimensions','Uniqueness'), 4);
   console.groupEnd();
-
-  console.group('COVERAGE.md checks — rules (135)');
+  console.group('COVERAGE.md checks — rules');
   const rl = countBy(rules,'lifecycleState');
-  Object.entries({New:13,'No data':14,Ongoing:27,Recovered:21,Reopened:18,Stable:42}).forEach(([k,v])=>expect('lifecycleState='+k, rl[k]||0, v));
-  const rd = countBy(rules,'domain');
-  Object.entries({Compliance:17,Finance:16,Marketing:24,Operations:36,Risk:12,Sales:30}).forEach(([k,v])=>expect('rule.domain='+k, rd[k]||0, v));
-  const rs = countBy(rules,'service');
-  Object.entries({bigquery_mart:25,mysql_prod:27,postgres_dwh:29,s3_datalake:27,snowflake_analytics:27}).forEach(([k,v])=>expect('rule.service='+k, rs[k]||0, v));
-  const ro = countBy(rules,'owner');
-  ['Analytics','Content','Data Platform','Finance Ops','Marketing Ops'].forEach(k=>expect('rule.owner='+k, ro[k]||0, 27));
-  const rt = countBy(rules,'ruleType');
-  Object.entries({accuracy:18,completeness:30,consistency:10,freshness:29,uniqueness:27,validity:21}).forEach(([k,v])=>expect('ruleType='+k, rt[k]||0, v));
-  const rhd = countBy(rules,'healthDimension');
-  Object.entries({Accuracy:18,Completeness:30,Consistency:10,Freshness:29,Uniqueness:27,Validity:21}).forEach(([k,v])=>expect('rule.healthDimension='+k, rhd[k]||0, v));
-  const rtier = countBy(rules,'tier');
-  Object.entries({Tier1:43,Tier2:45,Tier3:47}).forEach(([k,v])=>expect('rule.tier='+k, rtier[k]||0, v));
-  const rbo = countBy(rules,'businessRuleOwner');
-  Object.entries({'Compliance Ops':22,'Finance Ops':23,'Marketing Ops':22,'Operations Ops':23,'Risk Ops':22,'Sales Ops':23}).forEach(([k,v])=>expect('businessRuleOwner='+k, rbo[k]||0, v));
-  const rb = countBy(rules.map(r=>({b:recurBucket(r)})),'b');
-  Object.entries({'0':69,'1-2':48,'>=3':18}).forEach(([k,v])=>expect('recurrenceBucket='+k, rb[k]||0, v));
-  expect('chronic (recurrenceCount>=3)', rules.filter(r=>r.recurrenceCount>=3).length, 18);
-  const rr = countBy(rules.map(r=>({lr: r.latestResult==null?'None':r.latestResult})),'lr');
-  Object.entries({Fail:58,None:14,Pass:63}).forEach(([k,v])=>expect('latestResult='+k, rr[k]||0, v));
+  allPass &= expect('lifecycleState.New', rl.New||0, 5);
+  allPass &= expect('lifecycleState.Reopened', rl.Reopened||0, 6);
+  allPass &= expect('lifecycleState.Ongoing', rl.Ongoing||0, 6);
+  allPass &= expect('lifecycleState.Recovered', rl.Recovered||0, 6);
+  allPass &= expect('lifecycleState.Stable', rl.Stable||0, 5);
+  allPass &= expect('lifecycleState["No data"]', rl['No data']||0, 2);
+  allPass &= expect('chronic (recurrenceCount>=3)', rules.filter(r=>r.recurrenceCount>=3).length, 6);
   console.groupEnd();
-
-  console.group('COVERAGE.md checks — Asset <-> Rule join');
-  const byAsset = {};
-  rules.forEach(r=>{ (byAsset[r.assetId] = byAsset[r.assetId]||[]).push(r); });
-  const ruleCountDist = {};
-  assets.forEach(a=>{ const n=(byAsset[a.id]||[]).length; ruleCountDist[n]=(ruleCountDist[n]||0)+1; });
-  Object.entries({3:8,4:7,5:7,6:8}).forEach(([n,expected])=>expect('so asset co '+n+' rule', ruleCountDist[n]||0, expected));
-  let joinOk = 0;
-  assets.forEach(a=>{
-    const rs2 = byAsset[a.id]||[];
-    if(rs2.length===a.testsTotal && rs2.filter(r=>r.latestResult==='Fail').length===a.testsFailed) joinOk++;
-  });
-  expect('testsTotal/testsFailed khop voi so rule join duoc', joinOk, assets.length);
-  const healthyNoFail = assets.filter(a=>a.healthStatus==='Healthy').every(a=>(byAsset[a.id]||[]).every(r=>r.latestResult!=='Fail'));
-  expect('asset Healthy khong co rule Fail', healthyNoFail ? assets.filter(a=>a.healthStatus==='Healthy').length : -1, assets.filter(a=>a.healthStatus==='Healthy').length);
-  const criticalHasFail = assets.filter(a=>a.healthStatus==='Critical').every(a=>(byAsset[a.id]||[]).some(r=>r.latestResult==='Fail'));
-  expect('asset Critical co >=1 rule Fail', criticalHasFail ? assets.filter(a=>a.healthStatus==='Critical').length : -1, assets.filter(a=>a.healthStatus==='Critical').length);
-  console.groupEnd();
-
-  console.log(`Tong: ${pass} pass / ${fail} fail`);
-  return fail===0;
+  console.log(allPass ? '✅ COVERAGE.md: tất cả assertion pass.' : '❌ COVERAGE.md: có assertion lệch — xem log ở trên.');
+  return !!allPass;
 }
 
 /* ===================== Generic multi-select dropdown filter ===================== */
@@ -1064,6 +954,7 @@ function createMultiSelectDropdown(el, {label, options, getSelected, onChange}){
   function renderLabel(){
     const sel = getSelected();
     labelEl.textContent = sel.length ? `${label} (${sel.length})` : label;
+    el.classList.toggle('has-filter', sel.length>0);
   }
   function renderPanel(){
     const opts = typeof options === 'function' ? options() : options;
@@ -1154,20 +1045,18 @@ function statusBadge(status){
 }
 
 // Needs Attention = asset trong tập đang lọc có failingDimensions.length>0, sort theo healthScore tăng dần
-// (xấu nhất lên đầu), giới hạn 5 dòng. Click mở Asset Detail drawer qua event delegation
-// (data-asset-id/data-list-source) — xem listener chung ở phần "Asset Detail Drawer".
-let needsAttentionListIds = [];
+// (xấu nhất lên đầu), giới hạn 5 dòng. Asset Detail view chưa nối với mock JSON mới (xem renderHealthTable) nên
+// click vào dòng chỉ hiện placeholder, cùng quy ước với bảng Health.
 function renderNeedsAttention(list){
   const body = document.getElementById('needsAttentionBody');
   const rows = list
     .filter(a=>a.failingDimensions && a.failingDimensions.length>0)
     .sort((a,b)=>(a.healthScore??0)-(b.healthScore??0))
     .slice(0,5);
-  needsAttentionListIds = rows.map(a=>a.id);
   body.innerHTML = rows.length ? rows.map(a=>{
     const score = a.healthScore;
     const color = score==null ? 'var(--gray)' : score<50?'#e0453f':'#e8912b';
-    return `<tr class="rowlink" data-asset-id="${a.id}" data-list-source="needsAttention">
+    return `<tr class="rowlink" onclick="alert('Asset Detail chưa nối với mock JSON mới trong bản demo này.')">
       <td>
         <span class="asset-link">${a.name}</span>
         <span class="fqn">${a.fqn}</span>
@@ -1190,7 +1079,6 @@ let ovDomainFilters = [];
 let ovServiceFilters = [];
 let ovOwnerFilters = [];
 let ovDimFilters = [];
-let radarListIds = [];
 
 // Hàm thuần, không chạm DOM — dùng lại đúng logic đã verify ở Health tab (khớp failingDimensions,
 // không khớp healthDimensions).
@@ -1230,8 +1118,19 @@ function clearOverviewFilters(){
   renderOverview();
 }
 
-// applyHealthFilter/applyDimensionFilter (KPI card, stackbar, dimension bar) điều hướng sang tab Health —
-// chúng dùng state filter riêng của Health tab (healthStatusFilters/...), không đụng vào state Overview này.
+// Click KPI card / stackbar segment / legend item = shortcut toggle filter TẠI CHỖ trên chính
+// Overview (không nhảy tab) — bấm lần 2 vào cùng giá trị thì bỏ chọn, đúng yêu cầu "single source
+// of truth": mọi thứ trên Overview phải cùng đọc chung state ovStatusFilters/ovDimFilters.
+function toggleOverviewStatus(status){
+  ovStatusFilters = (ovStatusFilters.length===1 && ovStatusFilters[0]===status) ? [] : [status];
+  msOvStatus.refreshLabel();
+  renderOverview();
+}
+function toggleOverviewDimension(dim){
+  ovDimFilters = (ovDimFilters.length===1 && ovDimFilters[0]===dim) ? [] : [dim];
+  msOvDimension.refreshLabel();
+  renderOverview();
+}
 function radarPoint(dim, val){
   // Tâm (110,100), 6 trục hình lục giác — offset lấy từ chính toạ độ 100% vertex có sẵn trong SVG gốc.
   const offsets = {
@@ -1287,16 +1186,16 @@ function renderOverview(){
   });
 
   const lowest = filtered.filter(a=>a.healthScore!=null).sort((a,b)=>a.healthScore-b.healthScore).slice(0,3);
-  radarListIds = lowest.map(a=>a.id);
   RADAR_COLORS.forEach((color,i)=>{
     const poly = document.getElementById('ovRadarPoly'+i);
     const a = lowest[i];
     poly.setAttribute('points', a ? RADAR_DIMS.map(dim=>radarPoint(dim, a.healthDimensions[dim]).join(',')).join(' ') : '');
   });
   document.getElementById('ovRadarLegend').innerHTML = lowest.length ? lowest.map((a,i)=>
-    `<div class="item" data-asset-id="${a.id}" data-list-source="radar" style="cursor:pointer;"><span class="dot" style="background:${RADAR_COLORS[i]};border-radius:50%;width:8px;height:8px;"></span>${a.name}</div>`
+    `<div class="item"><span class="dot" style="background:${RADAR_COLORS[i]};border-radius:50%;width:8px;height:8px;"></span>${a.name}</div>`
   ).join('') : `<div class="empty-note">Không có asset nào có healthScore trong tập đang lọc.</div>`;
 
+  renderTrendChart(filtered);
   renderNeedsAttention(filtered);
 }
 
@@ -1312,7 +1211,6 @@ function assetStatusBadge(status){
 
 const HEALTH_DIMS = ["Completeness","Uniqueness","Validity","Consistency","Freshness","Accuracy"];
 
-let healthTableListIds = [];
 function renderHealthTable(){
   const body = document.getElementById('healthTableBody');
   const q = (document.getElementById('healthSearch').value || '').toLowerCase();
@@ -1328,12 +1226,13 @@ function renderHealthTable(){
     if(q && !(a.name.toLowerCase().includes(q) || a.fqn.toLowerCase().includes(q))) return false;
     return true;
   });
-  healthTableListIds = list.map(a=>a.id);
-  body.innerHTML = list.map(a=>{
+  document.getElementById('healthCountBadge').textContent = `${list.length} / ${assetsMock.length}`;
+
+  body.innerHTML = list.length ? list.map(a=>{
     const score = a.healthScore;
     const barColor = score==null ? 'var(--gray)' : score>=90?'#2f9e5b':score>=70?'#e8912b':'#e0453f';
     const primaryIssue = a.failingDimensions.length ? a.failingDimensions.join(', ') + ' failing' : '';
-    return `<tr class="rowlink" data-asset-id="${a.id}" data-list-source="healthTable">
+    return `<tr class="rowlink" onclick="alert('Asset Detail chưa nối với mock JSON mới trong bản demo này.')">
       <td><span class="asset-link">${a.name}</span><span class="fqn">${a.fqn}</span></td>
       <td>
         ${score==null ? '<span class="primary-issue none">—</span>' : `<span class="health-num" style="color:${barColor}">${score}</span>
@@ -1342,9 +1241,15 @@ function renderHealthTable(){
       ${HEALTH_DIMS.map(d=>`<td onclick="event.stopPropagation(); toggleHealthDimFilter('${d}')">${dimCell(a.healthDimensions[d])}</td>`).join('')}
       <td onclick="event.stopPropagation(); toggleHealthStatusFilter('${a.healthStatus}')">${assetStatusBadge(a.healthStatus)}</td>
       <td>${primaryIssue?`<span class="primary-issue">${primaryIssue}</span>`:'<span class="primary-issue none">—</span>'}</td>
-      <td><span class="owner-link" onclick="event.stopPropagation(); showToast('Filter theo Owner: ${a.owner} (demo placeholder).')">${a.owner}</span></td>
+      <td><span class="owner-link" onclick="event.stopPropagation(); alert('Filter theo Owner: ${a.owner} (demo placeholder).')">${a.owner}</span></td>
     </tr>`;
-  }).join('');
+  }).join('') : `<tr><td colspan="11" class="empty-note">Không có dữ liệu khớp filter. <span class="failed-rows-link" onclick="clearHealthFilters()">Clear</span></td></tr>`;
+
+  const critical = list.filter(a=>a.healthStatus==='Critical').length;
+  const noData = list.filter(a=>a.lastRunAt===null).length;
+  document.getElementById('cautionBanner').textContent = list.length
+    ? `⚠ ${critical} asset đang ở mức Critical, ${noData} asset chưa có dữ liệu đánh giá gần đây trong danh sách hiện tại.`
+    : '';
 }
 
 // Click trực tiếp trên KPI/ô status/ô dimension = shortcut chọn đúng 1 giá trị (thay toàn bộ selection).
@@ -1497,35 +1402,12 @@ function renderPagination(containerId, totalItems, page, goToFn){
 function goToTopUnstablePage(p){ topUnstablePage = p; renderRuleLifecycle(); }
 function goToRuleLifecyclePage(p){ ruleLifecyclePage = p; renderRuleLifecycle(); }
 
-function renderRuleLifecycle(){
-  const q = (document.getElementById('ruleSearch').value || '').toLowerCase();
-  const rows = rulesMock;
-
-  document.getElementById('rlSayLine').textContent = computeRuleLifecycleSayLine(rows);
-
-  const counts = {New:0, Reopened:0, Ongoing:0, Recovered:0};
-  rows.forEach(r=>{ if(counts[r.lifecycleState]!==undefined) counts[r.lifecycleState]++; });
-  document.getElementById('rlKpiNew').textContent = counts.New;
-  document.getElementById('rlKpiReopened').textContent = counts.Reopened;
-  document.getElementById('rlKpiOngoing').textContent = counts.Ongoing;
-  document.getElementById('rlKpiRecovered').textContent = counts.Recovered;
-
-  // Top rule bất ổn: toàn bộ rule có recurrenceCount>0, sort giảm dần — phân trang 10 dòng/trang.
-  const topUnstableAll = rows.filter(r=>r.recurrenceCount>0).sort((a,b)=>b.recurrenceCount - a.recurrenceCount);
-  topUnstablePage = renderPagination('topUnstablePagination', topUnstableAll.length, topUnstablePage, 'goToTopUnstablePage');
-  const topUnstable = topUnstableAll.slice((topUnstablePage-1)*PAGE_SIZE, topUnstablePage*PAGE_SIZE);
-  document.getElementById('topUnstableBody').innerHTML = topUnstable.length ? topUnstable.map(r=>`
-    <tr>
-      <td><span class="test-name">${r.ruleName}</span>${recurrenceBadgeHtml(r.recurrenceCount)}</td>
-      <td>${r.table}</td>
-      <td class="cellnum">${r.recurrenceCount}</td>
-      <td class="cellnum">${r.currentFailStreak}</td>
-      <td class="cellnum">${r.totalFailedRuns} / ${r.totalRuns} (${r.failRatePct}%)</td>
-      <td><span class="badge ${lifecycleBadgeClass[r.lifecycleState]}">${r.lifecycleState}</span></td>
-    </tr>`).join('') : `<tr><td colspan="6" class="empty-note">Không có rule nào từng tái phát trong lịch sử hiện có.</td></tr>`;
-
-  const recurBucket = r => r.recurrenceCount===0 ? '0' : r.recurrenceCount<=2 ? '1-2' : '3+';
-  let filtered = rows.filter(r=>{
+const recurBucket = r => r.recurrenceCount===0 ? '0' : r.recurrenceCount<=2 ? '1-2' : '3+';
+// Hàm thuần, không chạm DOM — MỘT bộ điều kiện filter duy nhất, dùng chung cho KPI, say-line,
+// Top Unstable và bảng chi tiết. Trước đây mỗi khối tự đọc rulesMock riêng nên KPI/say-line/Top
+// Unstable không phản ứng với filter — sửa bằng cách tính "filtered" một lần ở đầu renderRuleLifecycle().
+function filterRules(list, q){
+  return list.filter(r=>{
     if(ruleStateFilters.length && !ruleStateFilters.includes(r.lifecycleState)) return false;
     if(ruleDomainFilters.length && !ruleDomainFilters.includes(r.domain)) return false;
     if(ruleServiceFilters.length && !ruleServiceFilters.includes(r.service)) return false;
@@ -1538,10 +1420,41 @@ function renderRuleLifecycle(){
     if(q && !(r.ruleName.toLowerCase().includes(q) || r.table.toLowerCase().includes(q))) return false;
     return true;
   });
-  // Default sort = recurrenceCount giảm dần, đúng yêu cầu cốt lõi của spec.
-  filtered.sort((a,b)=>b.recurrenceCount - a.recurrenceCount);
-  ruleLifecyclePage = renderPagination('ruleLifecyclePagination', filtered.length, ruleLifecyclePage, 'goToRuleLifecyclePage');
-  const pageRows = filtered.slice((ruleLifecyclePage-1)*PAGE_SIZE, ruleLifecyclePage*PAGE_SIZE);
+}
+
+function renderRuleLifecycle(){
+  const q = (document.getElementById('ruleSearch').value || '').toLowerCase();
+  const filtered = filterRules(rulesMock, q);
+  document.getElementById('ruleCountBadge').textContent = `${filtered.length} / ${rulesMock.length}`;
+
+  document.getElementById('rlSayLine').textContent = computeRuleLifecycleSayLine(filtered);
+
+  const counts = {New:0, Reopened:0, Ongoing:0, Recovered:0};
+  filtered.forEach(r=>{ if(counts[r.lifecycleState]!==undefined) counts[r.lifecycleState]++; });
+  document.getElementById('rlKpiNew').textContent = counts.New;
+  document.getElementById('rlKpiReopened').textContent = counts.Reopened;
+  document.getElementById('rlKpiOngoing').textContent = counts.Ongoing;
+  document.getElementById('rlKpiRecovered').textContent = counts.Recovered;
+
+  // Top rule bất ổn: trong đúng tập đã lọc, recurrenceCount>0, sort giảm dần — phân trang 10 dòng/trang.
+  const topUnstableAll = filtered.filter(r=>r.recurrenceCount>0).sort((a,b)=>b.recurrenceCount - a.recurrenceCount);
+  topUnstablePage = renderPagination('topUnstablePagination', topUnstableAll.length, topUnstablePage, 'goToTopUnstablePage');
+  const topUnstable = topUnstableAll.slice((topUnstablePage-1)*PAGE_SIZE, topUnstablePage*PAGE_SIZE);
+  document.getElementById('topUnstableBody').innerHTML = topUnstable.length ? topUnstable.map(r=>`
+    <tr>
+      <td><span class="test-name">${r.ruleName}</span>${recurrenceBadgeHtml(r.recurrenceCount)}</td>
+      <td>${r.table}</td>
+      <td class="cellnum">${r.recurrenceCount}</td>
+      <td class="cellnum">${r.currentFailStreak}</td>
+      <td class="cellnum">${r.totalFailedRuns} / ${r.totalRuns} (${r.failRatePct}%)</td>
+      <td><span class="badge ${lifecycleBadgeClass[r.lifecycleState]}">${r.lifecycleState}</span></td>
+    </tr>`).join('') : `<tr><td colspan="6" class="empty-note">Không có rule nào từng tái phát trong tập đang lọc.</td></tr>`;
+
+  // Default sort = recurrenceCount giảm dần, đúng yêu cầu cốt lõi của spec — sort trên bản copy để
+  // không đổi thứ tự "filtered" đang được Top Unstable dùng ở trên.
+  const detailRows = filtered.slice().sort((a,b)=>b.recurrenceCount - a.recurrenceCount);
+  ruleLifecyclePage = renderPagination('ruleLifecyclePagination', detailRows.length, ruleLifecyclePage, 'goToRuleLifecyclePage');
+  const pageRows = detailRows.slice((ruleLifecyclePage-1)*PAGE_SIZE, ruleLifecyclePage*PAGE_SIZE);
 
   document.getElementById('ruleLifecycleBody').innerHTML = pageRows.length ? pageRows.map(r=>{
     const prevCell = !r.latestRunAt ? '<span class="primary-issue none">—</span>'
@@ -1668,9 +1581,9 @@ function openAssetDetail(id, scrollDim){
   document.getElementById('detailTitle').textContent = a.id;
   document.getElementById('detailFqn').textContent = a.fqn;
   document.getElementById('detailDomain').textContent = a.domain;
-  document.getElementById('detailDomain').onclick = ()=>showToast('Nhảy sang tab Domains, đúng domain: ' + a.domain + ' (demo placeholder).');
+  document.getElementById('detailDomain').onclick = ()=>alert('Nhảy sang tab Domains, đúng domain: ' + a.domain + ' (demo placeholder).');
   document.getElementById('detailOwner').textContent = a.owner;
-  document.getElementById('detailOwner').onclick = ()=>showToast('Filter theo Owner: ' + a.owner + ' (demo placeholder).');
+  document.getElementById('detailOwner').onclick = ()=>alert('Filter theo Owner: ' + a.owner + ' (demo placeholder).');
   document.getElementById('detailService').textContent = a.service;
   document.getElementById('detailTier').textContent = a.tier;
   document.getElementById('detailScore').textContent = a.overall;
@@ -1707,14 +1620,14 @@ function openAssetDetail(id, scrollDim){
 
   const totalQuarantine = tests.reduce((s,t)=>s+t.rows,0) + 3000;
   document.getElementById('viewQuarantineLink').textContent = `View Quarantine (${totalQuarantine.toLocaleString()} rows)`;
-  document.getElementById('viewQuarantineLink').onclick = ()=>showToast('Mở Quarantine Viewer cho toàn bộ asset ' + id + ' (demo placeholder).');
+  document.getElementById('viewQuarantineLink').onclick = ()=>alert('Mở Quarantine Viewer cho toàn bộ asset ' + id + ' (demo placeholder).');
 
   document.getElementById('failedTestsBody').innerHTML = tests.map(t=>`
     <tr>
       <td><span class="test-name" onclick="openTestDetail('${id}','${t.name}')">${t.name}</span></td>
       <td>${t.dim}</td>
       <td>${statusBadge(t.status)}</td>
-      <td><span class="failed-rows-link" onclick="showToast('Nhảy vào Quarantine Viewer filter theo test: ${t.name} (demo placeholder).')">${t.rows.toLocaleString()}</span></td>
+      <td><span class="failed-rows-link" onclick="alert('Nhảy vào Quarantine Viewer filter theo test: ${t.name} (demo placeholder).')">${t.rows.toLocaleString()}</span></td>
       <td>${t.rate}</td>
       <td>${t.last}</td>
     </tr>`).join('') || `<tr><td colspan="6" class="empty-note">Không có test lỗi nào.</td></tr>`;
@@ -1808,55 +1721,81 @@ function openTestDetail(assetId, testName){
   showView('test');
 }
 
-/* ===================== Trend hover tooltip (Overview) ===================== */
-const trendData = [
-  {x:30, overall:75, completeness:88, freshness:60},
-  {x:105,overall:77, completeness:90, freshness:52},
-  {x:180,overall:80, completeness:92, freshness:63},
-  {x:255,overall:78, completeness:86, freshness:57},
-  {x:330,overall:85, completeness:94, freshness:69},
-  {x:405,overall:80, completeness:90, freshness:59},
-  {x:480,overall:82, completeness:92, freshness:65},
-  {x:555,overall:81, completeness:91, freshness:61},
-  {x:610,overall:85, completeness:93, freshness:70},
-];
-const trendSvg = document.getElementById('trendSvg');
-const hoverdots = document.getElementById('hoverdots');
-trendData.forEach(pt=>{
-  const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
-  dot.setAttribute('cx', pt.x); dot.setAttribute('cy', 160-(pt.overall/100*150)); dot.setAttribute('r', 7);
-  dot.setAttribute('fill', 'transparent'); dot.style.cursor='pointer';
-  dot.addEventListener('mouseenter', ()=>{
-    document.getElementById('trendTooltip').textContent =
-      `Overall: ${pt.overall} · Completeness: ${pt.completeness} · Freshness: ${pt.freshness}`;
-  });
-  dot.addEventListener('mouseleave', ()=>{
-    document.getElementById('trendTooltip').textContent = 'Di chuột qua đường biểu đồ để xem điểm số từng dimension tại ngày đó.';
-  });
-  hoverdots.appendChild(dot);
-});
+/* ===================== Trend chart (Overview) — data-driven từ history30d của tập đã lọc ===================== */
+const TREND_DEFAULT_TOOLTIP = 'Di chuột qua đường biểu đồ để xem điểm số từng dimension tại ngày đó.';
 
-const trendLabelSeries = [
-  {key:'overall', color:'#3762d6', dy:-10},
-  {key:'completeness', color:'#2f9e5b', dy:-10},
-  {key:'freshness', color:'#e8912b', dy:14},
-];
-trendLabelSeries.forEach(series=>{
-  const group = document.getElementById('labels-'+series.key);
-  trendData.forEach(pt=>{
-    const val = pt[series.key];
-    const y = 160-(val/100*150);
-    const label = document.createElementNS('http://www.w3.org/2000/svg','text');
-    label.setAttribute('x', pt.x);
-    label.setAttribute('y', y + series.dy);
-    label.setAttribute('font-size', '9');
-    label.setAttribute('text-anchor', 'middle');
-    label.setAttribute('fill', series.color);
-    label.setAttribute('font-weight', '600');
-    label.textContent = val;
-    group.appendChild(label);
+function fmtTrendDate(iso){
+  // iso dạng "YYYY-MM-DD" — parse thủ công, tránh lệch múi giờ do Date() suy diễn theo local time.
+  const [y,m,d] = iso.split('-').map(Number);
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${months[m-1]} ${d}, ${y}`;
+}
+
+// Vẽ lại toàn bộ 3 đường (Overall/Completeness/Freshness) từ trung bình history30d của các asset
+// đang lọc, theo từng ngày. Xoá sạch DOM cũ (hoverdots/date labels) trước khi vẽ lại — hàm này được
+// gọi lại mỗi lần renderOverview() nên phải idempotent, không được cộng dồn phần tử qua các lần gọi.
+function renderTrendChart(filteredAssets){
+  const withHistory = filteredAssets.filter(a=>a.history30d && a.history30d.length);
+  const hoverdots = document.getElementById('hoverdots');
+  hoverdots.innerHTML = '';
+  ['trendDate0','trendDate1','trendDate2','trendDate3'].forEach(id=>document.getElementById(id).textContent='');
+
+  if(!withHistory.length){
+    ['line-overall','line-completeness','line-freshness'].forEach(id=>document.getElementById(id).setAttribute('points',''));
+    document.getElementById('trendTooltip').textContent = 'Không có dữ liệu lịch sử cho tập đang lọc.';
+    return;
+  }
+
+  const days = withHistory[0].history30d.length;
+  const points = {overall:[], completeness:[], freshness:[]};
+  const perDay = []; // giữ lại giá trị trung bình từng ngày để phục vụ tooltip hover
+
+  for(let i=0;i<days;i++){
+    const dayEntries = withHistory.map(a=>a.history30d[i]).filter(Boolean);
+    const avgOf = valFn => {
+      const vals = dayEntries.map(valFn).filter(v=>v!=null);
+      return vals.length ? vals.reduce((s,v)=>s+v,0)/vals.length : null;
+    };
+    const overall = avgOf(h=>h.healthScore);
+    const completeness = avgOf(h=>h.dimensions && h.dimensions.Completeness);
+    const freshness = avgOf(h=>h.dimensions && h.dimensions.Freshness);
+    const x = 30 + i*(610-30)/(days-1);
+    points.overall.push([x, overall]);
+    points.completeness.push([x, completeness]);
+    points.freshness.push([x, freshness]);
+    perDay.push({date: dayEntries[0] ? withHistory[0].history30d[i].date : null, overall, completeness, freshness});
+  }
+
+  const toY = v => 160 - ((v ?? 0)/100*150);
+  const toPolyline = arr => arr.filter(([,v])=>v!=null).map(([x,v])=>`${x.toFixed(1)},${toY(v).toFixed(1)}`).join(' ');
+  document.getElementById('line-overall').setAttribute('points', toPolyline(points.overall));
+  document.getElementById('line-completeness').setAttribute('points', toPolyline(points.completeness));
+  document.getElementById('line-freshness').setAttribute('points', toPolyline(points.freshness));
+
+  perDay.forEach((day, i)=>{
+    if(day.overall==null) return;
+    const x = 30 + i*(610-30)/(days-1);
+    const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    dot.setAttribute('cx', x.toFixed(1)); dot.setAttribute('cy', toY(day.overall).toFixed(1)); dot.setAttribute('r', 7);
+    dot.setAttribute('fill', 'transparent'); dot.style.cursor='pointer';
+    dot.addEventListener('mouseenter', ()=>{
+      document.getElementById('trendTooltip').textContent =
+        `${fmtTrendDate(day.date)} — Overall: ${Math.round(day.overall)} · Completeness: ${day.completeness!=null?Math.round(day.completeness):'—'} · Freshness: ${day.freshness!=null?Math.round(day.freshness):'—'}`;
+    });
+    dot.addEventListener('mouseleave', ()=>{
+      document.getElementById('trendTooltip').textContent = TREND_DEFAULT_TOOLTIP;
+    });
+    hoverdots.appendChild(dot);
   });
-});
+
+  const dateIdx = [0, Math.round((days-1)/3), Math.round((days-1)*2/3), days-1];
+  ['trendDate0','trendDate1','trendDate2','trendDate3'].forEach((id,i)=>{
+    const day = perDay[dateIdx[i]];
+    document.getElementById(id).textContent = day && day.date ? fmtTrendDate(day.date) : '';
+  });
+
+  document.getElementById('trendTooltip').textContent = TREND_DEFAULT_TOOLTIP;
+}
 
 function toggleLine(name){
   const line = document.getElementById('line-'+name);
@@ -1864,330 +1803,6 @@ function toggleLine(name){
   const hidden = line.style.display==='none';
   line.style.display = hidden ? '' : 'none';
   if(labels) labels.style.display = hidden ? '' : 'none';
-}
-
-/* ===================== Toast (thay cho alert() — không block trang) ===================== */
-let toastTimer = null;
-function showToast(msg){
-  let el = document.getElementById('toast');
-  if(!el){
-    el = document.createElement('div');
-    el.id = 'toast'; el.className = 'toast';
-    document.body.appendChild(el);
-  }
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=> el.classList.remove('show'), 2600);
-}
-
-function copyToClipboard(text){
-  if(navigator.clipboard && window.isSecureContext){
-    return navigator.clipboard.writeText(text);
-  }
-  // fallback cho file:// hoặc trình duyệt cũ không cho Clipboard API ở context không an toàn
-  return new Promise((resolve, reject)=>{
-    try{
-      const ta = document.createElement('textarea');
-      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
-      document.body.appendChild(ta); ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      resolve();
-    }catch(e){ reject(e); }
-  });
-}
-
-function scoreColor(score){
-  return score==null ? 'var(--gray)' : score>=90?'#2f9e5b':score>=70?'#e8912b':'#e0453f';
-}
-
-/* ===================== Asset Detail Drawer =====================
-   Join rule<->asset bằng rule.assetId === asset.id (KHÔNG dùng rule.table === asset.name — table
-   chỉ để hiển thị, assetId mới là khoá thật). Drawer không tự lọc gì cả, chỉ đọc thẳng assetsMock/
-   rulesMock — mọi con số hiển thị đều join được từ 2 file mock theo đúng COVERAGE.md.
-   Event delegation: KHÔNG gắn onclick cho từng <tr>. Mọi phần tử có data-asset-id (Needs Attention,
-   bảng Health, radar legend) được bắt bằng MỘT listener duy nhất trên document — sống sót qua mọi
-   lần re-render vì listener không nằm trong innerHTML bị thay thế. */
-let rulesByAssetId = {};
-function buildRulesByAssetIndex(){
-  rulesByAssetId = {};
-  rulesMock.forEach(r=>{ (rulesByAssetId[r.assetId] = rulesByAssetId[r.assetId] || []).push(r); });
-}
-function getAssetById(id){ return assetsMock.find(a=>a.id===id); }
-
-let drawerAssetId = null;
-let drawerListIds = [];
-let drawerReturnFocusEl = null;
-
-document.addEventListener('click', (e)=>{
-  const el = e.target.closest('[data-asset-id]');
-  if(!el) return;
-  openAssetDetail(el.dataset.assetId, el.dataset.listSource, el);
-});
-
-function computeDrawerListForSource(source){
-  if(source==='needsAttention' && needsAttentionListIds.length) return needsAttentionListIds;
-  if(source==='healthTable' && healthTableListIds.length) return healthTableListIds;
-  if(source==='radar' && radarListIds.length) return radarListIds;
-  return assetsMock.map(a=>a.id);
-}
-
-function openAssetDetail(assetId, source, triggerEl){
-  if(!getAssetById(assetId)) return;
-  drawerListIds = computeDrawerListForSource(source);
-  if(drawerAssetId==null) drawerReturnFocusEl = triggerEl || document.activeElement;
-  const targetHash = 'asset=' + encodeURIComponent(assetId);
-  if(location.hash === '#'+targetHash){
-    // hash không đổi (vd bấm lại đúng dòng đang mở) -> hashchange sẽ không tự bắn, render trực tiếp
-    drawerAssetId = assetId;
-    renderDrawer();
-    openDrawerUI();
-  } else {
-    location.hash = targetHash; // trigger hashchange -> handleHashChange() lo phần mở + render
-  }
-}
-
-function navigateDrawer(delta){
-  const idx = drawerListIds.indexOf(drawerAssetId);
-  const newIdx = idx + delta;
-  if(idx<0 || newIdx<0 || newIdx>=drawerListIds.length) return;
-  location.hash = 'asset=' + encodeURIComponent(drawerListIds[newIdx]);
-}
-
-function closeAssetDrawer(){
-  if(location.hash){ location.hash = ''; }
-  else { closeDrawerUI(); drawerAssetId = null; }
-}
-
-function handleHashChange(){
-  const m = location.hash.match(/^#asset=(.+)$/);
-  if(m){
-    const id = decodeURIComponent(m[1]);
-    const asset = getAssetById(id);
-    if(!asset){ closeDrawerUI(); drawerAssetId = null; return; }
-    drawerAssetId = id;
-    if(!drawerListIds.includes(id)) drawerListIds = assetsMock.map(a=>a.id);
-    renderDrawer();
-    openDrawerUI();
-  } else {
-    closeDrawerUI();
-    drawerAssetId = null;
-  }
-}
-window.addEventListener('hashchange', handleHashChange);
-
-function openDrawerUI(){
-  const overlay = document.getElementById('assetDrawerOverlay');
-  const drawer = document.getElementById('assetDrawer');
-  if(!drawer.classList.contains('open')){
-    overlay.classList.add('open');
-    drawer.classList.add('open');
-    document.addEventListener('keydown', drawerKeydownHandler);
-    drawer.focus();
-  }
-}
-function closeDrawerUI(){
-  const overlay = document.getElementById('assetDrawerOverlay');
-  const drawer = document.getElementById('assetDrawer');
-  overlay.classList.remove('open');
-  drawer.classList.remove('open');
-  document.removeEventListener('keydown', drawerKeydownHandler);
-  if(drawerReturnFocusEl && drawerReturnFocusEl.focus) drawerReturnFocusEl.focus();
-  drawerReturnFocusEl = null;
-}
-function drawerKeydownHandler(e){
-  if(e.key==='Escape'){ closeAssetDrawer(); return; }
-  if(e.key==='Tab'){ trapFocusInDrawer(e); }
-}
-function trapFocusInDrawer(e){
-  const drawer = document.getElementById('assetDrawer');
-  const focusables = drawer.querySelectorAll('button:not(:disabled), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-  if(!focusables.length) return;
-  const first = focusables[0], last = focusables[focusables.length-1];
-  if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
-  else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
-}
-
-const DRAWER_DIM_COLORS = {Completeness:'#2f9e5b', Freshness:'#e8912b', Uniqueness:'#9b59b6', Validity:'#e0453f', Accuracy:'#3762d6', Consistency:'#17a2b8'};
-
-function buildTrendSvgHtml(asset){
-  const hist = asset.history30d || [];
-  if(!hist.length) return `<div class="empty-note">Chưa có dữ liệu lịch sử (asset chưa có lần chạy nào được ghi nhận).</div>`;
-  const days = hist.length;
-  const toX = i => 20 + i*(480/(days-1));
-  const toY = v => 130 - ((v ?? 0)/100*110);
-  const overallPts = hist.map((h,i)=> h.healthScore!=null ? `${toX(i).toFixed(1)},${toY(h.healthScore).toFixed(1)}` : null).filter(Boolean).join(' ');
-  const dimLines = Object.keys(DRAWER_DIM_COLORS).map(dim=>{
-    const pts = hist.map((h,i)=> h.dimensions && h.dimensions[dim]!=null ? `${toX(i).toFixed(1)},${toY(h.dimensions[dim]).toFixed(1)}` : null).filter(Boolean).join(' ');
-    return `<polyline data-dim-line="${dim}" points="${pts}" fill="none" stroke="${DRAWER_DIM_COLORS[dim]}" stroke-width="1.3" style="display:none;"/>`;
-  }).join('');
-  const hoverdots = hist.map((h,i)=> h.healthScore!=null
-    ? `<circle cx="${toX(i).toFixed(1)}" cy="${toY(h.healthScore).toFixed(1)}" r="6" fill="transparent" style="cursor:pointer;" data-tooltip="${h.date} — Overall ${h.healthScore}"></circle>`
-    : '').join('');
-  return `
-    <svg viewBox="0 0 500 145" width="100%" height="145">
-      <line x1="20" y1="10" x2="20" y2="130" stroke="#e4e6eb"/>
-      <line x1="20" y1="130" x2="500" y2="130" stroke="#e4e6eb"/>
-      <polyline points="${overallPts}" fill="none" stroke="#3762d6" stroke-width="1.8"/>
-      ${dimLines}
-      <g id="drawerHoverdots">${hoverdots}</g>
-    </svg>
-    <div id="drawerTrendTooltip" style="font-size:11px;color:var(--muted);margin-top:2px;">Di chuột qua đường biểu đồ để xem theo ngày.</div>
-    <div class="legend-row" style="margin-top:8px;">
-      ${Object.entries(DRAWER_DIM_COLORS).map(([dim,color])=>`<label style="display:flex;align-items:center;gap:5px;font-size:11px;cursor:pointer;">
-        <input type="checkbox" data-toggle-dim="${dim}"><span class="dot" style="background:${color}"></span>${dim}
-      </label>`).join('')}
-    </div>`;
-}
-
-function buildDimensionRowsHtml(asset){
-  return RADAR_DIMS.map(dim=>{
-    const val = asset.healthDimensions[dim];
-    const failing = asset.failingDimensions.includes(dim);
-    const color = failing ? 'var(--red)' : scoreColor(val);
-    return `<div class="dim-row" style="cursor:default;">
-      <div class="top">
-        <span style="color:${failing?'var(--red)':'var(--text)'};font-weight:${failing?700:600};">${dim}${failing?' · đang lỗi':''}</span>
-        <span>${val==null?'—':val}</span>
-      </div>
-      <div class="dim-track"><div class="dim-fill" style="width:${val??0}%;background:${color};"></div></div>
-    </div>`;
-  }).join('');
-}
-
-function buildRuleRowsHtml(rules){
-  if(!rules.length) return `<tr><td colspan="9" class="empty-note">Asset này chưa có rule nào.</td></tr>`;
-  return rules.map(r=>{
-    const prevCell = !r.latestRunAt ? '<span class="primary-issue none">—</span>'
-      : !r.previousRunAt
-        ? `<span style="color:var(--gray)">—</span> → <span title="${fmtRunTs(r.latestRunAt)}">${r.latestResult ?? '—'}</span>`
-        : `<span title="${fmtRunTs(r.previousRunAt)}">${r.previousResult ?? '—'}</span> → <span title="${fmtRunTs(r.latestRunAt)}">${r.latestResult ?? '—'}</span>`;
-    return `<tr>
-      <td><span class="test-name">${r.ruleName}</span>${recurrenceBadgeHtml(r.recurrenceCount)}</td>
-      <td>${r.column}</td>
-      <td>${r.healthDimension}</td>
-      <td>${prevCell}</td>
-      <td><span class="badge ${lifecycleBadgeClass[r.lifecycleState]}">${r.lifecycleState}</span></td>
-      <td class="cellnum">${r.recurrenceCount}</td>
-      <td>${r.totalRuns ? `${r.totalFailedRuns} / ${r.totalRuns} (${r.failRatePct}%)` : '<span class="primary-issue none">—</span>'}</td>
-      <td>${r.avgRecoveryHours!=null ? r.avgRecoveryHours.toFixed(1)+'h' : '<span class="primary-issue none">—</span>'}</td>
-      <td>${sparklineHtml(r.history30)}</td>
-    </tr>`;
-  }).join('');
-}
-
-function renderDrawer(){
-  const asset = getAssetById(drawerAssetId);
-  if(!asset) return;
-  const rules = (rulesByAssetId[asset.id] || []).slice().sort((a,b)=>b.recurrenceCount - a.recurrenceCount);
-
-  document.getElementById('drawerHeaderTitle').textContent = asset.name;
-  const idx = drawerListIds.indexOf(asset.id);
-  const total = drawerListIds.length;
-  document.getElementById('drawerNavIndex').textContent = total ? `${idx+1} / ${total}` : '';
-  document.getElementById('drawerPrevBtn').disabled = idx<=0;
-  document.getElementById('drawerNextBtn').disabled = idx<0 || idx>=total-1;
-
-  const ruleFailCount = rules.filter(r=>r.latestResult==='Fail').length;
-  const chronicCount = rules.filter(r=>r.recurrenceCount>=3).length;
-  const totalRecurrence = rules.reduce((s,r)=>s+r.recurrenceCount, 0);
-  const uniq = arr => { const s = [...new Set(arr.filter(Boolean))]; return s.length ? s.join(', ') : '—'; };
-
-  document.getElementById('drawerBody').innerHTML = `
-    <div class="detail-fqn" style="display:flex;align-items:center;gap:6px;font-size:12px;">
-      <span id="drawerFqnText" style="font-family:'SF Mono',Consolas,Menlo,monospace;">${asset.fqn}</span>
-      <button class="drawer-copy-btn" id="drawerCopyFqnBtn" title="Copy FQN">⧉ copy</button>
-    </div>
-    <div style="display:flex;gap:8px;margin:10px 0;">
-      ${assetStatusBadge(asset.healthStatus)}
-      <span class="badge" style="background:var(--gray-bg);color:var(--text);">${asset.tier}</span>
-    </div>
-    <div class="health-score-box" style="margin:4px 0 2px;">
-      <div class="health-score">${asset.healthScore==null?'—':asset.healthScore} <small>/ 100</small></div>
-    </div>
-    <div class="mini-track" style="width:100%;height:8px;">
-      <div class="mini-fill" style="width:${asset.healthScore??0}%;background:${scoreColor(asset.healthScore)};"></div>
-    </div>
-    <div class="meta-row" style="margin-top:14px;margin-bottom:0;">
-      <div><b>Domain</b> ${asset.domain}</div>
-      <div><b>Owner</b> ${asset.owner}</div>
-      <div><b>Service</b> ${asset.service}</div>
-      <div><b>Cập nhật lần cuối</b> ${fmtRunTs(asset.lastRunAt)}</div>
-    </div>
-
-    <h3>Tổng quan</h3>
-    <div class="drawer-kpi-grid">
-      <div class="drawer-kpi"><div class="label">Tests fail / tổng</div><div class="value">${asset.testsFailed} / ${asset.testsTotal}</div></div>
-      <div class="drawer-kpi">
-        <div class="label">Số rule đang Fail</div><div class="value">${ruleFailCount}</div>
-        ${ruleFailCount===0 ? `<div class="note">✓ Không có rule nào đang fail</div>` : ''}
-      </div>
-      <div class="drawer-kpi"><div class="label">Rule chronic (≥3 lần)</div><div class="value">${chronicCount}</div></div>
-      <div class="drawer-kpi"><div class="label">Tổng số lần tái phát</div><div class="value">${totalRecurrence}</div></div>
-    </div>
-
-    <h3>Sức khoẻ theo dimension</h3>
-    ${buildDimensionRowsHtml(asset)}
-
-    <h3>Xu hướng 30 ngày</h3>
-    ${buildTrendSvgHtml(asset)}
-
-    <h3>Danh sách rule (${rules.length})</h3>
-    <div style="overflow-x:auto;">
-    <table id="drawerRuleTable">
-      <thead><tr>
-        <th>Rule</th><th>Column</th><th>Dimension</th><th>Trước → Mới nhất</th><th>Trạng thái</th>
-        <th>Tái phát</th><th>Fail/Runs</th><th>MTTR</th><th>Lịch sử</th>
-      </tr></thead>
-      <tbody>${buildRuleRowsHtml(rules)}</tbody>
-    </table>
-    </div>
-    <div style="margin-top:10px;">
-      <button class="btn-outline" onclick="jumpToRuleLifecycleForAsset('${asset.id}')">Xem trong Rule Lifecycle</button>
-    </div>
-
-    <h3>Metadata &amp; quyền sở hữu</h3>
-    <div class="kv"><b>System owner</b><span>${uniq(rules.map(r=>r.systemOwner))}</span></div>
-    <div class="kv"><b>Business rule owner</b><span>${uniq(rules.map(r=>r.businessRuleOwner))}</span></div>
-    <div class="kv"><b>Rule creator</b><span>${uniq(rules.map(r=>r.ruleCreator))}</span></div>
-    <div class="kv"><b>Service</b><span>${asset.service} (${asset.serviceType})</span></div>
-    <div class="kv"><b>Tier</b><span>${asset.tier}</span></div>
-  `;
-
-  wireDrawerBodyEvents();
-}
-
-function wireDrawerBodyEvents(){
-  const copyBtn = document.getElementById('drawerCopyFqnBtn');
-  if(copyBtn){
-    copyBtn.addEventListener('click', ()=>{
-      const asset = getAssetById(drawerAssetId);
-      copyToClipboard(asset.fqn)
-        .then(()=> showToast('Đã copy FQN: ' + asset.fqn))
-        .catch(()=> showToast('Không copy được (trình duyệt chặn clipboard).'));
-    });
-  }
-  document.querySelectorAll('#drawerHoverdots circle').forEach(c=>{
-    c.addEventListener('mouseenter', ()=>{ document.getElementById('drawerTrendTooltip').textContent = c.dataset.tooltip; });
-    c.addEventListener('mouseleave', ()=>{ document.getElementById('drawerTrendTooltip').textContent = 'Di chuột qua đường biểu đồ để xem theo ngày.'; });
-  });
-  document.querySelectorAll('[data-toggle-dim]').forEach(chk=>{
-    chk.addEventListener('change', ()=>{
-      const line = document.querySelector(`[data-dim-line="${chk.dataset.toggleDim}"]`);
-      if(line) line.style.display = chk.checked ? '' : 'none';
-    });
-  });
-}
-
-// "Xem trong Rule Lifecycle": không có filter theo assetId ở tab đó nên tái dùng ô tìm kiếm sẵn có
-// (search theo table/ruleName, và rule.table === asset.name) thay vì thêm 1 filter mới.
-function jumpToRuleLifecycleForAsset(assetId){
-  const asset = getAssetById(assetId);
-  closeAssetDrawer();
-  switchTab('rulelifecycle');
-  document.getElementById('ruleSearch').value = asset.name;
-  renderRuleLifecycle();
 }
 
 /* ===================== Init ===================== */
@@ -2202,19 +1817,13 @@ async function bootstrap(){
     document.getElementById('cautionBanner').textContent = '⚠ Không tải được mock data — xem console để biết chi tiết.';
     return;
   }
-  buildRulesByAssetIndex();
   initOverviewFilterDropdowns();
   initHealthFilterDropdowns();
   initRuleFilterDropdowns();
   renderOverview();
   renderHealthTable();
   renderRuleLifecycle();
-  const critical = assetsMock.filter(a=>a.healthStatus==='Critical').length;
-  const noData = assetsMock.filter(a=>a.lastRunAt===null).length;
-  document.getElementById('cautionBanner').textContent =
-    `⚠ ${critical} asset đang ở mức Critical, ${noData} asset chưa có dữ liệu đánh giá gần đây trong danh sách hiện tại.`;
   runCoverageChecks(assetsMock, rulesMock);
-  handleHashChange(); // deep link: nếu URL đã có #asset=... khi load trang thì tự mở đúng drawer
 }
 bootstrap();
 </script>
