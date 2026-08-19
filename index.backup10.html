@@ -406,7 +406,6 @@
             <text x="4" y="14" font-size="9" fill="#9aa1ab">100</text>
             <text x="10" y="90" font-size="9" fill="#9aa1ab">50</text>
             <text x="14" y="164" font-size="9" fill="#9aa1ab">0</text>
-            <g id="trendThresholds"></g>
             <polyline id="line-overall" fill="none" stroke="#3762d6" stroke-width="1.6" points=""/>
             <polyline id="line-completeness" fill="none" stroke="#2f9e5b" stroke-width="1.6" points=""/>
             <polyline id="line-freshness" fill="none" stroke="#e8912b" stroke-width="1.6" points=""/>
@@ -414,7 +413,10 @@
             <g id="labels-completeness"></g>
             <g id="labels-freshness"></g>
             <g id="hoverdots"></g>
-            <g id="trendXLabels"></g>
+            <text x="30" y="178" font-size="9" fill="#9aa1ab">Jul 16, 2026</text>
+            <text x="200" y="178" font-size="9" fill="#9aa1ab">Jul 28, 2026</text>
+            <text x="380" y="178" font-size="9" fill="#9aa1ab">Aug 5, 2026</text>
+            <text x="555" y="178" font-size="9" fill="#9aa1ab">Aug 14, 2026</text>
           </svg>
           <div id="trendTooltip" style="font-size:11.5px;color:var(--muted);margin-top:4px;">Di chuột qua đường biểu đồ để xem điểm số từng dimension tại ngày đó.</div>
           <div style="font-size:10.5px;color:var(--gray);margin-top:2px;">Biểu đồ xu hướng dùng dữ liệu tổng toàn hệ thống (mock không có lịch sử theo ngày cho từng subset filter) — không đổi theo filter bar phía trên.</div>
@@ -1003,14 +1005,6 @@ function runCoverageChecks(assets, rules){
   expect('asset Healthy khong co rule Fail', healthyNoFail ? assets.filter(a=>a.healthStatus==='Healthy').length : -1, assets.filter(a=>a.healthStatus==='Healthy').length);
   const criticalHasFail = assets.filter(a=>a.healthStatus==='Critical').every(a=>(byAsset[a.id]||[]).some(r=>r.latestResult==='Fail'));
   expect('asset Critical co >=1 rule Fail', criticalHasFail ? assets.filter(a=>a.healthStatus==='Critical').length : -1, assets.filter(a=>a.healthStatus==='Critical').length);
-  console.groupEnd();
-
-  console.group('COVERAGE.md checks — Trend chart geometry (1 nguon du lieu duy nhat)');
-  ['line-overall','line-completeness','line-freshness'].forEach(id=>{
-    const el = document.getElementById(id);
-    const pts = el ? el.getAttribute('points').trim().split(/\s+/).filter(Boolean) : [];
-    expect('trend polyline ' + id + ' so diem', pts.length, trendData.length);
-  });
   console.groupEnd();
 
   console.log(`Tong: ${pass} pass / ${fail} fail`);
@@ -1863,171 +1857,77 @@ function openTestDetail(assetId, testName){
   showView('test');
 }
 
-/* ===================== Trend chart — MỘT nguồn sự thật (trendX/trendY) ===================== */
-// Trước đây Overview có bug: toạ độ polyline bị gõ tay cố định trong HTML, còn nhãn số + tooltip
-// lại đọc từ mảng trendData — hai nguồn lệch nhau nên hình vẽ sai so với số liệu thật (vd
-// trendData[0].overall=75 phải vẽ ở y=47.5, nhưng HTML hardcode y=60). Từ giờ CHỈ có 2 hàm toạ độ
-// (trendX/trendY) và KHÔNG nơi nào khác trong biểu đồ này được tự tính toạ độ theo công thức riêng.
-const trendData = [
-  {date:'2026-07-20', overall:75, completeness:88, freshness:60},
-  {date:'2026-07-23', overall:77, completeness:90, freshness:52},
-  {date:'2026-07-27', overall:80, completeness:92, freshness:63},
-  {date:'2026-07-30', overall:78, completeness:86, freshness:57},
-  {date:'2026-08-03', overall:85, completeness:94, freshness:69},
-  {date:'2026-08-06', overall:80, completeness:90, freshness:59},
-  {date:'2026-08-10', overall:82, completeness:92, freshness:65},
-  {date:'2026-08-14', overall:81, completeness:91, freshness:61},
-  {date:'2026-08-18', overall:85, completeness:93, freshness:70},
-];
-
-const TREND_GEO = { x0:30, x1:610, yTop:10, yBottom:160, min:0, max:100 };
-const trendX = i => TREND_GEO.x0 + (TREND_GEO.x1 - TREND_GEO.x0) * (i / (trendData.length - 1));
-const trendY = v => TREND_GEO.yBottom
-  - ((v - TREND_GEO.min) / (TREND_GEO.max - TREND_GEO.min)) * (TREND_GEO.yBottom - TREND_GEO.yTop);
-
-const THRESHOLDS = { green: 90, amber: 70 };
-const TREND_SERIES = [
-  {key:'overall', color:'#3762d6', label:'Overall'},
-  {key:'completeness', color:'#2f9e5b', label:'Completeness'},
-  {key:'freshness', color:'#e8912b', label:'Freshness'},
-];
-const TREND_DEFAULT_TOOLTIP = 'Di chuột qua đường biểu đồ để xem điểm số từng dimension tại ngày đó.';
-
-function fmtTrendDate(iso){
-  const [y,m,d] = iso.split('-').map(Number);
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return `${months[m-1]} ${d}, ${y}`;
+/* ===================== Trend chart — MỘT nguồn sự thật cho mọi trend chart ===================== */
+// buildPolyline(): hàm DUY NHẤT sinh chuỗi "x,y x,y ..." cho <polyline>, dùng chung cho Overview
+// Trend chart và Asset Detail Trend chart. Trước đây Overview có bug: toạ độ polyline bị gõ tay
+// cố định trong HTML, còn nhãn số + tooltip lại đọc từ mảng trendData — hai nguồn lệch nhau nên
+// hình vẽ sai so với số liệu thật (vd trendData[0].overall=75 phải vẽ ở y=47.5, nhưng HTML hardcode
+// y=60). Từ giờ CHỈ có một nguồn: polyline, nhãn, và tooltip đều tính lại từ cùng 1 mảng dữ liệu
+// bằng buildPolyline(), không ai được tự gõ tay toạ độ nữa.
+function buildPolyline(points, {yTop, yBottom, min=0, max=100}){
+  return points
+    .filter(p=>p.value!=null)
+    .map(p=>`${p.x.toFixed(1)},${(yBottom - (p.value-min)/(max-min)*(yBottom-yTop)).toFixed(1)}`)
+    .join(' ');
+}
+function valueToY(value, {yTop, yBottom, min=0, max=100}){
+  return yBottom - ((value??0)-min)/(max-min)*(yBottom-yTop);
 }
 
-// Vẽ 2 đường ngưỡng ngang nét đứt (Target/Ngưỡng) tại THRESHOLDS.green/amber — đọc từ hằng số
-// dùng chung, không hardcode toạ độ hay giá trị trong SVG.
-function renderTrendThresholds(){
-  const group = document.getElementById('trendThresholds');
-  group.innerHTML = '';
-  [
-    {value:THRESHOLDS.green, color:'#2f9e5b', label:'Target ' + THRESHOLDS.green},
-    {value:THRESHOLDS.amber, color:'#e8912b', label:'Ngưỡng ' + THRESHOLDS.amber},
-  ].forEach(t=>{
-    const y = trendY(t.value);
-    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
-    line.setAttribute('x1', TREND_GEO.x0); line.setAttribute('x2', TREND_GEO.x1);
-    line.setAttribute('y1', y.toFixed(1)); line.setAttribute('y2', y.toFixed(1));
-    line.setAttribute('stroke', t.color); line.setAttribute('stroke-width', '1');
-    line.setAttribute('stroke-dasharray', '4,3'); line.setAttribute('opacity', '0.45');
-    group.appendChild(line);
+const trendData = [
+  {x:30, overall:75, completeness:88, freshness:60},
+  {x:105,overall:77, completeness:90, freshness:52},
+  {x:180,overall:80, completeness:92, freshness:63},
+  {x:255,overall:78, completeness:86, freshness:57},
+  {x:330,overall:85, completeness:94, freshness:69},
+  {x:405,overall:80, completeness:90, freshness:59},
+  {x:480,overall:82, completeness:92, freshness:65},
+  {x:555,overall:81, completeness:91, freshness:61},
+  {x:610,overall:85, completeness:93, freshness:70},
+];
+const OVERVIEW_TREND_SCALE = {yTop:10, yBottom:160, min:0, max:100};
+
+['overall','completeness','freshness'].forEach(key=>{
+  const points = trendData.map(pt=>({x:pt.x, value:pt[key]}));
+  document.getElementById('line-'+key).setAttribute('points', buildPolyline(points, OVERVIEW_TREND_SCALE));
+});
+
+const hoverdots = document.getElementById('hoverdots');
+trendData.forEach(pt=>{
+  const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  dot.setAttribute('cx', pt.x); dot.setAttribute('cy', valueToY(pt.overall, OVERVIEW_TREND_SCALE)); dot.setAttribute('r', 7);
+  dot.setAttribute('fill', 'transparent'); dot.style.cursor='pointer';
+  dot.addEventListener('mouseenter', ()=>{
+    document.getElementById('trendTooltip').textContent =
+      `Overall: ${pt.overall} · Completeness: ${pt.completeness} · Freshness: ${pt.freshness}`;
+  });
+  dot.addEventListener('mouseleave', ()=>{
+    document.getElementById('trendTooltip').textContent = 'Di chuột qua đường biểu đồ để xem điểm số từng dimension tại ngày đó.';
+  });
+  hoverdots.appendChild(dot);
+});
+
+const trendLabelSeries = [
+  {key:'overall', color:'#3762d6', dy:-10},
+  {key:'completeness', color:'#2f9e5b', dy:-10},
+  {key:'freshness', color:'#e8912b', dy:14},
+];
+trendLabelSeries.forEach(series=>{
+  const group = document.getElementById('labels-'+series.key);
+  trendData.forEach(pt=>{
+    const val = pt[series.key];
+    const y = valueToY(val, OVERVIEW_TREND_SCALE);
     const label = document.createElementNS('http://www.w3.org/2000/svg','text');
-    label.setAttribute('x', TREND_GEO.x1 + 4);
-    label.setAttribute('y', (y + 3).toFixed(1));
-    label.setAttribute('font-size', '8.5');
-    label.setAttribute('fill', t.color);
-    label.setAttribute('opacity', '0.85');
-    label.textContent = t.value;
+    label.setAttribute('x', pt.x);
+    label.setAttribute('y', y + series.dy);
+    label.setAttribute('font-size', '9');
+    label.setAttribute('text-anchor', 'middle');
+    label.setAttribute('fill', series.color);
+    label.setAttribute('font-weight', '600');
+    label.textContent = val;
     group.appendChild(label);
   });
-}
-
-// Trục X sinh từ trendData[i].date, đặt đúng tại trendX(i) — 4-5 nhãn, luôn có điểm đầu/cuối,
-// text-anchor start/end ở 2 đầu để không tràn khung, middle ở giữa.
-function renderTrendXAxis(){
-  const n = trendData.length;
-  const group = document.getElementById('trendXLabels');
-  group.innerHTML = '';
-  const idxs = Array.from(new Set([
-    0,
-    Math.round((n-1)*0.25),
-    Math.round((n-1)*0.5),
-    Math.round((n-1)*0.75),
-    n-1,
-  ])).sort((a,b)=>a-b);
-  idxs.forEach(i=>{
-    const anchor = i===0 ? 'start' : i===n-1 ? 'end' : 'middle';
-    const text = document.createElementNS('http://www.w3.org/2000/svg','text');
-    text.setAttribute('x', trendX(i).toFixed(1));
-    text.setAttribute('y', 178);
-    text.setAttribute('font-size', '9');
-    text.setAttribute('fill', '#9aa1ab');
-    text.setAttribute('text-anchor', anchor);
-    text.textContent = fmtTrendDate(trendData[i].date);
-    group.appendChild(text);
-  });
-}
-
-// Giảm mật độ nhãn theo IBCS: mỗi series chỉ gắn nhãn tại điểm đầu, cuối, cao nhất, thấp nhất —
-// các điểm còn lại đã có tooltip khi hover nên không cần nhãn số riêng.
-function pickLabelIndexesForSeries(key){
-  const n = trendData.length;
-  const vals = trendData.map(pt=>pt[key]);
-  const idxMax = vals.indexOf(Math.max(...vals));
-  const idxMin = vals.indexOf(Math.min(...vals));
-  return Array.from(new Set([0, n-1, idxMax, idxMin]));
-}
-
-// Chống đè nhãn theo từng cột x: gom các nhãn (từ nhiều series) rơi vào cùng 1 điểm dữ liệu, sắp
-// theo chiều cao (y tự nhiên), đặt nhãn trên cùng cách điểm 8px phía trên, rồi ép khoảng cách tối
-// thiểu 11px giữa các nhãn kế tiếp — không dùng offset dy cố định như code cũ.
-function renderTrendLabels(){
-  TREND_SERIES.forEach(s=>{ document.getElementById('labels-'+s.key).innerHTML = ''; });
-
-  const byIndex = {};
-  TREND_SERIES.forEach(s=>{
-    pickLabelIndexesForSeries(s.key).forEach(i=>{
-      (byIndex[i] = byIndex[i] || []).push({key:s.key, color:s.color, value:trendData[i][s.key]});
-    });
-  });
-
-  Object.keys(byIndex).forEach(idxStr=>{
-    const i = Number(idxStr);
-    const entries = byIndex[i].map(e=>({...e, y0: trendY(e.value)}));
-    entries.sort((a,b)=>a.y0-b.y0); // sắp theo chiều cao: điểm ở trên (y nhỏ) xử lý trước
-    let prevY = null;
-    entries.forEach(e=>{
-      let y = e.y0 - 8;
-      if(prevY!=null && (y - prevY) < 11) y = prevY + 11;
-      prevY = y;
-      const label = document.createElementNS('http://www.w3.org/2000/svg','text');
-      label.setAttribute('x', trendX(i).toFixed(1));
-      label.setAttribute('y', y.toFixed(1));
-      label.setAttribute('font-size', '9');
-      label.setAttribute('text-anchor', 'middle');
-      label.setAttribute('fill', e.color);
-      label.setAttribute('font-weight', '600');
-      label.textContent = e.value;
-      document.getElementById('labels-'+e.key).appendChild(label);
-    });
-  });
-}
-
-function renderTrendHoverdots(){
-  const hoverdots = document.getElementById('hoverdots');
-  hoverdots.innerHTML = '';
-  trendData.forEach((pt,i)=>{
-    const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    dot.setAttribute('cx', trendX(i).toFixed(1));
-    dot.setAttribute('cy', trendY(pt.overall).toFixed(1));
-    dot.setAttribute('r', 7);
-    dot.setAttribute('fill', 'transparent'); dot.style.cursor='pointer';
-    dot.addEventListener('mouseenter', ()=>{
-      document.getElementById('trendTooltip').textContent =
-        `${fmtTrendDate(pt.date)} — Overall: ${pt.overall} · Completeness: ${pt.completeness} · Freshness: ${pt.freshness}`;
-    });
-    dot.addEventListener('mouseleave', ()=>{
-      document.getElementById('trendTooltip').textContent = TREND_DEFAULT_TOOLTIP;
-    });
-    hoverdots.appendChild(dot);
-  });
-}
-
-function renderTrendChart(){
-  TREND_SERIES.forEach(s=>{
-    const points = trendData.map((pt,i)=>`${trendX(i).toFixed(1)},${trendY(pt[s.key]).toFixed(1)}`).join(' ');
-    document.getElementById('line-'+s.key).setAttribute('points', points);
-  });
-  renderTrendThresholds();
-  renderTrendXAxis();
-  renderTrendLabels();
-  renderTrendHoverdots();
-}
-renderTrendChart();
+});
 
 function toggleLine(name){
   const line = document.getElementById('line-'+name);
