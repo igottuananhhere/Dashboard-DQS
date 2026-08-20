@@ -261,11 +261,12 @@
 
   .cellnum{font-weight:600;}
 
-  .pagination{display:flex;justify-content:flex-end;align-items:center;gap:4px;padding:12px 14px;font-size:12px;color:var(--muted);}
-  .pagination .pg{padding:4px 8px;border-radius:4px;cursor:pointer;}
+  .pagination{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:4px;padding:12px 14px;font-size:12px;color:var(--muted);}
+  .pagination .pg{padding:4px 8px;border-radius:4px;cursor:pointer;flex-shrink:0;}
   .pagination .pg.active{background:var(--link);color:#fff;font-weight:700;}
   .pagination .pg:hover:not(.active){background:var(--gray-bg);}
-  .pagination .arrow{cursor:pointer;color:var(--muted);padding:4px 6px;}
+  .pagination .pg-ellipsis{padding:4px 2px;color:var(--muted);}
+  .pagination .arrow{cursor:pointer;color:var(--muted);padding:4px 6px;flex-shrink:0;}
 
   .caution-row{
     display:flex;align-items:center;gap:8px;font-size:12px;color:#9c2b26;
@@ -393,8 +394,6 @@
     <button class="tab active" data-tab="overview" onclick="switchTab('overview')">Overview</button>
     <button class="tab" data-tab="health" onclick="switchTab('health')">Health</button>
     <button class="tab" data-tab="rulelifecycle" onclick="switchTab('rulelifecycle')">Rule Lifecycle</button>
-    <button class="tab" data-tab="systemhealth" onclick="switchTab('systemhealth')">System Health</button>
-    <button class="tab" data-tab="auditlog" onclick="switchTab('auditlog')">Audit Log</button>
   </div>
 
   <!-- ======================= OVERVIEW + HEALTH (shared header) ======================= -->
@@ -404,20 +403,22 @@
       <div class="filterbar" style="margin-top:16px;">
         <div class="ddown" id="ddOvStatus">Health status</div>
         <div class="ddown" id="ddOvDomain">Domain</div>
-        <div class="ddown" id="ddOvService">Service</div>
         <div class="ddown" id="ddOvOwner">Owner</div>
         <div class="ddown" id="ddOvDimension">Health dimension</div>
-        <div class="ddown" onclick="clearOverviewFilters()">Clear</div>
+        <button onclick="clearOverviewFilters()" style="padding:4px 12px;border:1px solid var(--border);border-radius:4px;background:0;cursor:pointer;font-size:12px;color:var(--muted);">Clear</button>
         <div class="spacer"></div>
         <div class="range-pill" id="ovCountBadge">30 / 30</div>
       </div>
 
       <div class="grid-kpi cols-4">
         <div class="card kpi">
-          <div class="label">Điểm TB của tập đang lọc (chưa trọng số)</div>
+          <div class="label" style="display:flex;align-items:center;gap:6px;">
+            Điểm TB của các bảng
+            <span id="ovOverallInfoIcon" tabindex="0" style="cursor:default;color:var(--muted);font-size:11px;border:1px solid var(--border);border-radius:50%;width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">ⓘ</span>
+          </div>
           <div class="value" id="ovKpiOverall" style="font-size:17px;">– / 100</div>
-          <div class="delta" id="ovKpiOverallDelta" style="color:var(--muted);">Trung bình healthScore trong tập đang lọc</div>
-          <div class="delta" id="ovKpiOverallVsSystem" style="color:var(--muted);margin-top:4px;"></div>
+          <div class="delta" id="ovKpiOverallDelta" style="color:var(--muted);"></div>
+          <div class="delta" id="ovKpiOverallVsSystem" style="color:var(--muted);margin-top:4px;">Điểm trung bình Health Score của các bảng đang được tính trong Overview.</div>
         </div>
         <div class="card kpi clickable" onclick="switchTab('health'); applyHealthFilter('Critical')">
           <div class="label">Critical Assets</div>
@@ -430,7 +431,7 @@
           <div class="mini-track" style="width:100%;height:5px;margin-top:6px;"><div class="mini-fill" id="ovKpiRuleCoverageBar" style="height:100%;"></div></div>
           <div class="delta" id="ovKpiRuleCoverageNote" style="margin-top:6px;"></div>
         </div>
-        <div class="card kpi clickable" onclick="switchTab('systemhealth')">
+        <div class="card kpi">
           <div class="label">Last Full Scan</div>
           <div class="value" id="ovKpiLastScan" style="font-size:17px;">–</div>
           <div class="delta" id="ovKpiLastScanDelta"></div>
@@ -481,7 +482,7 @@
                 <div class="stackbar-seg" id="ovSegHealthy" style="width:0%;background:#2f9e5b;" onclick="switchTab('health'); applyHealthFilter('Healthy')" title="Healthy · 0 assets">
                   <span class="seg-label"></span>
                 </div>
-                <div class="stackbar-seg" id="ovSegUnknown" style="width:0%;background:#9aa1ab;" onclick="switchTab('health'); applyHealthFilter('Unknown')" title="Unknown · 0 assets">
+                <div class="stackbar-seg" id="ovSegUnknown" style="width:0%;background:#9aa1ab;" onclick="switchTab('health'); applyHealthFilter('Unmonitored')" title="Unmonitored · 0 assets">
                   <span class="seg-label"></span>
                 </div>
               </div>
@@ -491,7 +492,7 @@
               <div class="item" onclick="switchTab('health'); applyHealthFilter('Critical')"><span class="dot" style="background:#e0453f"></span>Critical &nbsp;<span id="ovLegCritical">0</span></div>
               <div class="item" onclick="switchTab('health'); applyHealthFilter('Warning')"><span class="dot" style="background:#e8912b"></span>Degraded &nbsp;<span id="ovLegDegraded">0</span></div>
               <div class="item" onclick="switchTab('health'); applyHealthFilter('Healthy')"><span class="dot" style="background:#2f9e5b"></span>Healthy &nbsp;<span id="ovLegHealthy">0</span></div>
-              <div class="item" onclick="switchTab('health'); applyHealthFilter('Unknown')"><span class="dot" style="background:#9aa1ab"></span>Unknown &nbsp;<span id="ovLegUnknown">0</span></div>
+              <div class="item" onclick="switchTab('health'); applyHealthFilter('Unmonitored')"><span class="dot" style="background:#9aa1ab"></span>Unmonitored &nbsp;<span id="ovLegUnknown">0</span></div>
             </div>
           </div>
         </div>
@@ -510,7 +511,7 @@
             <span class="item"><svg width="16" height="10" style="flex-shrink:0;"><line x1="0" y1="5" x2="16" y2="5" stroke="#9aa1ab" stroke-width="2" stroke-dasharray="3,2"/></svg>Mục tiêu</span>
           </div>
           <div id="dqWeightWarning"></div>
-          <div style="text-align:right;margin-top:10px;">
+          <div style="text-align:left;margin-top:18px;">
             <button class="btn-outline" id="dqDrilldownToggleBtn" onclick="toggleDQDrilldown()" style="font-size:11.5px;padding:5px 12px;">Xem chi tiết theo asset →</button>
           </div>
           <div id="dqDrilldownPanel" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
@@ -541,11 +542,11 @@
         <div class="card panel dq-heatmap-card">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;">
             <h3 style="margin:0;">Chất lượng theo Asset × Dimension</h3>
-            <div style="display:flex;gap:4px;" id="dqHeatmapRangeCtrl">
-              <button type="button" class="btn-outline" data-hm-range="10" style="padding:4px 10px;font-size:11px;">Top 10</button>
-              <button type="button" class="btn-outline" data-hm-range="20" style="padding:4px 10px;font-size:11px;background:var(--link);color:#fff;border-color:var(--link);">Top 20</button>
-              <button type="button" class="btn-outline" data-hm-range="all" style="padding:4px 10px;font-size:11px;">Tất cả</button>
-            </div>
+            <select id="dqHeatmapRangeSelect" onchange="setDQHeatmapRange(this.value)" style="padding:4px 10px;font-size:11px;border:1px solid var(--border);border-radius:6px;background:#fff;color:var(--text);cursor:pointer;">
+              <option value="5">Top 5</option>
+              <option value="10">Top 10</option>
+              <option value="20" selected>Top 20</option>
+            </select>
           </div>
           <div id="dqHeatmapWrap" class="heatmap-scroll"></div>
           <div class="legend-row" id="dqHeatmapLegend" style="margin-top:10px;font-size:11px;color:var(--muted);flex-shrink:0;"></div>
@@ -570,11 +571,10 @@
         <input class="search" id="healthSearch" placeholder="Search asset or FQN" oninput="renderHealthTable()">
         <div class="ddown" id="ddHealthStatus">Health status</div>
         <div class="ddown" id="ddHealthDomain">Domain</div>
-        <div class="ddown" id="ddHealthService">Service</div>
         <div class="ddown" id="ddHealthOwner">Owner</div>
         <div class="ddown" id="ddHealthDimension">Health dimension</div>
         <div class="ddown" id="ddHealthTier">Tier</div>
-        <div class="ddown" onclick="clearHealthFilters()">Clear</div>
+        <button onclick="clearHealthFilters()" style="padding:4px 12px;border:1px solid var(--border);border-radius:4px;background:0;cursor:pointer;font-size:12px;color:var(--muted);">Clear</button>
       </div>
 
       <div class="caution-row" id="cautionBanner"></div>
@@ -601,14 +601,13 @@
       <div class="filterbar" style="margin-top:16px;">
         <div class="ddown" id="ddRuleState">Trạng thái</div>
         <div class="ddown" id="ddRuleDomain">Domain</div>
-        <div class="ddown" id="ddRuleService">Service</div>
         <div class="ddown" id="ddRuleOwner">Owner</div>
         <div class="ddown" id="ddRuleType">Loại rule</div>
         <div class="ddown" id="ddRuleBizOwner">Business Rule Owner</div>
         <div class="ddown" id="ddRuleTier">Tier</div>
         <div class="ddown" id="ddRuleRecur">Số lần tái phát</div>
         <div class="ddown" id="failOnlyToggle" onclick="toggleFailOnly()">☐ Chỉ hiện rule đang Fail</div>
-        <div class="ddown" onclick="clearRuleLifecycleFilters()">Clear</div>
+        <button onclick="clearRuleLifecycleFilters()" style="padding:4px 12px;border:1px solid var(--border);border-radius:4px;background:0;cursor:pointer;font-size:12px;color:var(--muted);">Clear</button>
         <div class="spacer"></div>
         <input class="search" id="ruleSearch" placeholder="Tìm theo rule hoặc table" oninput="renderRuleLifecycle()" style="max-width:220px;flex:none;">
         <div class="range-pill">30 lần chạy</div>
@@ -669,85 +668,6 @@
       </div>
     </div>
 
-    <!-- ---------- SYSTEM HEALTH TAB (Admin/Data Platform only — role gating TODO, see note near renderSystemHealth) ---------- -->
-    <div id="tab-systemhealth" style="display:none;">
-      <div class="filterbar" style="margin-top:16px;">
-        <div class="ddown">Data source</div>
-        <div class="ddown">Trạng thái job</div>
-        <div class="ddown">Loại kích hoạt</div>
-        <div class="spacer"></div>
-        <div class="range-pill">24H</div>
-      </div>
-
-      <div class="grid-kpi cols-4">
-        <div class="card kpi">
-          <div class="label">Last Full Scan</div>
-          <div class="value" id="shKpiLastScan" style="font-size:17px;">–</div>
-          <div class="delta" id="shKpiFreshness"></div>
-        </div>
-        <div class="card kpi">
-          <div class="label">Job Success Rate (24h)</div>
-          <div class="value" id="shKpiSuccessRate">–</div>
-        </div>
-        <div class="card kpi">
-          <div class="label">Failed Jobs (24h)</div>
-          <div class="value" id="shKpiFailedJobs">–</div>
-        </div>
-        <div class="card kpi">
-          <div class="label">Data Sources Connected</div>
-          <div class="value" id="shKpiSourcesConnected">–</div>
-        </div>
-      </div>
-
-      <div id="shSayLine" style="font-size:12.5px;color:var(--muted);margin:-4px 0 16px;"></div>
-
-      <div class="card panel" style="margin-bottom:16px;">
-        <h3>Job Run History</h3>
-        <div style="overflow-x:auto;">
-        <table>
-          <thead>
-            <tr>
-              <th>Job Name</th><th>Source</th><th>Start time</th><th>End time</th><th>Duration</th>
-              <th>Status</th><th>Error message</th><th>Triggered by</th>
-            </tr>
-          </thead>
-          <tbody id="jobRunBody"></tbody>
-        </table>
-        </div>
-      </div>
-
-      <div class="card panel">
-        <h3>Data Source Connections</h3>
-        <table>
-          <thead>
-            <tr><th>Source name</th><th>Type</th><th>Status</th><th>Last successful sync</th><th>Latency</th></tr>
-          </thead>
-          <tbody id="dataSourceBody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ---------- AUDIT LOG TAB (Admin/Data Platform only — role gating TODO, see note near renderAuditLog) ---------- -->
-    <div id="tab-auditlog" style="display:none;">
-      <div class="filterbar" style="margin-top:16px;">
-        <input class="search" id="auditSearch" placeholder="Tìm theo người thực hiện hoặc đối tượng" oninput="renderAuditLog()">
-        <div class="ddown">Hành động</div>
-        <div class="ddown">Khoảng thời gian</div>
-        <div class="ddown">Đối tượng</div>
-      </div>
-
-      <div id="auditSayLine" style="font-size:12.5px;color:var(--muted);margin:2px 0 16px;"></div>
-
-      <div class="card">
-        <div style="padding:14px 16px 0;font-weight:700;font-size:14px;">Audit Log — Lịch sử thay đổi cấu hình</div>
-        <table>
-          <thead>
-            <tr><th>Thời gian</th><th>Người thực hiện</th><th>Hành động</th><th>Đối tượng bị ảnh hưởng</th><th>Giá trị cũ → Giá trị mới</th><th>Ghi chú</th></tr>
-          </thead>
-          <tbody id="auditLogBody"></tbody>
-        </table>
-      </div>
-    </div>
   </div>
 
   <!-- ======================= ASSET DETAIL VIEW ======================= -->
@@ -994,11 +914,13 @@ function runCoverageChecks(assets, rules){
     return ok;
   };
 
+  // Từ khi có tools/fill-heatmap-gaps.js (mỗi asset-dimension có 3-5 rule thay vì 1 rule nhị phân),
+  // các phân bố dưới đây gắn với ĐÚNG bộ mock hiện tại (647 rule) — không còn là số "27 asset x 1
+  // rule/dimension" cũ. Nếu chạy lại generator và ra số khác, đây LÀ chỗ cần cập nhật, không phải bug.
   console.group('COVERAGE.md checks — assets (30)');
   const ah = countBy(assets,'healthStatus');
-  ['Critical','Healthy','Unknown','Warning'].forEach(k=>expect('healthStatus='+k, ah[k]||0, {Critical:6,Healthy:12,Unknown:3,Warning:9}[k]));
+  ['Critical','Healthy','Unmonitored','Warning'].forEach(k=>expect('healthStatus='+k, ah[k]||0, {Critical:10,Healthy:6,Unmonitored:3,Warning:11}[k]));
   const ad = countBy(assets,'domain');
-  ({Compliance:4,Finance:4,Marketing:5,Operations:8,Risk:3,Sales:6}); // reference
   Object.entries({Compliance:4,Finance:4,Marketing:5,Operations:8,Risk:3,Sales:6}).forEach(([k,v])=>expect('asset.domain='+k, ad[k]||0, v));
   const as_ = countBy(assets,'service');
   ['bigquery_mart','mysql_prod','postgres_dwh','s3_datalake','snowflake_analytics'].forEach(k=>expect('asset.service='+k, as_[k]||0, 6));
@@ -1006,48 +928,51 @@ function runCoverageChecks(assets, rules){
   ['Analytics','Content','Data Platform','Finance Ops','Marketing Ops'].forEach(k=>expect('asset.owner='+k, ao[k]||0, 6));
   const at = countBy(assets,'tier');
   ['Tier1','Tier2','Tier3'].forEach(k=>expect('asset.tier='+k, at[k]||0, 10));
-  Object.entries({Accuracy:4,Completeness:4,Consistency:3,Freshness:3,Uniqueness:4,Validity:3}).forEach(([k,v])=>
+  Object.entries({Accuracy:14,Completeness:16,Consistency:9,Freshness:14,Uniqueness:10,Validity:9}).forEach(([k,v])=>
     expect('failingDimensions='+k, countArrField(assets,'failingDimensions',k), v));
   console.groupEnd();
 
-  console.group('COVERAGE.md checks — rules (125)');
+  console.group('COVERAGE.md checks — rules (647)');
   const rl = countBy(rules,'lifecycleState');
-  Object.entries({New:13,'No data':14,Ongoing:27,Recovered:18,Reopened:18,Stable:35}).forEach(([k,v])=>expect('lifecycleState='+k, rl[k]||0, v));
+  Object.entries({New:42,Ongoing:138,Reopened:27,Stable:440}).forEach(([k,v])=>expect('lifecycleState='+k, rl[k]||0, v));
   const rd = countBy(rules,'domain');
-  Object.entries({Compliance:14,Finance:12,Marketing:21,Operations:36,Risk:12,Sales:30}).forEach(([k,v])=>expect('rule.domain='+k, rd[k]||0, v));
+  Object.entries({Compliance:74,Finance:72,Marketing:87,Operations:193,Risk:72,Sales:149}).forEach(([k,v])=>expect('rule.domain='+k, rd[k]||0, v));
   const rs = countBy(rules,'service');
-  Object.entries({bigquery_mart:21,mysql_prod:27,postgres_dwh:26,s3_datalake:27,snowflake_analytics:24}).forEach(([k,v])=>expect('rule.service='+k, rs[k]||0, v));
+  Object.entries({bigquery_mart:117,mysql_prod:150,postgres_dwh:120,s3_datalake:132,snowflake_analytics:128}).forEach(([k,v])=>expect('rule.service='+k, rs[k]||0, v));
   const ro = countBy(rules,'owner');
-  Object.entries({Analytics:26,Content:25,'Data Platform':25,'Finance Ops':25,'Marketing Ops':24}).forEach(([k,v])=>expect('rule.owner='+k, ro[k]||0, v));
+  Object.entries({Analytics:128,Content:133,'Data Platform':146,'Finance Ops':137,'Marketing Ops':103}).forEach(([k,v])=>expect('rule.owner='+k, ro[k]||0, v));
   const rt = countBy(rules,'ruleType');
-  Object.entries({accuracy:18,completeness:27,consistency:10,freshness:26,uniqueness:24,validity:20}).forEach(([k,v])=>expect('ruleType='+k, rt[k]||0, v));
+  Object.entries({accuracy:106,completeness:103,consistency:106,freshness:112,uniqueness:108,validity:112}).forEach(([k,v])=>expect('ruleType='+k, rt[k]||0, v));
   const rhd = countBy(rules,'healthDimension');
-  Object.entries({Accuracy:18,Completeness:27,Consistency:10,Freshness:26,Uniqueness:24,Validity:20}).forEach(([k,v])=>expect('rule.healthDimension='+k, rhd[k]||0, v));
+  Object.entries({Accuracy:106,Completeness:103,Consistency:106,Freshness:112,Uniqueness:108,Validity:112}).forEach(([k,v])=>expect('rule.healthDimension='+k, rhd[k]||0, v));
   const rtier = countBy(rules,'tier');
-  Object.entries({Tier1:36,Tier2:42,Tier3:47}).forEach(([k,v])=>expect('rule.tier='+k, rtier[k]||0, v));
+  Object.entries({Tier1:190,Tier2:214,Tier3:243}).forEach(([k,v])=>expect('rule.tier='+k, rtier[k]||0, v));
   const rbo = countBy(rules,'businessRuleOwner');
-  Object.entries({'Compliance Ops':21,'Finance Ops':21,'Marketing Ops':21,'Operations Ops':20,'Risk Ops':21,'Sales Ops':21}).forEach(([k,v])=>expect('businessRuleOwner='+k, rbo[k]||0, v));
+  Object.entries({'Compliance Ops':112,'Finance Ops':108,'Marketing Ops':102,'Operations Ops':103,'Risk Ops':114,'Sales Ops':108}).forEach(([k,v])=>expect('businessRuleOwner='+k, rbo[k]||0, v));
   const rb = countBy(rules.map(r=>({b:recurBucket(r)})),'b');
-  Object.entries({'0':62,'1-2':45,'>=3':18}).forEach(([k,v])=>expect('recurrenceBucket='+k, rb[k]||0, v));
-  expect('chronic (recurrenceCount>=3)', rules.filter(r=>r.recurrenceCount>=3).length, 18);
+  Object.entries({'0':264,'1-2':383}).forEach(([k,v])=>expect('recurrenceBucket='+k, rb[k]||0, v));
+  expect('chronic (recurrenceCount>=3)', rules.filter(r=>r.recurrenceCount>=3).length, 0);
   const rr = countBy(rules.map(r=>({lr: r.latestResult==null?'None':r.latestResult})),'lr');
-  Object.entries({Fail:58,None:14,Pass:53}).forEach(([k,v])=>expect('latestResult='+k, rr[k]||0, v));
+  Object.entries({Fail:207,Pass:440}).forEach(([k,v])=>expect('latestResult='+k, rr[k]||0, v));
   console.groupEnd();
 
   console.group('COVERAGE.md checks — Asset <-> Rule join');
   const byAsset = {};
   rules.forEach(r=>{ (byAsset[r.assetId] = byAsset[r.assetId]||[]).push(r); });
-  const ruleCountDist = {};
-  assets.forEach(a=>{ const n=(byAsset[a.id]||[]).length; ruleCountDist[n]=(ruleCountDist[n]||0)+1; });
-  Object.entries({0:3,3:6,4:6,5:7,6:8}).forEach(([n,expected])=>expect('so asset co '+n+' rule', ruleCountDist[n]||0, expected));
+  // Mỗi asset-dimension có 3-5 rule tất định theo seed (asset.id+dimension) chứ không phải 1 con số
+  // rule/asset cố định như bản cũ — kiểm invariant "mọi asset có >=1 rule đều có 21-27 rule (6 dimension
+  // x 3-5 rule)" thay vì so khớp phân bố ruleCountDist cứng (sẽ vỡ ngay khi seed/asset thay đổi).
+  const monitoredCounts = assets.filter(a=>(byAsset[a.id]||[]).length>0).map(a=>(byAsset[a.id]||[]).length);
+  expect('moi asset co rule deu nam trong [18,30] rule (6 dimension x 3-5 rule)', monitoredCounts.every(n=>n>=18 && n<=30), true);
   let joinOk = 0;
   assets.forEach(a=>{
     const rs2 = byAsset[a.id]||[];
     if(rs2.length===a.testsTotal && rs2.filter(r=>r.latestResult==='Fail').length===a.testsFailed) joinOk++;
   });
   expect('testsTotal/testsFailed khop voi so rule join duoc', joinOk, assets.length);
-  const healthyNoFail = assets.filter(a=>a.healthStatus==='Healthy').every(a=>(byAsset[a.id]||[]).every(r=>r.latestResult!=='Fail'));
-  expect('asset Healthy khong co rule Fail', healthyNoFail ? assets.filter(a=>a.healthStatus==='Healthy').length : -1, assets.filter(a=>a.healthStatus==='Healthy').length);
+  // "Healthy khong co rule Fail" khong con la invariant that voi du lieu nhieu-rule/dimension (1 asset
+  // tong the Healthy van co the co vai rule le fail o 1 dimension - dung thuc te hon ban cu nhi phan
+  // 1-rule/dimension) - chi giu invariant con lai: Critical luon co >=1 rule Fail.
   const criticalHasFail = assets.filter(a=>a.healthStatus==='Critical').every(a=>(byAsset[a.id]||[]).some(r=>r.latestResult==='Fail'));
   expect('asset Critical co >=1 rule Fail', criticalHasFail ? assets.filter(a=>a.healthStatus==='Critical').length : -1, assets.filter(a=>a.healthStatus==='Critical').length);
   // Rule Coverage KPI (Overview): assetsCoRule + assetsKhongRule phai bang tong asset — assertion
@@ -1071,14 +996,52 @@ function runCoverageChecks(assets, rules){
   });
   console.groupEnd();
 
+  // Gọi thẳng dimensionScore()/healthScore() thật — không tự suy expected từ asset.healthDimensions
+  // (đó chính xác là field bug cũ đang đọc, không được dùng để "verify" chính nó).
+  console.group('COVERAGE.md checks — dimensionScore/healthScore tinh tu rulesMock (fix bug ruleCount=0)');
+  ['payment','subscriptions_057','kyc_check'].forEach(name=>{
+    const a = assets.find(x=>x.name===name);
+    const ruleCountForAsset = rules.filter(r=>r.assetId===a.id).length;
+    expect(name+' co 0 rule trong mock-rules', ruleCountForAsset, 0);
+    expect(name+' healthScore().score phai null', healthScore(a.id).score, null);
+    RADAR_DIMS.forEach(dim=>expect(name+' dimensionScore('+dim+') phai null', dimensionScore(a.id, dim), null));
+  });
+
+  const withScoreCheck = assets.map(a=>({a, score: healthScore(a.id).score}));
+  const scoredCheck = withScoreCheck.filter(x=>x.score!=null);
+  const unmonitoredCheck = withScoreCheck.length - scoredCheck.length;
+  expect('Overview avg: so scored + so unmonitored === tong so asset', scoredCheck.length + unmonitoredCheck, assets.length);
+
+  const statusDist = {Critical:0, Warning:0, Healthy:0, Unmonitored:0};
+  withScoreCheck.forEach(x=>{ const st = statusForScore(x.score); if(statusDist[st]!==undefined) statusDist[st]++; });
+  expect('tong 4 bucket status (Critical+Warning+Healthy+Unmonitored) === tong asset',
+    statusDist.Critical + statusDist.Warning + statusDist.Healthy + statusDist.Unmonitored, assets.length);
+  expect('payment/subscriptions_057/kyc_check deu roi vao bucket Unmonitored (khong lot vao Healthy/Degraded/Critical)',
+    ['payment','subscriptions_057','kyc_check'].every(name=>{
+      const a = assets.find(x=>x.name===name);
+      return statusForScore(healthScore(a.id).score) === 'Unmonitored';
+    }), true);
+  console.groupEnd();
+
+  console.group('COVERAGE.md checks — Filter dropdowns');
+  const statusOpts = HEALTH_STATUS_OPTIONS.length;
+  const domainOpts = DOMAIN_OPTIONS.length;
+  const ownerOpts = OWNER_OPTIONS.length;
+  const dimOpts = DIMENSION_OPTIONS.length;
+  expect('Health status dropdown co 4 options', statusOpts, 4);
+  expect('Domain dropdown co 6 options', domainOpts, 6);
+  expect('Owner dropdown co 5 options', ownerOpts, 5);
+  expect('Dimension dropdown co 6 options', dimOpts, 6);
+  console.groupEnd();
+
   console.log(`Tong: ${pass} pass / ${fail} fail`);
   return fail===0;
 }
 
 /* ===================== Generic multi-select dropdown filter ===================== */
 // Dùng cho mọi .ddown filter có data thật đứng sau (Health tab + Rule Lifecycle tab).
-// options: string[] | () => string[] (lazy, để lấy option list sau khi mock data đã load).
-// getSelected/onChange: state sống ở ngoài (mảng filter của tab), component chỉ render UI.
+// options: string[] | {value, label}[] | () => string[] | () => {value, label}[] (lazy, để lấy option list sau khi mock data đã load).
+// getSelected/onChange: state sống ở ngoài (mảng filter của tab — luôn lưu value, không phải label), component chỉ render UI.
 function createMultiSelectDropdown(el, {label, options, getSelected, onChange}){
   el.classList.add('ms-dropdown');
   el.innerHTML = `<span class="ms-label"></span><div class="ms-panel"></div>`;
@@ -1092,12 +1055,22 @@ function createMultiSelectDropdown(el, {label, options, getSelected, onChange}){
   function renderPanel(){
     const opts = typeof options === 'function' ? options() : options;
     const sel = getSelected();
-    panel.innerHTML = opts.map(opt => `<label class="ms-opt"><input type="checkbox" value="${opt}" ${sel.includes(opt)?'checked':''}> ${opt}</label>`).join('')
+    // Support both string[] và {value, label}[] formats
+    const isObjectFormat = opts.length > 0 && typeof opts[0] === 'object';
+    panel.innerHTML = opts.map(opt => {
+      const val = isObjectFormat ? opt.value : opt;
+      const lbl = isObjectFormat ? opt.label : opt;
+      return `<label class="ms-opt"><input type="checkbox" value="${val}" ${sel.includes(val)?'checked':''}> ${lbl}</label>`;
+    }).join('')
       + `<div class="ms-panel-actions"><span data-act="all">Chọn tất cả</span><span data-act="none">Bỏ chọn</span></div>`;
   }
 
   el.addEventListener('click', (e)=>{
     if(e.target.closest('.ms-panel')) return; // click bên trong panel không đóng/mở lại
+    // Chặn bubble lên document listener "click ra ngoài thì đóng" (cuối file) — nếu để bubble thì
+    // chính cú click mở panel sẽ chạy tiếp lên document và xoá .open ngay trong cùng 1 event,
+    // khiến dropdown không bao giờ mở được.
+    e.stopPropagation();
     document.querySelectorAll('.ms-dropdown.open').forEach(o=>{ if(o!==el) o.classList.remove('open'); });
     const willOpen = !el.classList.contains('open');
     el.classList.toggle('open', willOpen);
@@ -1106,7 +1079,14 @@ function createMultiSelectDropdown(el, {label, options, getSelected, onChange}){
   panel.addEventListener('click', (e)=>{
     e.stopPropagation();
     const act = e.target.dataset && e.target.dataset.act;
-    if(act==='all'){ onChange((typeof options==='function'?options():options).slice()); renderLabel(); renderPanel(); }
+    if(act==='all'){
+      const opts = typeof options==='function'?options():options;
+      const isObjectFormat = opts.length > 0 && typeof opts[0] === 'object';
+      const values = isObjectFormat ? opts.map(o=>o.value) : opts.slice();
+      onChange(values);
+      renderLabel();
+      renderPanel();
+    }
     if(act==='none'){ onChange([]); renderLabel(); renderPanel(); }
   });
   panel.addEventListener('change', (e)=>{
@@ -1122,17 +1102,10 @@ function createMultiSelectDropdown(el, {label, options, getSelected, onChange}){
 }
 document.addEventListener('click', ()=>document.querySelectorAll('.ms-dropdown.open').forEach(o=>o.classList.remove('open')));
 
-/* ===================== DATA: System Health (mock) ===================== */
+/* ===================== DATA: Last Full Scan (mock) ===================== */
 // Mỗi job = 1 lần Rule Engine của chính DQS chạy toàn bộ rule trên 1 data source
 // (khác với job ETL của Airflow/Cube) — khớp đúng ý "Last Full Scan" trong spec.
 // "Hiện tại" tường thuật của toàn dashboard ăn khớp với lastEval mới nhất đã dùng ở tab Health/Overview: Aug 14, 2026, ~01:45 AM (UTC+7:00).
-const dataSourceConnections = [
-  {name:"Pagila", type:"Postgres", status:"Connected", lastSync:"Aug 14, 2026, 01:42 AM (UTC+7:00)", latency:"180ms"},
-  {name:"Redshift (Marketing)", type:"Redshift", status:"Connected", lastSync:"Aug 13, 2026, 09:46 PM (UTC+7:00)", latency:"340ms"},
-  {name:"Snowflake (Finance DW)", type:"Snowflake", status:"Disconnected", lastSync:"Aug 13, 2026, 03:15 PM (UTC+7:00)", latency:"—"},
-  {name:"BigQuery (Content Analytics)", type:"BigQuery", status:"Connected", lastSync:"Aug 14, 2026, 12:50 AM (UTC+7:00)", latency:"260ms"},
-];
-
 // endSeq = thứ tự thời gian thực sự (tăng dần) — dùng để tìm job gần nhất thay vì so sánh chuỗi ngày giờ
 // (so chuỗi "12:07 AM" vs "04:26 AM" sẽ sai vì '1' > '0' theo lexicographic, dù 04:26 AM diễn ra sau).
 const jobRuns = [
@@ -1148,23 +1121,8 @@ const jobRuns = [
 const lastFullScanMinutesAgo = 3;
 const expectedScanIntervalMinutes = 180;
 
-/* ===================== DATA: Audit Log (mock) ===================== */
-// seq = thứ tự thời gian thật tăng dần (dùng để tìm bản ghi gần nhất, không so chuỗi "time" —
-// cùng lý do đã sửa ở jobRuns/endSeq: chuỗi "hh:mm AM/PM" so lexicographic sẽ cho kết quả sai).
-const auditLogRecords = [
-  {seq:1, time:"Aug 11, 2026, 02:50 PM (UTC+7:00)", actor:"Marketing Ops", action:"Xoá Rule", target:"subscriptions_057_legacy_check", oldValue:"Rule đang bật", newValue:"Đã xoá", note:"Rule cũ trùng với subscriptions_057_completeness"},
-  {seq:2, time:"Aug 11, 2026, 03:10 PM (UTC+7:00)", actor:"Marketing Ops", action:"Tạo Rule", target:"subscriptions_057_completeness", oldValue:"—", newValue:"Rule mới: completeness ≥ 95%", note:"Thay thế rule vừa xoá"},
-  {seq:3, time:"Aug 12, 2026, 10:15 AM (UTC+7:00)", actor:"Data Platform", action:"Sửa cấu hình cảnh báo", target:"Freshness SLA breach alerts", oldValue:"Tần suất kiểm tra: 1 giờ", newValue:"Tần suất kiểm tra: 30 phút", note:"Tăng tần suất sau sự cố tuần trước"},
-  {seq:4, time:"Aug 13, 2026, 03:10 PM (UTC+7:00)", actor:"Data Platform", action:"Đổi Owner", target:"stock_adjustment_098", oldValue:"Data Platform", newValue:"Analytics", note:""},
-  {seq:5, time:"Aug 13, 2026, 06:20 PM (UTC+7:00)", actor:"Analytics", action:"Sửa ngưỡng", target:"payment_validity", oldValue:"Failure rate ≤ 5%", newValue:"Failure rate ≤ 8%", note:"Nới ngưỡng tạm thời theo yêu cầu Finance"},
-  {seq:6, time:"Aug 13, 2026, 08:42 PM (UTC+7:00)", actor:"Analytics", action:"Gán Issue", target:"stock_adjustment_098_freshness", oldValue:"Chưa gán", newValue:"Analytics", note:""},
-  {seq:7, time:"Aug 14, 2026, 12:32 AM (UTC+7:00)", actor:"Content", action:"Đổi trạng thái", target:"account_282_validity", oldValue:"Open", newValue:"In Progress", note:""},
-  {seq:8, time:"Aug 14, 2026, 01:05 AM (UTC+7:00)", actor:"Data Platform", action:"Tạo Rule", target:"customer_freshness", oldValue:"—", newValue:"Rule mới: freshness ≤ 4 giờ", note:"Bổ sung giám sát SLA cho bảng customer"},
-];
-
 let healthStatusFilters = [];
 let healthDomainFilters = [];
-let healthServiceFilters = [];
 let healthOwnerFilters = [];
 let healthDimFilters = [];
 let healthTierFilters = [];
@@ -1186,11 +1144,17 @@ function renderNeedsAttention(list){
   const body = document.getElementById('needsAttentionBody');
   const rows = list
     .filter(a=>a.failingDimensions && a.failingDimensions.length>0)
-    .sort((a,b)=>(a.healthScore??0)-(b.healthScore??0))
+    .sort((a,b)=>{
+      const sa = healthScore(a.id).score, sb = healthScore(b.id).score;
+      if(sa==null && sb==null) return 0;
+      if(sa==null) return 1; // null (chưa đo được) xếp sau, không coi như 0 (tệ nhất)
+      if(sb==null) return -1;
+      return sa-sb;
+    })
     .slice(0,5);
   needsAttentionListIds = rows.map(a=>a.id);
   body.innerHTML = rows.length ? rows.map(a=>{
-    const score = a.healthScore;
+    const score = healthScore(a.id).score;
     // Trước đây so <50 (chỉ đỏ/cam, không có nhánh xanh) — lệch hẳn thang màu THRESHOLDS của cả
     // dashboard (90/70): điểm 60 từng hiện cam như thể "khá ổn" trong khi đúng thang chung phải đỏ.
     const color = scoreColor(score);
@@ -1214,7 +1178,6 @@ function renderNeedsAttention(list){
 /* ===================== RENDER: Overview (data-driven, filter cộng dồn) ===================== */
 let ovStatusFilters = [];
 let ovDomainFilters = [];
-let ovServiceFilters = [];
 let ovOwnerFilters = [];
 let ovDimFilters = [];
 let radarListIds = [];
@@ -1223,37 +1186,32 @@ let radarListIds = [];
 // không khớp healthDimensions).
 function filterOverviewAssets(list){
   return list.filter(a=>{
-    if(ovStatusFilters.length && !ovStatusFilters.includes(a.healthStatus)) return false;
+    if(ovStatusFilters.length && !ovStatusFilters.includes(statusForScore(healthScore(a.id).score))) return false;
     if(ovDomainFilters.length && !ovDomainFilters.includes(a.domain)) return false;
-    if(ovServiceFilters.length && !ovServiceFilters.includes(a.service)) return false;
     if(ovOwnerFilters.length && !ovOwnerFilters.includes(a.owner)) return false;
     if(ovDimFilters.length && !ovDimFilters.some(d=>a.failingDimensions.includes(d))) return false;
     return true;
   });
 }
 
-let msOvStatus, msOvDomain, msOvService, msOvOwner, msOvDimension;
+let msOvStatus, msOvDomain, msOvOwner, msOvDimension;
 function initOverviewFilterDropdowns(){
-  const uniq = key => Array.from(new Set(assetsMock.map(a=>a[key]))).sort();
   msOvStatus = createMultiSelectDropdown(document.getElementById('ddOvStatus'), {
-    label:'Health status', options:()=>uniq('healthStatus'), getSelected:()=>ovStatusFilters,
+    label:'Health status', options:()=>HEALTH_STATUS_OPTIONS, getSelected:()=>ovStatusFilters,
     onChange:v=>{ ovStatusFilters=v; renderOverview(); }});
   msOvDomain = createMultiSelectDropdown(document.getElementById('ddOvDomain'), {
-    label:'Domain', options:()=>uniq('domain'), getSelected:()=>ovDomainFilters,
+    label:'Domain', options:()=>DOMAIN_OPTIONS, getSelected:()=>ovDomainFilters,
     onChange:v=>{ ovDomainFilters=v; renderOverview(); }});
-  msOvService = createMultiSelectDropdown(document.getElementById('ddOvService'), {
-    label:'Service', options:()=>uniq('service'), getSelected:()=>ovServiceFilters,
-    onChange:v=>{ ovServiceFilters=v; renderOverview(); }});
   msOvOwner = createMultiSelectDropdown(document.getElementById('ddOvOwner'), {
-    label:'Owner', options:()=>uniq('owner'), getSelected:()=>ovOwnerFilters,
+    label:'Owner', options:()=>OWNER_OPTIONS, getSelected:()=>ovOwnerFilters,
     onChange:v=>{ ovOwnerFilters=v; renderOverview(); }});
   msOvDimension = createMultiSelectDropdown(document.getElementById('ddOvDimension'), {
-    label:'Health dimension', options:()=>HEALTH_DIMS, getSelected:()=>ovDimFilters,
+    label:'Health dimension', options:()=>DIMENSION_OPTIONS, getSelected:()=>ovDimFilters,
     onChange:v=>{ ovDimFilters=v; renderOverview(); }});
 }
 function clearOverviewFilters(){
-  ovStatusFilters=[]; ovDomainFilters=[]; ovServiceFilters=[]; ovOwnerFilters=[]; ovDimFilters=[];
-  [msOvStatus, msOvDomain, msOvService, msOvOwner, msOvDimension].forEach(ms=>ms && ms.refreshLabel());
+  ovStatusFilters=[]; ovDomainFilters=[]; ovOwnerFilters=[]; ovDimFilters=[];
+  [msOvStatus, msOvDomain, msOvOwner, msOvDimension].forEach(ms=>ms && ms.refreshLabel());
   renderOverview();
 }
 
@@ -1280,6 +1238,62 @@ const RADAR_COLORS = ["#3762d6","#e8912b","#e0453f"];
 // — không được khai hằng số ngưỡng thứ hai cho cùng khái niệm, không hardcode 90/70 nơi khác.
 const THRESHOLDS = { green: 90, amber: 70 };
 
+// ===================== Điểm dimension/health score tính TỪ rulesMock, không đọc field tĩnh
+// asset.healthDimensions/asset.healthScore trong mock JSON nữa (bug cũ: 3 asset không có rule nào
+// — payment/subscriptions_057/kyc_check — vẫn hiện điểm cao + badge Healthy vì điểm được bake sẵn
+// trong JSON, hoàn toàn không liên quan tới rule pass/fail thật). join bằng rule.assetId +
+// rule.healthDimension (field/value thật trong mock-rules.js là `healthDimension` — không phải
+// `dimension`), pass = latestResult==='Pass' (field/value thật là `latestResult`/'Pass', không phải
+// `lastResult`/'pass' như gợi ý ban đầu).
+// null = KHÔNG có rule nào đo dimension này (khác hoàn toàn với điểm 0 = có rule nhưng toàn Fail).
+function dimensionScore(assetId, dim){
+  const rules = rulesMock.filter(r=>r.assetId===assetId && r.healthDimension===dim);
+  // latestResult=null nghĩa là rule đã tạo nhưng CHƯA chạy lần nào — khác "Fail" (đã chạy, không đạt).
+  // Loại khỏi mẫu số thay vì tính là fail, nếu không asset chỉ có rule chưa chạy sẽ bị chấm điểm 0
+  // (trông như thảm hoạ) trong khi thực ra chưa có kết quả đo nào cả.
+  const evaluated = rules.filter(r=>r.latestResult!=null);
+  if(!evaluated.length) return null;
+  return Math.round(evaluated.filter(r=>r.latestResult==='Pass').length / evaluated.length * 100);
+}
+
+// { score, measuredDims, totalDims }; score=null nếu không dimension nào đo được (asset chưa có
+// rule nào = "Unmonitored"). Dùng RADAR_DIMS làm danh sách 6 dimension chuẩn — HEALTH_DIMS (khai
+// báo ở phần Health table, dưới) chỉ là 1 THỨ TỰ HIỂN THỊ khác cho cùng 6 giá trị này (thứ tự cột
+// bảng khác thứ tự đỉnh lục giác radar), không phải danh sách dimension thứ 2 — không gộp 2 hằng số
+// này vì đổi 1 trong 2 sẽ làm lệch thứ tự hiển thị đang có (cột bảng / đỉnh radar).
+function healthScore(assetId){
+  const scores = RADAR_DIMS.map(d=>dimensionScore(assetId, d)).filter(v=>v!=null);
+  return {
+    score: scores.length ? Math.round(scores.reduce((s,v)=>s+v,0)/scores.length) : null,
+    measuredDims: scores.length,
+    totalDims: RADAR_DIMS.length,
+  };
+}
+
+// Trạng thái asset DUY NHẤT của toàn dashboard, luôn suy từ CÙNG healthScore()/THRESHOLDS mà
+// scoreColor() dùng — để 1 điểm số không thể vừa xanh (scoreColor) vừa hiện badge khác màu (bug cũ
+// khi 2 ternary ngưỡng độc lập bị lệch nhau). score===null (chưa có rule nào đo được dimension nào)
+// -> 'Unmonitored', khác với "Unknown" cũ trong mock JSON (asset CÓ rule nhưng rule chưa chạy lần
+// nào / latestResult null — 1 khái niệm khác, xem asset_008/asset_018/asset_028) — không gộp 2
+// khái niệm này, nhưng vì status giờ luôn suy từ điểm rule thật nên "Unknown" cũ (field tĩnh trong
+// mock JSON) không còn được đọc trực tiếp ở bất kỳ đâu nữa.
+function statusForScore(score){
+  if(score==null) return 'Unmonitored';
+  if(score>=THRESHOLDS.green) return 'Healthy';
+  if(score>=THRESHOLDS.amber) return 'Warning';
+  return 'Critical';
+}
+const ASSET_STATUSES = ['Critical','Warning','Healthy','Unmonitored'];
+const HEALTH_STATUS_OPTIONS = [
+  {value:'Critical', label:'Critical'},
+  {value:'Warning',  label:'Degraded'},
+  {value:'Healthy',  label:'Healthy'},
+  {value:'Unmonitored',  label:'Unmonitored'},
+];
+const DOMAIN_OPTIONS = ["Compliance","Finance","Marketing","Operations","Risk","Sales"];
+const OWNER_OPTIONS = ["Analytics","Content","Data Platform","Finance Ops","Marketing Ops"];
+const DIMENSION_OPTIONS = ["Accuracy","Completeness","Uniqueness","Validity","Consistency","Freshness"];
+
 /* ===================== Data Quality Score — Toàn hệ thống (Overview) =====================
    Luôn tính trên TOÀN BỘ assetsMock (không theo filter bar) — đúng vai trò Overview trả lời
    "hệ thống đang ở mức nào", khác với heatmap "Chất lượng theo Asset × Dimension" bên cạnh (vẫn
@@ -1297,9 +1311,9 @@ function dqStatusFor(score){
   return {key:'critical', label:'Nghiêm trọng', badgeClass:'critical'};
 }
 
-// dayOffset=null -> dùng healthDimensions hiện tại (snapshot mới nhất); dayOffset=N -> lùi N ngày
-// trong history30d của từng asset (dùng để tính "kỳ trước", cùng cách "so với hôm qua" đã áp dụng
-// ở dải KPI phía trên — nhất quán 1 kiểu so sánh trong toàn Overview).
+// dayOffset=null -> dùng dimensionScore() tính trực tiếp từ rulesMock (snapshot mới nhất); dayOffset=N
+// -> lùi N ngày trong history30d của từng asset (dùng để tính "kỳ trước" — không có rule-history theo
+// ngày trong mock nên nhánh lịch sử này vẫn phải đọc history30d[...].dimensions như cũ).
 function weightedDimensionScores(assets, dayOffset){
   const scores = {};
   RADAR_DIMS.forEach(dim=>{
@@ -1309,7 +1323,7 @@ function weightedDimensionScores(assets, dayOffset){
       if(!w) return;
       let v;
       if(dayOffset==null){
-        v = a.healthDimensions[dim];
+        v = dimensionScore(a.id, dim);
       } else {
         const hist = a.history30d;
         const idx = hist ? hist.length - 1 - dayOffset : -1;
@@ -1449,7 +1463,7 @@ function wireDQInfoTooltip(){
   icon.dataset.wired = '1';
   const tooltip = getRadarTooltipEl();
   const show = (x,y)=>{
-    tooltip.innerHTML = `<b>Cách tính</b><div>dimension_score = Σ(score × record_count) / Σ(record_count)</div><div>Ngưỡng mục tiêu: ${THRESHOLDS.green}/100 mỗi chiều</div>`;
+    tooltip.innerHTML = `<b>Cách tính</b><div>Health Score = (Accuracy + Completeness + Uniqueness + Validity + Consistency + Freshness) / 6</div><div>Ngưỡng mục tiêu: ${THRESHOLDS.green}/100 mỗi chiều</div>`;
     tooltip.classList.add('show');
     positionRadarTooltip(tooltip, x, y);
   };
@@ -1475,7 +1489,7 @@ function renderSystemDQCard(){
 
   document.getElementById('dqKpiRow').innerHTML = buildDQKpiHtml(current, previous);
   document.getElementById('dqRadarWrap').innerHTML = buildSystemDQRadarHtml(scores);
-  document.getElementById('dqWeightWarning').innerHTML = buildWeightWarningHtml(assetsMock);
+  document.getElementById('dqWeightWarning').innerHTML = '';
   wireSystemDQTooltip(document.getElementById('dqRadarWrap'), scores);
   wireDQInfoTooltip();
 }
@@ -1605,9 +1619,7 @@ function applyRuleCoverageFilter(){
   renderHealthTable();
 }
 
-// Last Full Scan (Overview) — chỉ số vận hành TOÀN HỆ THỐNG, không theo filter bar. Tái dùng đúng
-// jobRuns/lastFullScanMinutesAgo/expectedScanIntervalMinutes và cách tính completedFullScans của
-// renderSystemHealth() (xem hàm đó) để 2 tab không bao giờ lệch số với nhau.
+// Last Full Scan (Overview) — chỉ số vận hành TOÀN HỆ THỐNG, không theo filter bar.
 function renderLastFullScanKpi(){
   const completedFullScans = jobRuns.filter(j=>j.job.startsWith('Full Scan') && j.status==='Success');
   const lastFullScan = completedFullScans.reduce((latest,j)=> j.endSeq > latest.endSeq ? j : latest, completedFullScans[0]);
@@ -1620,18 +1632,24 @@ function renderLastFullScanKpi(){
     : `● Overdue (${lastFullScanMinutesAgo}m trước, kỳ vọng ≤ ${expectedScanIntervalMinutes}m)`;
 }
 
-// Sinh dòng giải thích tự động cho chênh lệch giữa "Điểm TB của tập đang lọc" (trung bình cộng
-// đơn giản) và điểm hệ thống chính thức "Data Quality Score" (weighted theo recordCount) — để
-// người xem hiểu NGAY vì sao 2 con số khác nhau thay vì tự chọn số nào "dễ chịu hơn".
-function renderOverallVsSystemNote(avgScore){
-  const el = document.getElementById('ovKpiOverallVsSystem');
-  if(avgScore==null || dqSystemOverallScore==null){ el.textContent = ''; return; }
-  const diff = Math.round(avgScore - dqSystemOverallScore);
-  if(diff===0){ el.textContent = 'Khớp với điểm hệ thống (đã trọng số).'; return; }
-  const reason = diff<0
-    ? 'do một số asset lớn đang khỏe hơn mặt bằng chung'
-    : 'do một số asset lớn đang kém hơn mặt bằng chung';
-  el.textContent = `Chênh ${Math.abs(diff)} điểm so với điểm hệ thống ${reason}.`;
+// Tooltip cho card "Điểm TB của các bảng" — giải thích công thức Overview Score = trung bình
+// Health Score của các bảng đang tính trong Overview (không tính lại từ 6 dimension ở tầng này).
+function wireOverallInfoTooltip(){
+  const icon = document.getElementById('ovOverallInfoIcon');
+  if(!icon || icon.dataset.wired) return; // chỉ gắn listener 1 lần, tránh cộng dồn qua các lần renderOverview()
+  icon.dataset.wired = '1';
+  const tooltip = getRadarTooltipEl();
+  const show = (x,y)=>{
+    tooltip.innerHTML = `<b>Cách tính</b><div>Overview Score = Σ Health Score của các bảng / Số lượng bảng</div><div>Ví dụ: 30 bảng → Tổng Health Score / 30</div>`;
+    tooltip.classList.add('show');
+    positionRadarTooltip(tooltip, x, y);
+  };
+  const hide = ()=>tooltip.classList.remove('show');
+  icon.addEventListener('mouseenter', e=>show(e.clientX, e.clientY));
+  icon.addEventListener('mousemove', e=>positionRadarTooltip(tooltip, e.clientX, e.clientY));
+  icon.addEventListener('mouseleave', hide);
+  icon.addEventListener('focus', ()=>{ const r=icon.getBoundingClientRect(); show(r.left+r.width/2, r.top); });
+  icon.addEventListener('blur', hide);
 }
 
 /* ===================== Heatmap Chất lượng theo Asset × Dimension (Overview) =====================
@@ -1647,13 +1665,9 @@ const DQ_HEATMAP_ROW_MIN = 22, DQ_HEATMAP_ROW_MAX = 34;
 const DQ_HEATMAP_SHORT = {Accuracy:'Accur.', Completeness:'Compl.', Uniqueness:'Uniq.', Validity:'Valid.', Consistency:'Consist.', Freshness:'Fresh.'};
 
 function setDQHeatmapRange(range){
-  dqHeatmapRange = range;
-  document.querySelectorAll('#dqHeatmapRangeCtrl [data-hm-range]').forEach(btn=>{
-    const active = String(btn.dataset.hmRange) === String(range);
-    btn.style.background = active ? 'var(--link)' : '';
-    btn.style.color = active ? '#fff' : '';
-    btn.style.borderColor = active ? 'var(--link)' : '';
-  });
+  dqHeatmapRange = range === 'all' ? 'all' : Number(range);
+  const select = document.getElementById('dqHeatmapRangeSelect');
+  if(select) select.value = String(dqHeatmapRange);
   renderDQHeatmap(filterOverviewAssets(assetsMock));
 }
 
@@ -1682,9 +1696,10 @@ function renderDQHeatmap(filtered){
     return;
   }
 
-  const scored = filtered.filter(a=>a.healthScore!=null).sort((a,b)=>a.healthScore-b.healthScore);
-  const unscored = filtered.filter(a=>a.healthScore==null);
-  const ordered = scored.concat(unscored);
+  const withScore = filtered.map(a=>({a, hs: healthScore(a.id)}));
+  const scored = withScore.filter(x=>x.hs.score!=null).sort((x,y)=>x.hs.score-y.hs.score);
+  const unscored = withScore.filter(x=>x.hs.score==null);
+  const ordered = scored.concat(unscored).map(x=>x.a);
   const shown = dqHeatmapRange === 'all' ? ordered : ordered.slice(0, dqHeatmapRange);
 
   const headHtml = `<div class="hm-head hm-corner">Asset</div>` +
@@ -1693,7 +1708,7 @@ function renderDQHeatmap(filtered){
   const rowsHtml = shown.map(a=>{
     const nameCell = `<div class="hm-name" data-asset-id="${a.id}" data-list-source="dqHeatmap" title="${a.name}">${a.name}</div>`;
     const cells = RADAR_DIMS.map(dim=>{
-      const v = a.healthDimensions[dim];
+      const v = dimensionScore(a.id, dim);
       const color = v==null ? 'var(--gray)' : scoreColor(v);
       return `<div class="hm-cell" style="background:${color};" data-asset-id="${a.id}" data-list-source="dqHeatmap" data-scroll-dim="${dim}"
         title="${a.name} · ${dim}: ${v==null?'không có dữ liệu':v+'/100'}">${v==null?'—':v}</div>`;
@@ -1742,17 +1757,25 @@ function renderOverview(){
 
   renderSystemDQCard(); // luôn tính trên assetsMock (toàn hệ thống), không theo filter bar
 
-  const scored = filtered.filter(a=>a.healthScore!=null);
-  const avgScore = scored.length ? Math.round(scored.reduce((s,a)=>s+a.healthScore,0)/scored.length) : null;
+  // Unmonitored (score===null) bị LOẠI khỏi tử số/mẫu số của avgScore (không tính là 0, không tính
+  // là 100 — đơn giản là không nằm trong trung bình), nhưng phải công khai rõ cỡ mẫu ở UI để không
+  // đánh lừa người xem là "toàn bộ asset" đã được đo.
+  const withScore = filtered.map(a=>({a, score: healthScore(a.id).score}));
+  const scored = withScore.filter(x=>x.score!=null);
+  const unmonitoredCount = filtered.length - scored.length;
+  const avgScore = scored.length ? Math.round(scored.reduce((s,x)=>s+x.score,0)/scored.length) : null;
   document.getElementById('ovKpiOverall').textContent = avgScore==null ? '— / 100' : `${avgScore} / 100`;
-  renderOverallVsSystemNote(avgScore);
+  document.getElementById('ovKpiOverallVsSystem').textContent = avgScore==null
+    ? `Chưa có asset nào được giám sát trong tập đang lọc.`
+    : `Overall ${avgScore}/100 — tính trên ${scored.length}/${filtered.length} asset. ${unmonitoredCount} asset chưa được giám sát.`;
+  wireOverallInfoTooltip();
 
-  const byStatus = {Healthy:0, Warning:0, Critical:0, Unknown:0};
-  filtered.forEach(a=>{ if(byStatus[a.healthStatus]!==undefined) byStatus[a.healthStatus]++; });
+  const byStatus = {Healthy:0, Warning:0, Critical:0, Unmonitored:0};
+  filtered.forEach(a=>{ const st = statusForScore(healthScore(a.id).score); if(byStatus[st]!==undefined) byStatus[st]++; });
   document.getElementById('ovKpiCritical').textContent = byStatus.Critical;
 
   const deltas = computeYesterdayDeltas(filtered);
-  applyDelta('ovKpiOverallDelta', deltas && deltas.overallDelta, ' điểm', 'Trung bình healthScore trong tập đang lọc', 1);
+  applyDelta('ovKpiOverallDelta', deltas && deltas.overallDelta, ' điểm', '', 1);
   applyDelta('ovKpiCriticalDelta', deltas && deltas.criticalDelta, ' asset');
 
   renderRuleCoverageKpi(filtered);
@@ -1763,7 +1786,7 @@ function renderOverview(){
     ['ovSegCritical','ovLegCritical', byStatus.Critical, 'Critical'],
     ['ovSegDegraded','ovLegDegraded', byStatus.Warning, 'Degraded'],
     ['ovSegHealthy','ovLegHealthy', byStatus.Healthy, 'Healthy'],
-    ['ovSegUnknown','ovLegUnknown', byStatus.Unknown, 'Unknown'],
+    ['ovSegUnknown','ovLegUnknown', byStatus.Unmonitored, 'Unmonitored'],
   ];
   segs.forEach(([segId, legId, count, label])=>{
     const pct = filtered.length ? (count/filtered.length*100) : 0;
@@ -1776,12 +1799,12 @@ function renderOverview(){
 
   renderDQHeatmap(filtered);
 
-  const lowest = filtered.filter(a=>a.healthScore!=null).sort((a,b)=>a.healthScore-b.healthScore).slice(0,3);
+  const lowest = withScore.filter(x=>x.score!=null).sort((x,y)=>x.score-y.score).slice(0,3).map(x=>x.a);
   radarListIds = lowest.map(a=>a.id);
   RADAR_COLORS.forEach((color,i)=>{
     const poly = document.getElementById('ovRadarPoly'+i);
     const a = lowest[i];
-    poly.setAttribute('points', a ? RADAR_DIMS.map(dim=>radarPoint(dim, a.healthDimensions[dim]).join(',')).join(' ') : '');
+    poly.setAttribute('points', a ? RADAR_DIMS.map(dim=>radarPoint(dim, dimensionScore(a.id, dim)).join(',')).join(' ') : '');
   });
   document.getElementById('ovRadarLegend').innerHTML = lowest.length ? lowest.map((a,i)=>
     `<div class="item" data-asset-id="${a.id}" data-list-source="radar" style="cursor:pointer;"><span class="dot" style="background:${RADAR_COLORS[i]};border-radius:50%;width:8px;height:8px;"></span>${a.name}</div>`
@@ -1792,10 +1815,10 @@ function renderOverview(){
 
 /* ===================== RENDER: Health table ===================== */
 function dimCell(val){
-  return val==null ? '<span class="primary-issue none">—</span>' : `<span class="cellnum">${val}</span>`;
+  return val==null ? '<span class="primary-issue none" title="Chưa có rule đo dimension này">—</span>' : `<span class="cellnum">${val}</span>`;
 }
 
-const assetStatusBadgeClass = {Critical:"critical", Warning:"degraded", Healthy:"healthy", Unknown:"unknown"};
+const assetStatusBadgeClass = {Critical:"critical", Warning:"degraded", Healthy:"healthy", Unmonitored:"unknown"};
 function assetStatusBadge(status){
   return `<span class="badge ${assetStatusBadgeClass[status]||'unknown'}">${status}</span>`;
 }
@@ -1811,9 +1834,8 @@ function renderHealthTable(){
   // Lưu ý: filter dimension khớp theo failingDimensions (dimension đang lỗi), KHÔNG khớp theo
   // object healthDimensions (điểm số mọi dimension) — đúng ràng buộc trong prompt.
   let list = assetsMock.filter(a=>{
-    if(healthStatusFilters.length && !healthStatusFilters.includes(a.healthStatus)) return false;
+    if(healthStatusFilters.length && !healthStatusFilters.includes(statusForScore(healthScore(a.id).score))) return false;
     if(healthDomainFilters.length && !healthDomainFilters.includes(a.domain)) return false;
-    if(healthServiceFilters.length && !healthServiceFilters.includes(a.service)) return false;
     if(healthOwnerFilters.length && !healthOwnerFilters.includes(a.owner)) return false;
     if(healthTierFilters.length && !healthTierFilters.includes(a.tier)) return false;
     if(healthDimFilters.length && !healthDimFilters.some(d=>a.failingDimensions.includes(d))) return false;
@@ -1827,18 +1849,27 @@ function renderHealthTable(){
   healthTablePage = renderPagination('healthTablePagination', list.length, healthTablePage, 'goToHealthTablePage');
   const pageRows = list.slice((healthTablePage-1)*PAGE_SIZE, healthTablePage*PAGE_SIZE);
   body.innerHTML = pageRows.map(a=>{
-    const score = a.healthScore;
+    const hs = healthScore(a.id);
+    const score = hs.score;
+    const status = statusForScore(score);
     const barColor = scoreColor(score);
-    const primaryIssue = a.failingDimensions.length ? a.failingDimensions.join(', ') + ' failing' : '';
+    // Unmonitored (chưa có rule nào) phải nói rõ ràng "Chưa có rule kiểm tra", không được để "—"
+    // như 1 ô dữ liệu trống bình thường — 2 trạng thái khác nghĩa nhau hoàn toàn.
+    const primaryIssue = status==='Unmonitored' ? 'Chưa có rule kiểm tra'
+      : a.failingDimensions.length ? a.failingDimensions.join(', ') + ' failing' : '';
+    // "Độ tin cậy thấp": asset CÓ 1 số rule nhưng đo được chưa tới nửa số dimension — khác Unmonitored
+    // (hoàn toàn không có rule nào).
+    const lowConfidence = status!=='Unmonitored' && hs.measuredDims/hs.totalDims < 0.5;
     return `<tr class="rowlink" data-asset-id="${a.id}" data-list-source="healthTable">
       <td><span class="asset-link">${a.name}</span><span class="fqn">${a.fqn}</span></td>
       <td>
         ${score==null ? '<span class="primary-issue none">—</span>' : `<span class="health-num" style="color:${barColor}">${score}</span>
         <div class="mini-track"><div class="mini-fill" style="width:${score}%;background:${barColor};"></div></div>`}
+        ${lowConfidence ? `<span class="badge unknown" title="Chỉ ${hs.measuredDims}/${hs.totalDims} dimension có rule đo">Độ tin cậy thấp</span>` : ''}
       </td>
-      ${HEALTH_DIMS.map(d=>`<td onclick="event.stopPropagation(); toggleHealthDimFilter('${d}')">${dimCell(a.healthDimensions[d])}</td>`).join('')}
-      <td onclick="event.stopPropagation(); toggleHealthStatusFilter('${a.healthStatus}')">${assetStatusBadge(a.healthStatus)}</td>
-      <td>${primaryIssue?`<span class="primary-issue">${primaryIssue}</span>`:'<span class="primary-issue none">—</span>'}</td>
+      ${HEALTH_DIMS.map(d=>`<td onclick="event.stopPropagation(); toggleHealthDimFilter('${d}')">${dimCell(dimensionScore(a.id, d))}</td>`).join('')}
+      <td onclick="event.stopPropagation(); toggleHealthStatusFilter('${status}')">${assetStatusBadge(status)}</td>
+      <td>${status==='Unmonitored' ? `<span class="primary-issue">${primaryIssue}</span>` : (primaryIssue?`<span class="primary-issue">${primaryIssue}</span>`:'<span class="primary-issue none">—</span>')}</td>
       <td><span class="owner-link" onclick="event.stopPropagation(); showToast('Filter theo Owner: ${a.owner} (demo placeholder).')">${a.owner}</span></td>
     </tr>`;
   }).join('') || `<tr><td colspan="11" class="empty-note">Không có dữ liệu khớp filter. <span class="failed-rows-link" onclick="clearHealthFilters()">Clear</span></td></tr>`;
@@ -1859,31 +1890,28 @@ function toggleHealthDimFilter(dim){
 function applyHealthFilter(status){ switchTab('health'); toggleHealthStatusFilter(status); }
 
 function clearHealthFilters(){
-  healthStatusFilters = []; healthDomainFilters = []; healthServiceFilters = []; healthOwnerFilters = [];
+  healthStatusFilters = []; healthDomainFilters = []; healthOwnerFilters = [];
   healthDimFilters = []; healthTierFilters = []; healthNoRuleFilter = false;
-  [msHealthStatus, msHealthDomain, msHealthService, msHealthOwner, msHealthDimension, msHealthTier].forEach(ms=>ms && ms.refreshLabel());
+  [msHealthStatus, msHealthDomain, msHealthOwner, msHealthDimension, msHealthTier].forEach(ms=>ms && ms.refreshLabel());
   document.getElementById('healthSearch').value='';
   healthTablePage = 1;
   renderHealthTable();
 }
 
-let msHealthStatus, msHealthDomain, msHealthService, msHealthOwner, msHealthDimension, msHealthTier;
+let msHealthStatus, msHealthDomain, msHealthOwner, msHealthDimension, msHealthTier;
 function initHealthFilterDropdowns(){
   const uniq = key => Array.from(new Set(assetsMock.map(a=>a[key]))).sort();
   msHealthStatus = createMultiSelectDropdown(document.getElementById('ddHealthStatus'), {
-    label:'Health status', options:()=>uniq('healthStatus'), getSelected:()=>healthStatusFilters,
+    label:'Health status', options:()=>HEALTH_STATUS_OPTIONS, getSelected:()=>healthStatusFilters,
     onChange:v=>{ healthStatusFilters=v; renderHealthTable(); }});
   msHealthDomain = createMultiSelectDropdown(document.getElementById('ddHealthDomain'), {
-    label:'Domain', options:()=>uniq('domain'), getSelected:()=>healthDomainFilters,
+    label:'Domain', options:()=>DOMAIN_OPTIONS, getSelected:()=>healthDomainFilters,
     onChange:v=>{ healthDomainFilters=v; renderHealthTable(); }});
-  msHealthService = createMultiSelectDropdown(document.getElementById('ddHealthService'), {
-    label:'Service', options:()=>uniq('service'), getSelected:()=>healthServiceFilters,
-    onChange:v=>{ healthServiceFilters=v; renderHealthTable(); }});
   msHealthOwner = createMultiSelectDropdown(document.getElementById('ddHealthOwner'), {
-    label:'Owner', options:()=>uniq('owner'), getSelected:()=>healthOwnerFilters,
+    label:'Owner', options:()=>OWNER_OPTIONS, getSelected:()=>healthOwnerFilters,
     onChange:v=>{ healthOwnerFilters=v; renderHealthTable(); }});
   msHealthDimension = createMultiSelectDropdown(document.getElementById('ddHealthDimension'), {
-    label:'Health dimension', options:()=>HEALTH_DIMS, getSelected:()=>healthDimFilters,
+    label:'Health dimension', options:()=>DIMENSION_OPTIONS, getSelected:()=>healthDimFilters,
     onChange:v=>{ healthDimFilters=v; renderHealthTable(); }});
   msHealthTier = createMultiSelectDropdown(document.getElementById('ddHealthTier'), {
     label:'Tier', options:()=>uniq('tier'), getSelected:()=>healthTierFilters,
@@ -1893,7 +1921,6 @@ function initHealthFilterDropdowns(){
 /* ===================== RENDER: Rule Lifecycle ===================== */
 let ruleStateFilters = [];
 let ruleDomainFilters = [];
-let ruleServiceFilters = [];
 let ruleOwnerFilters = [];
 let ruleTypeFilters = [];
 let ruleBizOwnerFilters = [];
@@ -1926,29 +1953,26 @@ function applyRuleStateFilter(state){
   renderRuleLifecycle();
 }
 function clearRuleLifecycleFilters(){
-  ruleStateFilters=[]; ruleDomainFilters=[]; ruleServiceFilters=[]; ruleOwnerFilters=[];
+  ruleStateFilters=[]; ruleDomainFilters=[]; ruleOwnerFilters=[];
   ruleTypeFilters=[]; ruleBizOwnerFilters=[]; ruleTierFilters=[]; ruleRecurFilters=[]; ruleFailOnlyMode=false;
-  [msRuleState, msRuleDomain, msRuleService, msRuleOwner, msRuleType, msRuleBizOwner, msRuleTier, msRuleRecur]
+  [msRuleState, msRuleDomain, msRuleOwner, msRuleType, msRuleBizOwner, msRuleTier, msRuleRecur]
     .forEach(ms=>ms && ms.refreshLabel());
   document.getElementById('failOnlyToggle').textContent = '☐ Chỉ hiện rule đang Fail';
   document.getElementById('ruleSearch').value = '';
   renderRuleLifecycle();
 }
 
-let msRuleState, msRuleDomain, msRuleService, msRuleOwner, msRuleType, msRuleBizOwner, msRuleTier, msRuleRecur;
+let msRuleState, msRuleDomain, msRuleOwner, msRuleType, msRuleBizOwner, msRuleTier, msRuleRecur;
 function initRuleFilterDropdowns(){
   const uniq = key => Array.from(new Set(rulesMock.map(r=>r[key]))).sort();
   msRuleState = createMultiSelectDropdown(document.getElementById('ddRuleState'), {
     label:'Trạng thái', options:()=>uniq('lifecycleState'), getSelected:()=>ruleStateFilters,
     onChange:v=>{ ruleStateFilters=v; renderRuleLifecycle(); }});
   msRuleDomain = createMultiSelectDropdown(document.getElementById('ddRuleDomain'), {
-    label:'Domain', options:()=>uniq('domain'), getSelected:()=>ruleDomainFilters,
+    label:'Domain', options:()=>DOMAIN_OPTIONS, getSelected:()=>ruleDomainFilters,
     onChange:v=>{ ruleDomainFilters=v; renderRuleLifecycle(); }});
-  msRuleService = createMultiSelectDropdown(document.getElementById('ddRuleService'), {
-    label:'Service', options:()=>uniq('service'), getSelected:()=>ruleServiceFilters,
-    onChange:v=>{ ruleServiceFilters=v; renderRuleLifecycle(); }});
   msRuleOwner = createMultiSelectDropdown(document.getElementById('ddRuleOwner'), {
-    label:'Owner', options:()=>uniq('owner'), getSelected:()=>ruleOwnerFilters,
+    label:'Owner', options:()=>OWNER_OPTIONS, getSelected:()=>ruleOwnerFilters,
     onChange:v=>{ ruleOwnerFilters=v; renderRuleLifecycle(); }});
   msRuleType = createMultiSelectDropdown(document.getElementById('ddRuleType'), {
     label:'Loại rule', options:()=>uniq('ruleType'), getSelected:()=>ruleTypeFilters,
@@ -1980,14 +2004,22 @@ let ruleLifecyclePage = 1;
 
 // Generic pager: reuses the existing .pagination/.pg/.arrow classes. Clamps page to valid range
 // so a filter that shrinks the result set never leaves the view stuck on an empty page.
+// Windowed page list (trang 1, trang cuối, và ${clamped}±1) thay vì in hết totalPages — bộ rule
+// mock đã tăng lên 647 dòng (65 trang/10 dòng-trang), in hết số sẽ tràn ngang khỏi khung card.
 function renderPagination(containerId, totalItems, page, goToFn){
   const totalPages = Math.max(1, Math.ceil(totalItems/PAGE_SIZE));
   const clamped = Math.min(Math.max(1,page), totalPages);
   const el = document.getElementById(containerId);
+
+  const pagesToShow = new Set([1, totalPages, clamped, clamped-1, clamped+1]);
+  const nums = [...pagesToShow].filter(p=>p>=1 && p<=totalPages).sort((a,b)=>a-b);
   let pageBtns = '';
-  for(let p=1;p<=totalPages;p++){
+  let prevP = 0;
+  nums.forEach(p=>{
+    if(p - prevP > 1) pageBtns += `<span class="pg-ellipsis">…</span>`;
     pageBtns += `<span class="pg ${p===clamped?'active':''}" onclick="${goToFn}(${p})">${p}</span>`;
-  }
+    prevP = p;
+  });
   el.innerHTML = `<span class="arrow" onclick="${goToFn}(${Math.max(1,clamped-1)})">&#8249;</span>${pageBtns}<span class="arrow" onclick="${goToFn}(${Math.min(totalPages,clamped+1)})">&#8250;</span>`;
   return clamped;
 }
@@ -2025,7 +2057,6 @@ function renderRuleLifecycle(){
   let filtered = rows.filter(r=>{
     if(ruleStateFilters.length && !ruleStateFilters.includes(r.lifecycleState)) return false;
     if(ruleDomainFilters.length && !ruleDomainFilters.includes(r.domain)) return false;
-    if(ruleServiceFilters.length && !ruleServiceFilters.includes(r.service)) return false;
     if(ruleOwnerFilters.length && !ruleOwnerFilters.includes(r.owner)) return false;
     if(ruleTypeFilters.length && !ruleTypeFilters.includes(r.ruleType)) return false;
     if(ruleBizOwnerFilters.length && !ruleBizOwnerFilters.includes(r.businessRuleOwner)) return false;
@@ -2065,88 +2096,12 @@ function renderRuleLifecycle(){
   }).join('') : `<tr><td colspan="15" class="empty-note">Không có rule nào khớp bộ lọc hiện tại.</td></tr>`;
 }
 
-/* ===================== RENDER: System Health ===================== */
-// TODO(role gating): tab này (và Audit Log) dự kiến chỉ hiện với role Admin/Data Platform.
-// Chưa gắn kiểm tra quyền — chờ xác nhận Role/Policy cụ thể trong OpenMetadata trước khi wire thật.
-function renderSystemHealth(){
-  // Chỉ tính job Full Scan đã Success — 1 lần chạy lỗi không được tính là "vòng quét đã xong".
-  // So sánh bằng endSeq (số thứ tự thời gian thật), không so chuỗi ngày giờ hiển thị.
-  const completedFullScans = jobRuns.filter(j=>j.job.startsWith('Full Scan') && j.status==='Success');
-  const lastFullScan = completedFullScans.reduce((latest,j)=> j.endSeq > latest.endSeq ? j : latest, completedFullScans[0]);
-  document.getElementById('shKpiLastScan').textContent = lastFullScan.end;
-  const isFresh = lastFullScanMinutesAgo <= expectedScanIntervalMinutes;
-  document.getElementById('shKpiFreshness').innerHTML = isFresh
-    ? `<span class="delta up">● Fresh (${lastFullScanMinutesAgo}m trước)</span>`
-    : `<span class="delta down">● Overdue (${lastFullScanMinutesAgo}m trước, kỳ vọng ≤ ${expectedScanIntervalMinutes}m)</span>`;
-
-  const successCount = jobRuns.filter(j=>j.status==='Success').length;
-  const failedCount = jobRuns.filter(j=>j.status==='Failed').length;
-  document.getElementById('shKpiSuccessRate').textContent = Math.round(successCount/jobRuns.length*100) + '%';
-  document.getElementById('shKpiFailedJobs').textContent = failedCount;
-
-  const connectedCount = dataSourceConnections.filter(s=>s.status==='Connected').length;
-  const totalSources = dataSourceConnections.length;
-  document.getElementById('shKpiSourcesConnected').textContent = `${connectedCount}/${totalSources}`;
-
-  document.getElementById('shSayLine').textContent = failedCount>0
-    ? `Rule Engine có ${failedCount} job lỗi trong 24h qua (${dataSourceConnections.filter(s=>s.status!=='Connected').length}/${totalSources} nguồn dữ liệu đang mất kết nối) — cần kiểm tra trước khi tin số liệu sức khỏe dữ liệu ở các tab khác.`
-    : `Rule Engine chạy ổn định — toàn bộ ${totalSources} nguồn dữ liệu đang kết nối, không có job lỗi trong 24h qua.`;
-
-  document.getElementById('jobRunBody').innerHTML = jobRuns.map(j=>`
-    <tr>
-      <td>${j.job}</td>
-      <td>${j.source}</td>
-      <td>${j.start}</td>
-      <td>${j.end}</td>
-      <td>${j.duration}</td>
-      <td><span class="badge ${j.status==='Success'?'healthy':'critical'}">${j.status}</span></td>
-      <td>${j.error || '<span class="primary-issue none">—</span>'}</td>
-      <td>${j.trigger}</td>
-    </tr>`).join('');
-
-  document.getElementById('dataSourceBody').innerHTML = dataSourceConnections.map(s=>`
-    <tr>
-      <td>${s.name}</td>
-      <td>${s.type}</td>
-      <td><span class="badge ${s.status==='Connected'?'healthy':'critical'}">${s.status}</span></td>
-      <td>${s.lastSync}</td>
-      <td>${s.latency}</td>
-    </tr>`).join('');
-}
-
-/* ===================== RENDER: Audit Log ===================== */
-function renderAuditLog(){
-  const q = (document.getElementById('auditSearch').value || '').toLowerCase();
-  const rows = auditLogRecords
-    .filter(r=>{
-      if(!q) return true;
-      return r.actor.toLowerCase().includes(q) || r.target.toLowerCase().includes(q);
-    })
-    .sort((a,b)=>b.seq-a.seq); // mới nhất lên đầu
-
-  const latest = auditLogRecords.reduce((l,r)=> r.seq>l.seq ? r : l, auditLogRecords[0]);
-  document.getElementById('auditSayLine').textContent =
-    `${auditLogRecords.length} thay đổi cấu hình được ghi nhận, gần nhất bởi ${latest.actor} lúc ${latest.time} (${latest.action} — ${latest.target}).`;
-
-  document.getElementById('auditLogBody').innerHTML = rows.map(r=>`
-    <tr>
-      <td>${r.time}</td>
-      <td>${r.actor}</td>
-      <td>${r.action}</td>
-      <td>${r.target}</td>
-      <td><span style="color:var(--muted);">${r.oldValue}</span> → <span style="color:var(--text);font-weight:600;">${r.newValue}</span></td>
-      <td>${r.note || '<span class="primary-issue none">—</span>'}</td>
-    </tr>`).join('') || `<tr><td colspan="6" class="empty-note">Không có bản ghi phù hợp.</td></tr>`;
-}
-
 /* ===================== Tabs & Views ===================== */
 function switchTab(tab){
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
   document.getElementById('tab-overview').style.display = tab==='overview' ? 'block':'none';
   document.getElementById('tab-health').style.display = tab==='health' ? 'block':'none';
   document.getElementById('tab-rulelifecycle').style.display = tab==='rulelifecycle' ? 'block':'none';
-  document.getElementById('tab-systemhealth').style.display = tab==='systemhealth' ? 'block':'none';
-  document.getElementById('tab-auditlog').style.display = tab==='auditlog' ? 'block':'none';
   // Bấm tab trong lúc đang xem Asset Detail -> phải xoá #asset=... khỏi URL, nếu không địa chỉ
   // vẫn trỏ asset cũ trong khi trang hiện tab khác (reload/deep-link sẽ mở nhầm asset đó).
   if(location.hash.startsWith('#asset=')){ currentAssetDetailId = null; location.hash = ''; }
@@ -2662,7 +2617,7 @@ function radar2Dy(angleDeg){
 }
 
 function buildDimensionRadarHtml(asset){
-  const color = scoreColor(asset.healthScore);
+  const color = scoreColor(healthScore(asset.id).score);
   const rings = [1, 0.66, 0.33].map(frac=>{
     const pts = RADAR_DIMS.map((_,i)=>radar2Point(radar2Angle(i), RADAR2_MAX_R*frac).join(',')).join(' ');
     return `<polygon points="${pts}" fill="none" stroke="#eceef2"/>`;
@@ -2673,24 +2628,27 @@ function buildDimensionRadarHtml(asset){
     return `<line x1="${RADAR2_CENTER}" y1="${RADAR2_CENTER}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="#eceef2"/>`;
   }).join('');
 
+  // val==null (dimension chưa có rule đo) vẽ tại tâm (bán kính 0) thay vì coi như điểm 0 (??0 cũ
+  // từng khiến "chưa đo được" trông y hệt "đo được và tệ nhất" trên radar).
   const polyPoints = RADAR_DIMS.map((dim,i)=>{
-    const val = Math.max(0, Math.min(100, asset.healthDimensions[dim] ?? 0));
+    const raw = dimensionScore(asset.id, dim);
+    const val = raw==null ? 0 : Math.max(0, Math.min(100, raw));
     return radar2Point(radar2Angle(i), RADAR2_MAX_R * val/100).join(',');
   }).join(' ');
 
   const ariaSummary = RADAR_DIMS.map(dim=>{
-    const v = asset.healthDimensions[dim];
+    const v = dimensionScore(asset.id, dim);
     const failing = asset.failingDimensions.includes(dim);
     return `${dim} ${v==null?'không có dữ liệu':v+'/100'}${failing?' (đang lỗi)':''}`;
   }).join(', ');
 
   const vertexHtml = RADAR_DIMS.map((dim,i)=>{
     const angle = radar2Angle(i);
-    const val = asset.healthDimensions[dim];
+    const val = dimensionScore(asset.id, dim);
     const failing = asset.failingDimensions.includes(dim);
-    const clamped = Math.max(0, Math.min(100, val ?? 0));
+    const clamped = val==null ? 0 : Math.max(0, Math.min(100, val));
     const [x,y] = radar2Point(angle, RADAR2_MAX_R * clamped/100);
-    const dotColor = failing ? 'var(--red)' : color;
+    const dotColor = val==null ? 'var(--gray)' : failing ? 'var(--red)' : color;
     const label = `${dim}: ${val==null?'—':val+' / 100'}${failing?' — ⚠ Đang lỗi':''}`;
     // Chấm nhỏ hiển thị thật + vùng hover/focus lớn hơn vô hình đè lên trên (chấm 4px quá nhỏ để
     // rê trúng chính xác) — cả 2 đều mang data-dim để JS gắn tooltip theo con trỏ / theo bàn phím.
@@ -2704,7 +2662,7 @@ function buildDimensionRadarHtml(asset){
     const angle = radar2Angle(i);
     const [x,y] = radar2Point(angle, RADAR2_LABEL_R);
     const failing = asset.failingDimensions.includes(dim);
-    const val = asset.healthDimensions[dim];
+    const val = dimensionScore(asset.id, dim);
     const label = `${dim}: ${val==null?'—':val+' / 100'}${failing?' — ⚠ Đang lỗi':''}`;
     return `<text x="${x.toFixed(1)}" y="${(y+radar2Dy(angle)).toFixed(1)}" font-size="12" text-anchor="${radar2Anchor(angle)}"
       fill="${failing?'var(--red)':'#6b7280'}" font-weight="${failing?700:600}"
@@ -2751,7 +2709,7 @@ function positionRadarTooltip(el, clientX, clientY){
 function wireDimensionRadarTooltip(container, asset){
   const tooltip = getRadarTooltipEl();
   const showFor = (dim, clientX, clientY)=>{
-    const val = asset.healthDimensions[dim];
+    const val = dimensionScore(asset.id, dim);
     const failing = asset.failingDimensions.includes(dim);
     tooltip.innerHTML = `<b>${dim}</b><div>${val==null?'—':val + ' / 100'}</div>${failing?'<div class="warn">⚠ Đang lỗi</div>':''}`;
     tooltip.classList.add('show');
@@ -2815,11 +2773,23 @@ function renderAssetDetailPage(){
   document.getElementById('detailPrevBtn').disabled = idx<=0;
   document.getElementById('detailNextBtn').disabled = idx<0 || idx>=total-1;
 
+  const hs = healthScore(asset.id);
+  const detailStatus = statusForScore(hs.score);
+  const isUnmonitored = hs.score === null;
+  const lowConfidence = !isUnmonitored && hs.measuredDims/hs.totalDims < 0.5;
+  const lowConfidenceBadgeHtml = lowConfidence
+    ? `<span class="badge unknown" title="Chỉ ${hs.measuredDims}/${hs.totalDims} dimension có rule đo">Độ tin cậy thấp</span>` : '';
+
   document.getElementById('detailKpiGrid').innerHTML = `
     <div class="card kpi">
       <div class="label">Health Score</div>
-      <div class="value"><span id="detailScore"></span> <small style="font-size:12px;font-weight:600;color:var(--muted);">/ 100</small></div>
-      <div class="mini-track" style="width:100%;height:6px;margin-top:8px;"><div class="mini-fill" id="detailScoreBar" style="height:100%;"></div></div>
+      ${isUnmonitored ? `
+        <div class="empty-note" style="margin-top:6px;">Asset này chưa có rule nào. Chưa thể đánh giá chất lượng.</div>
+        <button class="btn-outline" disabled title="Sẽ có ở bản kế tiếp" style="margin-top:8px;">Tạo rule</button>
+      ` : `
+        <div class="value"><span id="detailScore"></span> <small style="font-size:12px;font-weight:600;color:var(--muted);">/ 100</small> ${lowConfidenceBadgeHtml}</div>
+        <div class="mini-track" style="width:100%;height:6px;margin-top:8px;"><div class="mini-fill" id="detailScoreBar" style="height:100%;"></div></div>
+      `}
     </div>
     <div class="card kpi"><div class="label">Tests fail / tổng</div><div class="value">${asset.testsFailed} / ${asset.testsTotal}</div></div>
     <div class="card kpi">
@@ -2830,14 +2800,26 @@ function renderAssetDetailPage(){
     <div class="card kpi"><div class="label">Tổng số lần tái phát</div><div class="value">${totalRecurrence}</div></div>
   `;
 
-  document.getElementById('detailScore').textContent = asset.healthScore==null ? '—' : asset.healthScore;
-  document.getElementById('detailStatusBadge').outerHTML = assetStatusBadge(asset.healthStatus).replace('<span class="badge','<span id="detailStatusBadge" class="badge');
-  document.getElementById('detailScoreBar').style.width = (asset.healthScore??0) + '%';
-  document.getElementById('detailScoreBar').style.background = scoreColor(asset.healthScore);
+  document.getElementById('detailStatusBadge').outerHTML = assetStatusBadge(detailStatus).replace('<span class="badge','<span id="detailStatusBadge" class="badge');
+  if(!isUnmonitored){
+    document.getElementById('detailScore').textContent = hs.score;
+    document.getElementById('detailScoreBar').style.width = hs.score + '%';
+    document.getElementById('detailScoreBar').style.background = scoreColor(hs.score);
+  }
 
-  document.getElementById('dimBreakdown').innerHTML = buildDimensionRadarHtml(asset);
-  wireDimensionRadarTooltip(document.getElementById('dimBreakdown'), asset);
-  document.getElementById('detailTrendChart').innerHTML = buildTrendSvgHtml(asset);
+  // Unmonitored = chưa có rule nào -> không vẽ radar/dimension gì cả, thay bằng empty state (khác
+  // hẳn "có rule nhưng điểm 0", không phải overlay lên trên radar rỗng).
+  if(isUnmonitored){
+    document.getElementById('dimBreakdown').innerHTML = `<div class="empty-note">Asset này chưa có rule nào. Chưa thể đánh giá chất lượng.</div>`;
+  } else {
+    document.getElementById('dimBreakdown').innerHTML = buildDimensionRadarHtml(asset);
+    wireDimensionRadarTooltip(document.getElementById('dimBreakdown'), asset);
+  }
+  // Unmonitored: history30d là dữ liệu mock cũ gắn sẵn theo asset, KHÔNG bắt nguồn từ rule nào —
+  // vẫn vẽ trend sẽ mâu thuẫn với "chưa có rule nào" ở khối Health Score phía trên, nên ẩn luôn.
+  document.getElementById('detailTrendChart').innerHTML = isUnmonitored
+    ? `<div class="empty-note">Asset này chưa có rule nào nên chưa có lịch sử điểm số để hiển thị.</div>`
+    : buildTrendSvgHtml(asset);
 
   document.getElementById('detailRuleCount').textContent = rules.length;
   document.getElementById('detailRuleBody').innerHTML = buildRuleRowsHtml(rules);
@@ -2875,9 +2857,6 @@ function jumpToRuleLifecycleForAsset(assetId){
 }
 
 /* ===================== Init ===================== */
-renderSystemHealth();
-renderAuditLog();
-
 async function bootstrap(){
   try{
     [assetsMock, rulesMock] = await Promise.all([DataHealthAPI.loadAssets(), DataHealthAPI.loadRules()]);
@@ -2893,7 +2872,7 @@ async function bootstrap(){
   renderOverview();
   renderHealthTable();
   renderRuleLifecycle();
-  const critical = assetsMock.filter(a=>a.healthStatus==='Critical').length;
+  const critical = assetsMock.filter(a=>statusForScore(healthScore(a.id).score)==='Critical').length;
   const noData = assetsMock.filter(a=>a.lastRunAt===null).length;
   document.getElementById('cautionBanner').textContent =
     `⚠ ${critical} asset đang ở mức Critical, ${noData} asset chưa có dữ liệu đánh giá gần đây trong danh sách hiện tại.`;

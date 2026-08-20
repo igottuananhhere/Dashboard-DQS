@@ -101,21 +101,25 @@
       "owner": "Data Platform",
       "tier": "Tier1",
       "healthStatus": "Critical",
-      "healthScore": 31,
+      "healthScore": 27,
       "healthDimensions": {
-        "Completeness": 3,
-        "Freshness": 3,
-        "Uniqueness": 49,
-        "Validity": 51,
-        "Accuracy": 29,
-        "Consistency": 49
+        "Accuracy": 20,
+        "Completeness": 0,
+        "Uniqueness": 50,
+        "Validity": 60,
+        "Consistency": 33,
+        "Freshness": 0
       },
       "failingDimensions": [
+        "Accuracy",
         "Completeness",
+        "Uniqueness",
+        "Validity",
+        "Consistency",
         "Freshness"
       ],
-      "testsTotal": 3,
-      "testsFailed": 3,
+      "testsTotal": 27,
+      "testsFailed": 20,
       "lastRunAt": "2026-08-18T08:00:00+07:00",
       "history30d": [
         {
@@ -490,21 +494,23 @@
       "domain": "Sales",
       "owner": "Marketing Ops",
       "tier": "Tier2",
-      "healthStatus": "Warning",
-      "healthScore": 66,
+      "healthStatus": "Critical",
+      "healthScore": 68,
       "healthDimensions": {
-        "Completeness": 72,
-        "Freshness": 19,
-        "Uniqueness": 75,
-        "Validity": 77,
-        "Accuracy": 78,
-        "Consistency": 75
+        "Accuracy": 67,
+        "Completeness": 80,
+        "Uniqueness": 80,
+        "Validity": 67,
+        "Consistency": 80,
+        "Freshness": 33
       },
       "failingDimensions": [
+        "Accuracy",
+        "Validity",
         "Freshness"
       ],
-      "testsTotal": 6,
-      "testsFailed": 4,
+      "testsTotal": 24,
+      "testsFailed": 7,
       "lastRunAt": "2026-08-18T07:00:00+07:00",
       "history30d": [
         {
@@ -880,18 +886,18 @@
       "owner": "Analytics",
       "tier": "Tier3",
       "healthStatus": "Healthy",
-      "healthScore": 92,
+      "healthScore": 97,
       "healthDimensions": {
-        "Completeness": 87,
-        "Freshness": 87,
-        "Uniqueness": 90,
-        "Validity": 92,
-        "Accuracy": 93,
-        "Consistency": 100
+        "Accuracy": 100,
+        "Completeness": 100,
+        "Uniqueness": 100,
+        "Validity": 100,
+        "Consistency": 100,
+        "Freshness": 80
       },
       "failingDimensions": [],
-      "testsTotal": 5,
-      "testsFailed": 0,
+      "testsTotal": 27,
+      "testsFailed": 1,
       "lastRunAt": "2026-08-18T06:00:00+07:00",
       "history30d": [
         {
@@ -1266,15 +1272,15 @@
       "domain": "Finance",
       "owner": "Finance Ops",
       "tier": "Tier1",
-      "healthStatus": "Healthy",
-      "healthScore": 89,
+      "healthStatus": "Unmonitored",
+      "healthScore": null,
       "healthDimensions": {
-        "Completeness": 81,
-        "Freshness": 81,
-        "Uniqueness": 100,
-        "Validity": 86,
-        "Accuracy": 87,
-        "Consistency": 100
+        "Accuracy": null,
+        "Completeness": null,
+        "Uniqueness": null,
+        "Validity": null,
+        "Consistency": null,
+        "Freshness": null
       },
       "failingDimensions": [],
       "testsTotal": 0,
@@ -1653,21 +1659,24 @@
       "domain": "Finance",
       "owner": "Content",
       "tier": "Tier2",
-      "healthStatus": "Warning",
-      "healthScore": 66,
+      "healthStatus": "Critical",
+      "healthScore": 60,
       "healthDimensions": {
-        "Completeness": 77,
-        "Freshness": 54,
-        "Uniqueness": 80,
-        "Validity": 82,
-        "Accuracy": 24,
-        "Consistency": 80
+        "Accuracy": 25,
+        "Completeness": 67,
+        "Uniqueness": 67,
+        "Validity": 75,
+        "Consistency": 75,
+        "Freshness": 50
       },
       "failingDimensions": [
-        "Accuracy"
+        "Accuracy",
+        "Completeness",
+        "Uniqueness",
+        "Freshness"
       ],
-      "testsTotal": 3,
-      "testsFailed": 3,
+      "testsTotal": 22,
+      "testsFailed": 9,
       "lastRunAt": "2026-08-18T04:00:00+07:00",
       "history30d": [
         {
@@ -2043,21 +2052,25 @@
       "owner": "Data Platform",
       "tier": "Tier3",
       "healthStatus": "Critical",
-      "healthScore": 30,
+      "healthScore": 26,
       "healthDimensions": {
-        "Completeness": 6,
-        "Freshness": 39,
-        "Uniqueness": 42,
-        "Validity": 44,
-        "Accuracy": 45,
-        "Consistency": 4
+        "Accuracy": 33,
+        "Completeness": 0,
+        "Uniqueness": 40,
+        "Validity": 40,
+        "Consistency": 0,
+        "Freshness": 40
       },
       "failingDimensions": [
+        "Accuracy",
+        "Completeness",
+        "Uniqueness",
+        "Validity",
         "Consistency",
-        "Completeness"
+        "Freshness"
       ],
-      "testsTotal": 6,
-      "testsFailed": 6,
+      "testsTotal": 26,
+      "testsFailed": 19,
       "lastRunAt": "2026-08-18T03:00:00+07:00",
       "history30d": [
         {
@@ -2433,18 +2446,18 @@
       "owner": "Marketing Ops",
       "tier": "Tier1",
       "healthStatus": "Healthy",
-      "healthScore": 92,
+      "healthScore": 93,
       "healthDimensions": {
-        "Completeness": 86,
-        "Freshness": 86,
+        "Accuracy": 100,
+        "Completeness": 75,
         "Uniqueness": 100,
-        "Validity": 91,
-        "Accuracy": 92,
-        "Consistency": 100
+        "Validity": 100,
+        "Consistency": 100,
+        "Freshness": 80
       },
       "failingDimensions": [],
-      "testsTotal": 5,
-      "testsFailed": 0,
+      "testsTotal": 26,
+      "testsFailed": 2,
       "lastRunAt": "2026-08-18T02:00:00+07:00",
       "history30d": [
         {
@@ -2819,19 +2832,19 @@
       "domain": "Operations",
       "owner": "Analytics",
       "tier": "Tier2",
-      "healthStatus": "Unknown",
-      "healthScore": null,
+      "healthStatus": "Warning",
+      "healthScore": 78,
       "healthDimensions": {
-        "Completeness": null,
-        "Freshness": null,
-        "Uniqueness": null,
-        "Validity": null,
-        "Accuracy": null,
-        "Consistency": null
+        "Accuracy": 75,
+        "Completeness": 80,
+        "Uniqueness": 75,
+        "Validity": 80,
+        "Consistency": 75,
+        "Freshness": 80
       },
       "failingDimensions": [],
-      "testsTotal": 4,
-      "testsFailed": 0,
+      "testsTotal": 27,
+      "testsFailed": 6,
       "lastRunAt": null,
       "history30d": [],
       "recordCount": 505021
@@ -2845,21 +2858,23 @@
       "domain": "Operations",
       "owner": "Finance Ops",
       "tier": "Tier3",
-      "healthStatus": "Warning",
-      "healthScore": 69,
+      "healthStatus": "Critical",
+      "healthScore": 65,
       "healthDimensions": {
-        "Completeness": 76,
-        "Freshness": 53,
-        "Uniqueness": 41,
-        "Validity": 81,
-        "Accuracy": 82,
-        "Consistency": 79
+        "Accuracy": 75,
+        "Completeness": 67,
+        "Uniqueness": 40,
+        "Validity": 80,
+        "Consistency": 80,
+        "Freshness": 50
       },
       "failingDimensions": [
-        "Uniqueness"
+        "Completeness",
+        "Uniqueness",
+        "Freshness"
       ],
-      "testsTotal": 3,
-      "testsFailed": 3,
+      "testsTotal": 26,
+      "testsFailed": 9,
       "lastRunAt": "2026-08-18T00:00:00+07:00",
       "history30d": [
         {
@@ -3235,17 +3250,17 @@
       "owner": "Content",
       "tier": "Tier1",
       "healthStatus": "Healthy",
-      "healthScore": 95,
+      "healthScore": 100,
       "healthDimensions": {
-        "Completeness": 91,
-        "Freshness": 91,
-        "Uniqueness": 94,
-        "Validity": 96,
-        "Accuracy": 97,
-        "Consistency": 100
+        "Accuracy": 100,
+        "Completeness": 100,
+        "Uniqueness": 100,
+        "Validity": 100,
+        "Consistency": 100,
+        "Freshness": 100
       },
       "failingDimensions": [],
-      "testsTotal": 6,
+      "testsTotal": 21,
       "testsFailed": 0,
       "lastRunAt": "2026-08-17T23:00:00+07:00",
       "history30d": [
@@ -3622,21 +3637,25 @@
       "owner": "Data Platform",
       "tier": "Tier2",
       "healthStatus": "Critical",
-      "healthScore": 32,
+      "healthScore": 30,
       "healthDimensions": {
-        "Completeness": 32,
-        "Freshness": 32,
-        "Uniqueness": 58,
-        "Validity": 37,
-        "Accuracy": 8,
-        "Consistency": 27
+        "Accuracy": 0,
+        "Completeness": 25,
+        "Uniqueness": 67,
+        "Validity": 25,
+        "Consistency": 25,
+        "Freshness": 40
       },
       "failingDimensions": [
         "Accuracy",
-        "Consistency"
+        "Completeness",
+        "Uniqueness",
+        "Validity",
+        "Consistency",
+        "Freshness"
       ],
-      "testsTotal": 5,
-      "testsFailed": 5,
+      "testsTotal": 25,
+      "testsFailed": 18,
       "lastRunAt": "2026-08-17T22:00:00+07:00",
       "history30d": [
         {
@@ -4012,20 +4031,23 @@
       "owner": "Marketing Ops",
       "tier": "Tier3",
       "healthStatus": "Warning",
-      "healthScore": 67,
+      "healthScore": 76,
       "healthDimensions": {
-        "Completeness": 58,
-        "Freshness": 58,
-        "Uniqueness": 84,
-        "Validity": 86,
-        "Accuracy": 64,
-        "Consistency": 52
+        "Accuracy": 67,
+        "Completeness": 67,
+        "Uniqueness": 100,
+        "Validity": 100,
+        "Consistency": 60,
+        "Freshness": 60
       },
       "failingDimensions": [
-        "Consistency"
+        "Accuracy",
+        "Completeness",
+        "Consistency",
+        "Freshness"
       ],
-      "testsTotal": 4,
-      "testsFailed": 3,
+      "testsTotal": 22,
+      "testsFailed": 6,
       "lastRunAt": "2026-08-17T21:00:00+07:00",
       "history30d": [
         {
@@ -4400,15 +4422,15 @@
       "domain": "Marketing",
       "owner": "Analytics",
       "tier": "Tier1",
-      "healthStatus": "Healthy",
-      "healthScore": 94,
+      "healthStatus": "Unmonitored",
+      "healthScore": null,
       "healthDimensions": {
-        "Completeness": 96,
-        "Freshness": 73,
-        "Uniqueness": 99,
-        "Validity": 100,
-        "Accuracy": 100,
-        "Consistency": 99
+        "Accuracy": null,
+        "Completeness": null,
+        "Uniqueness": null,
+        "Validity": null,
+        "Consistency": null,
+        "Freshness": null
       },
       "failingDimensions": [],
       "testsTotal": 0,
@@ -4788,17 +4810,17 @@
       "owner": "Finance Ops",
       "tier": "Tier2",
       "healthStatus": "Healthy",
-      "healthScore": 94,
+      "healthScore": 100,
       "healthDimensions": {
-        "Completeness": 90,
-        "Freshness": 90,
-        "Uniqueness": 93,
-        "Validity": 95,
-        "Accuracy": 96,
-        "Consistency": 100
+        "Accuracy": 100,
+        "Completeness": 100,
+        "Uniqueness": 100,
+        "Validity": 100,
+        "Consistency": 100,
+        "Freshness": 100
       },
       "failingDimensions": [],
-      "testsTotal": 6,
+      "testsTotal": 23,
       "testsFailed": 0,
       "lastRunAt": "2026-08-17T19:00:00+07:00",
       "history30d": [
@@ -5175,20 +5197,23 @@
       "owner": "Content",
       "tier": "Tier3",
       "healthStatus": "Warning",
-      "healthScore": 68,
+      "healthScore": 71,
       "healthDimensions": {
-        "Completeness": 63,
-        "Freshness": 63,
-        "Uniqueness": 57,
-        "Validity": 68,
-        "Accuracy": 69,
-        "Consistency": 89
+        "Accuracy": 67,
+        "Completeness": 67,
+        "Uniqueness": 50,
+        "Validity": 75,
+        "Consistency": 100,
+        "Freshness": 67
       },
       "failingDimensions": [
-        "Uniqueness"
+        "Accuracy",
+        "Completeness",
+        "Uniqueness",
+        "Freshness"
       ],
-      "testsTotal": 5,
-      "testsFailed": 4,
+      "testsTotal": 21,
+      "testsFailed": 6,
       "lastRunAt": "2026-08-17T18:00:00+07:00",
       "history30d": [
         {
@@ -5564,21 +5589,25 @@
       "owner": "Data Platform",
       "tier": "Tier1",
       "healthStatus": "Critical",
-      "healthScore": 29,
+      "healthScore": 34,
       "healthDimensions": {
+        "Accuracy": 0,
         "Completeness": 25,
-        "Freshness": 25,
-        "Uniqueness": 51,
-        "Validity": 19,
-        "Accuracy": 3,
-        "Consistency": 51
+        "Uniqueness": 67,
+        "Validity": 25,
+        "Consistency": 60,
+        "Freshness": 25
       },
       "failingDimensions": [
+        "Accuracy",
+        "Completeness",
+        "Uniqueness",
         "Validity",
-        "Accuracy"
+        "Consistency",
+        "Freshness"
       ],
-      "testsTotal": 4,
-      "testsFailed": 4,
+      "testsTotal": 23,
+      "testsFailed": 15,
       "lastRunAt": "2026-08-17T17:00:00+07:00",
       "history30d": [
         {
@@ -5953,15 +5982,15 @@
       "domain": "Compliance",
       "owner": "Marketing Ops",
       "tier": "Tier2",
-      "healthStatus": "Healthy",
-      "healthScore": 94,
+      "healthStatus": "Unmonitored",
+      "healthScore": null,
       "healthDimensions": {
-        "Completeness": 95,
-        "Freshness": 72,
-        "Uniqueness": 98,
-        "Validity": 100,
-        "Accuracy": 100,
-        "Consistency": 98
+        "Accuracy": null,
+        "Completeness": null,
+        "Uniqueness": null,
+        "Validity": null,
+        "Consistency": null,
+        "Freshness": null
       },
       "failingDimensions": [],
       "testsTotal": 0,
@@ -6340,19 +6369,22 @@
       "domain": "Compliance",
       "owner": "Analytics",
       "tier": "Tier3",
-      "healthStatus": "Unknown",
-      "healthScore": null,
+      "healthStatus": "Warning",
+      "healthScore": 74,
       "healthDimensions": {
-        "Completeness": null,
-        "Freshness": null,
-        "Uniqueness": null,
-        "Validity": null,
-        "Accuracy": null,
-        "Consistency": null
+        "Accuracy": 75,
+        "Completeness": 80,
+        "Uniqueness": 67,
+        "Validity": 75,
+        "Consistency": 67,
+        "Freshness": 80
       },
-      "failingDimensions": [],
-      "testsTotal": 6,
-      "testsFailed": 0,
+      "failingDimensions": [
+        "Uniqueness",
+        "Consistency"
+      ],
+      "testsTotal": 24,
+      "testsFailed": 6,
       "lastRunAt": null,
       "history30d": [],
       "recordCount": 79174
@@ -6367,20 +6399,23 @@
       "owner": "Finance Ops",
       "tier": "Tier1",
       "healthStatus": "Warning",
-      "healthScore": 67,
+      "healthScore": 71,
       "healthDimensions": {
-        "Completeness": 28,
-        "Freshness": 62,
-        "Uniqueness": 88,
+        "Accuracy": 67,
+        "Completeness": 33,
+        "Uniqueness": 100,
         "Validity": 67,
-        "Accuracy": 68,
-        "Consistency": 88
+        "Consistency": 100,
+        "Freshness": 60
       },
       "failingDimensions": [
-        "Completeness"
+        "Accuracy",
+        "Completeness",
+        "Validity",
+        "Freshness"
       ],
-      "testsTotal": 5,
-      "testsFailed": 4,
+      "testsTotal": 21,
+      "testsFailed": 6,
       "lastRunAt": "2026-08-17T14:00:00+07:00",
       "history30d": [
         {
@@ -6755,19 +6790,22 @@
       "domain": "Risk",
       "owner": "Content",
       "tier": "Tier2",
-      "healthStatus": "Healthy",
-      "healthScore": 90,
+      "healthStatus": "Warning",
+      "healthScore": 86,
       "healthDimensions": {
-        "Completeness": 77,
-        "Freshness": 77,
+        "Accuracy": 67,
+        "Completeness": 67,
         "Uniqueness": 100,
         "Validity": 100,
-        "Accuracy": 83,
-        "Consistency": 100
+        "Consistency": 100,
+        "Freshness": 80
       },
-      "failingDimensions": [],
-      "testsTotal": 4,
-      "testsFailed": 0,
+      "failingDimensions": [
+        "Accuracy",
+        "Completeness"
+      ],
+      "testsTotal": 24,
+      "testsFailed": 3,
       "lastRunAt": "2026-08-17T13:00:00+07:00",
       "history30d": [
         {
@@ -7143,21 +7181,25 @@
       "owner": "Data Platform",
       "tier": "Tier3",
       "healthStatus": "Critical",
-      "healthScore": 27,
+      "healthScore": 26,
       "healthDimensions": {
-        "Completeness": 41,
-        "Freshness": 18,
-        "Uniqueness": 6,
-        "Validity": 7,
-        "Accuracy": 47,
-        "Consistency": 44
+        "Accuracy": 40,
+        "Completeness": 40,
+        "Uniqueness": 0,
+        "Validity": 0,
+        "Consistency": 40,
+        "Freshness": 33
       },
       "failingDimensions": [
+        "Accuracy",
+        "Completeness",
         "Uniqueness",
-        "Validity"
+        "Validity",
+        "Consistency",
+        "Freshness"
       ],
-      "testsTotal": 3,
-      "testsFailed": 3,
+      "testsTotal": 27,
+      "testsFailed": 20,
       "lastRunAt": "2026-08-18T08:00:00+07:00",
       "history30d": [
         {
@@ -7533,20 +7575,21 @@
       "owner": "Marketing Ops",
       "tier": "Tier1",
       "healthStatus": "Warning",
-      "healthScore": 69,
+      "healthScore": 72,
       "healthDimensions": {
+        "Accuracy": 75,
         "Completeness": 67,
-        "Freshness": 67,
-        "Uniqueness": 70,
-        "Validity": 44,
-        "Accuracy": 73,
-        "Consistency": 93
+        "Uniqueness": 80,
+        "Validity": 33,
+        "Consistency": 100,
+        "Freshness": 75
       },
       "failingDimensions": [
+        "Completeness",
         "Validity"
       ],
-      "testsTotal": 6,
-      "testsFailed": 4,
+      "testsTotal": 22,
+      "testsFailed": 6,
       "lastRunAt": "2026-08-18T07:00:00+07:00",
       "history30d": [
         {
@@ -7922,18 +7965,20 @@
       "owner": "Analytics",
       "tier": "Tier2",
       "healthStatus": "Healthy",
-      "healthScore": 90,
+      "healthScore": 91,
       "healthDimensions": {
-        "Completeness": 82,
-        "Freshness": 82,
+        "Accuracy": 100,
+        "Completeness": 67,
         "Uniqueness": 100,
-        "Validity": 87,
-        "Accuracy": 88,
-        "Consistency": 100
+        "Validity": 100,
+        "Consistency": 100,
+        "Freshness": 80
       },
-      "failingDimensions": [],
-      "testsTotal": 5,
-      "testsFailed": 0,
+      "failingDimensions": [
+        "Completeness"
+      ],
+      "testsTotal": 23,
+      "testsFailed": 2,
       "lastRunAt": "2026-08-18T06:00:00+07:00",
       "history30d": [
         {
@@ -8308,19 +8353,19 @@
       "domain": "Operations",
       "owner": "Finance Ops",
       "tier": "Tier3",
-      "healthStatus": "Healthy",
-      "healthScore": 89,
+      "healthStatus": "Warning",
+      "healthScore": 88,
       "healthDimensions": {
-        "Completeness": 76,
-        "Freshness": 76,
+        "Accuracy": 75,
+        "Completeness": 75,
         "Uniqueness": 100,
         "Validity": 100,
-        "Accuracy": 82,
-        "Consistency": 100
+        "Consistency": 100,
+        "Freshness": 75
       },
       "failingDimensions": [],
-      "testsTotal": 4,
-      "testsFailed": 0,
+      "testsTotal": 23,
+      "testsFailed": 3,
       "lastRunAt": "2026-08-18T05:00:00+07:00",
       "history30d": [
         {
@@ -8695,21 +8740,24 @@
       "domain": "Operations",
       "owner": "Content",
       "tier": "Tier1",
-      "healthStatus": "Warning",
-      "healthScore": 66,
+      "healthStatus": "Critical",
+      "healthScore": 60,
       "healthDimensions": {
-        "Completeness": 44,
-        "Freshness": 49,
+        "Accuracy": 67,
+        "Completeness": 40,
         "Uniqueness": 75,
-        "Validity": 77,
-        "Accuracy": 78,
-        "Consistency": 75
+        "Validity": 80,
+        "Consistency": 67,
+        "Freshness": 33
       },
       "failingDimensions": [
-        "Completeness"
+        "Accuracy",
+        "Completeness",
+        "Consistency",
+        "Freshness"
       ],
-      "testsTotal": 3,
-      "testsFailed": 3,
+      "testsTotal": 23,
+      "testsFailed": 9,
       "lastRunAt": "2026-08-18T04:00:00+07:00",
       "history30d": [
         {
@@ -9085,21 +9133,25 @@
       "owner": "Data Platform",
       "tier": "Tier2",
       "healthStatus": "Critical",
-      "healthScore": 30,
+      "healthScore": 29,
       "healthDimensions": {
-        "Completeness": 34,
-        "Freshness": 4,
-        "Uniqueness": 6,
-        "Validity": 39,
-        "Accuracy": 40,
-        "Consistency": 60
+        "Accuracy": 50,
+        "Completeness": 25,
+        "Uniqueness": 0,
+        "Validity": 33,
+        "Consistency": 67,
+        "Freshness": 0
       },
       "failingDimensions": [
-        "Freshness",
-        "Uniqueness"
+        "Accuracy",
+        "Completeness",
+        "Uniqueness",
+        "Validity",
+        "Consistency",
+        "Freshness"
       ],
-      "testsTotal": 6,
-      "testsFailed": 6,
+      "testsTotal": 22,
+      "testsFailed": 16,
       "lastRunAt": "2026-08-18T03:00:00+07:00",
       "history30d": [
         {
@@ -9474,19 +9526,19 @@
       "domain": "Sales",
       "owner": "Marketing Ops",
       "tier": "Tier3",
-      "healthStatus": "Healthy",
-      "healthScore": 89,
+      "healthStatus": "Warning",
+      "healthScore": 84,
       "healthDimensions": {
-        "Completeness": 81,
-        "Freshness": 81,
+        "Accuracy": 75,
+        "Completeness": 75,
         "Uniqueness": 100,
-        "Validity": 86,
-        "Accuracy": 87,
-        "Consistency": 100
+        "Validity": 80,
+        "Consistency": 100,
+        "Freshness": 75
       },
       "failingDimensions": [],
-      "testsTotal": 5,
-      "testsFailed": 0,
+      "testsTotal": 26,
+      "testsFailed": 4,
       "lastRunAt": "2026-08-18T02:00:00+07:00",
       "history30d": [
         {
@@ -9861,19 +9913,21 @@
       "domain": "Compliance",
       "owner": "Analytics",
       "tier": "Tier1",
-      "healthStatus": "Unknown",
-      "healthScore": null,
+      "healthStatus": "Warning",
+      "healthScore": 77,
       "healthDimensions": {
-        "Completeness": null,
-        "Freshness": null,
-        "Uniqueness": null,
-        "Validity": null,
-        "Accuracy": null,
-        "Consistency": null
+        "Accuracy": 80,
+        "Completeness": 67,
+        "Uniqueness": 80,
+        "Validity": 80,
+        "Consistency": 75,
+        "Freshness": 80
       },
-      "failingDimensions": [],
-      "testsTotal": 4,
-      "testsFailed": 0,
+      "failingDimensions": [
+        "Completeness"
+      ],
+      "testsTotal": 27,
+      "testsFailed": 6,
       "lastRunAt": null,
       "history30d": [],
       "recordCount": 2768137
@@ -9888,20 +9942,21 @@
       "owner": "Finance Ops",
       "tier": "Tier2",
       "healthStatus": "Warning",
-      "healthScore": 68,
+      "healthScore": 70,
       "healthDimensions": {
-        "Completeness": 71,
-        "Freshness": 71,
-        "Uniqueness": 74,
-        "Validity": 76,
-        "Accuracy": 41,
-        "Consistency": 74
+        "Accuracy": 50,
+        "Completeness": 75,
+        "Uniqueness": 75,
+        "Validity": 80,
+        "Consistency": 75,
+        "Freshness": 67
       },
       "failingDimensions": [
-        "Accuracy"
+        "Accuracy",
+        "Freshness"
       ],
-      "testsTotal": 3,
-      "testsFailed": 3,
+      "testsTotal": 24,
+      "testsFailed": 7,
       "lastRunAt": "2026-08-18T00:00:00+07:00",
       "history30d": [
         {
@@ -10277,18 +10332,18 @@
       "owner": "Content",
       "tier": "Tier3",
       "healthStatus": "Healthy",
-      "healthScore": 92,
+      "healthScore": 96,
       "healthDimensions": {
-        "Completeness": 86,
-        "Freshness": 86,
+        "Accuracy": 100,
+        "Completeness": 75,
         "Uniqueness": 100,
-        "Validity": 91,
-        "Accuracy": 92,
-        "Consistency": 100
+        "Validity": 100,
+        "Consistency": 100,
+        "Freshness": 100
       },
       "failingDimensions": [],
-      "testsTotal": 6,
-      "testsFailed": 0,
+      "testsTotal": 21,
+      "testsFailed": 1,
       "lastRunAt": "2026-08-17T23:00:00+07:00",
       "history30d": [
         {
