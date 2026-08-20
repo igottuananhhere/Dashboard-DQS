@@ -80,8 +80,8 @@
       "totalFailedRuns": 4,
       "totalRuns": 30,
       "failRatePct": 13.3,
-      "avgRecoveryHours": 18.0,
-      "avgDaysBetweenRecurrence": 5.0,
+      "avgRecoveryHours": 18,
+      "avgDaysBetweenRecurrence": 5,
       "isChronic": true,
       "history30": [
         {
@@ -390,8 +390,8 @@
       "totalFailedRuns": 10,
       "totalRuns": 30,
       "failRatePct": 33.3,
-      "avgRecoveryHours": 27.0,
-      "avgDaysBetweenRecurrence": 3.0,
+      "avgRecoveryHours": 27,
+      "avgDaysBetweenRecurrence": 3,
       "isChronic": true,
       "history30": [
         {
@@ -544,7 +544,7 @@
       "firstFailOfCurrentCycleAt": "2026-08-15T21:00:00+07:00",
       "totalFailedRuns": 6,
       "totalRuns": 30,
-      "failRatePct": 20.0,
+      "failRatePct": 20,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -1009,7 +1009,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -1165,7 +1165,7 @@
       "totalFailedRuns": 7,
       "totalRuns": 30,
       "failRatePct": 23.3,
-      "avgRecoveryHours": 24.0,
+      "avgRecoveryHours": 24,
       "avgDaysBetweenRecurrence": 3.8,
       "isChronic": true,
       "history30": [
@@ -1320,7 +1320,7 @@
       "totalFailedRuns": 4,
       "totalRuns": 30,
       "failRatePct": 13.3,
-      "avgRecoveryHours": 48.0,
+      "avgRecoveryHours": 48,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
       "history30": [
@@ -1474,7 +1474,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -1629,7 +1629,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -1785,7 +1785,7 @@
       "totalFailedRuns": 4,
       "totalRuns": 30,
       "failRatePct": 13.3,
-      "avgRecoveryHours": 48.0,
+      "avgRecoveryHours": 48,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
       "history30": [
@@ -1939,7 +1939,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -2094,8 +2094,8 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 3,
       "totalRuns": 30,
-      "failRatePct": 10.0,
-      "avgRecoveryHours": 36.0,
+      "failRatePct": 10,
+      "avgRecoveryHours": 36,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
       "history30": [
@@ -2190,626 +2190,6 @@
         {
           "timestamp": "2026-08-14T21:00:00+07:00",
           "status": "Failed"
-        },
-        {
-          "timestamp": "2026-08-15T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-15T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-16T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-16T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-17T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-17T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-18T09:00:00+07:00",
-          "status": "Success"
-        }
-      ]
-    },
-    {
-      "id": "rule_015",
-      "assetId": "asset_004",
-      "ruleName": "payment_completeness",
-      "testCaseFqn": "bigquery_mart.dwh.public.payment.created_at.payment_completeness",
-      "table": "payment",
-      "tableFqn": "bigquery_mart.dwh.public.payment",
-      "column": "created_at",
-      "service": "bigquery_mart",
-      "domain": "Finance",
-      "ruleType": "completeness",
-      "healthDimension": "Completeness",
-      "tier": "Tier1",
-      "owner": "Marketing Ops",
-      "systemOwner": "Finance Ops",
-      "businessRuleOwner": "Operations Ops",
-      "ruleCreator": "Data Platform",
-      "previousResult": "Pass",
-      "latestResult": "Pass",
-      "previousRunAt": "2026-08-17T21:00:00+07:00",
-      "latestRunAt": "2026-08-18T09:00:00+07:00",
-      "lifecycleState": "Stable",
-      "recurrenceCount": 0,
-      "currentFailStreak": 0,
-      "lastRecurrenceAt": null,
-      "firstFailOfCurrentCycleAt": null,
-      "totalFailedRuns": 0,
-      "totalRuns": 30,
-      "failRatePct": 0.0,
-      "avgRecoveryHours": null,
-      "avgDaysBetweenRecurrence": null,
-      "isChronic": false,
-      "history30": [
-        {
-          "timestamp": "2026-08-03T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-04T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-04T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-05T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-05T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-06T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-06T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-07T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-07T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-08T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-08T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-09T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-09T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-10T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-10T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-11T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-11T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-12T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-12T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-13T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-13T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-14T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-14T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-15T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-15T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-16T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-16T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-17T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-17T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-18T09:00:00+07:00",
-          "status": "Success"
-        }
-      ]
-    },
-    {
-      "id": "rule_016",
-      "assetId": "asset_004",
-      "ruleName": "payment_freshness",
-      "testCaseFqn": "bigquery_mart.dwh.public.payment.updated_at.payment_freshness",
-      "table": "payment",
-      "tableFqn": "bigquery_mart.dwh.public.payment",
-      "column": "updated_at",
-      "service": "bigquery_mart",
-      "domain": "Finance",
-      "ruleType": "freshness",
-      "healthDimension": "Freshness",
-      "tier": "Tier1",
-      "owner": "Data Platform",
-      "systemOwner": "Finance Ops",
-      "businessRuleOwner": "Marketing Ops",
-      "ruleCreator": "Analytics",
-      "previousResult": "Pass",
-      "latestResult": "Pass",
-      "previousRunAt": "2026-08-17T21:00:00+07:00",
-      "latestRunAt": "2026-08-18T09:00:00+07:00",
-      "lifecycleState": "Stable",
-      "recurrenceCount": 0,
-      "currentFailStreak": 0,
-      "lastRecurrenceAt": null,
-      "firstFailOfCurrentCycleAt": null,
-      "totalFailedRuns": 0,
-      "totalRuns": 30,
-      "failRatePct": 0.0,
-      "avgRecoveryHours": null,
-      "avgDaysBetweenRecurrence": null,
-      "isChronic": false,
-      "history30": [
-        {
-          "timestamp": "2026-08-03T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-04T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-04T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-05T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-05T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-06T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-06T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-07T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-07T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-08T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-08T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-09T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-09T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-10T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-10T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-11T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-11T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-12T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-12T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-13T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-13T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-14T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-14T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-15T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-15T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-16T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-16T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-17T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-17T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-18T09:00:00+07:00",
-          "status": "Success"
-        }
-      ]
-    },
-    {
-      "id": "rule_017",
-      "assetId": "asset_004",
-      "ruleName": "payment_uniqueness",
-      "testCaseFqn": "bigquery_mart.dwh.public.payment.id.payment_uniqueness",
-      "table": "payment",
-      "tableFqn": "bigquery_mart.dwh.public.payment",
-      "column": "id",
-      "service": "bigquery_mart",
-      "domain": "Finance",
-      "ruleType": "uniqueness",
-      "healthDimension": "Uniqueness",
-      "tier": "Tier1",
-      "owner": "Content",
-      "systemOwner": "Finance Ops",
-      "businessRuleOwner": "Risk Ops",
-      "ruleCreator": "Content",
-      "previousResult": "Pass",
-      "latestResult": "Pass",
-      "previousRunAt": "2026-08-17T21:00:00+07:00",
-      "latestRunAt": "2026-08-18T09:00:00+07:00",
-      "lifecycleState": "Recovered",
-      "recurrenceCount": 1,
-      "currentFailStreak": 0,
-      "lastRecurrenceAt": "2026-08-13T21:00:00+07:00",
-      "firstFailOfCurrentCycleAt": null,
-      "totalFailedRuns": 3,
-      "totalRuns": 30,
-      "failRatePct": 10.0,
-      "avgRecoveryHours": 36.0,
-      "avgDaysBetweenRecurrence": null,
-      "isChronic": false,
-      "history30": [
-        {
-          "timestamp": "2026-08-03T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-04T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-04T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-05T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-05T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-06T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-06T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-07T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-07T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-08T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-08T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-09T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-09T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-10T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-10T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-11T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-11T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-12T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-12T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-13T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-13T21:00:00+07:00",
-          "status": "Failed"
-        },
-        {
-          "timestamp": "2026-08-14T09:00:00+07:00",
-          "status": "Failed"
-        },
-        {
-          "timestamp": "2026-08-14T21:00:00+07:00",
-          "status": "Failed"
-        },
-        {
-          "timestamp": "2026-08-15T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-15T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-16T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-16T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-17T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-17T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-18T09:00:00+07:00",
-          "status": "Success"
-        }
-      ]
-    },
-    {
-      "id": "rule_018",
-      "assetId": "asset_004",
-      "ruleName": "payment_validity",
-      "testCaseFqn": "bigquery_mart.dwh.public.payment.status.payment_validity",
-      "table": "payment",
-      "tableFqn": "bigquery_mart.dwh.public.payment",
-      "column": "status",
-      "service": "bigquery_mart",
-      "domain": "Finance",
-      "ruleType": "validity",
-      "healthDimension": "Validity",
-      "tier": "Tier1",
-      "owner": "Finance Ops",
-      "systemOwner": "Finance Ops",
-      "businessRuleOwner": "Compliance Ops",
-      "ruleCreator": "Marketing Ops",
-      "previousResult": "Pass",
-      "latestResult": "Pass",
-      "previousRunAt": "2026-08-17T21:00:00+07:00",
-      "latestRunAt": "2026-08-18T09:00:00+07:00",
-      "lifecycleState": "Stable",
-      "recurrenceCount": 0,
-      "currentFailStreak": 0,
-      "lastRecurrenceAt": null,
-      "firstFailOfCurrentCycleAt": null,
-      "totalFailedRuns": 0,
-      "totalRuns": 30,
-      "failRatePct": 0.0,
-      "avgRecoveryHours": null,
-      "avgDaysBetweenRecurrence": null,
-      "isChronic": false,
-      "history30": [
-        {
-          "timestamp": "2026-08-03T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-04T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-04T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-05T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-05T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-06T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-06T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-07T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-07T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-08T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-08T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-09T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-09T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-10T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-10T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-11T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-11T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-12T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-12T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-13T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-13T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-14T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-14T21:00:00+07:00",
-          "status": "Success"
         },
         {
           "timestamp": "2026-08-15T09:00:00+07:00",
@@ -2869,7 +2249,7 @@
       "firstFailOfCurrentCycleAt": "2026-08-15T21:00:00+07:00",
       "totalFailedRuns": 6,
       "totalRuns": 30,
-      "failRatePct": 20.0,
+      "failRatePct": 20,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -3335,8 +2715,8 @@
       "totalFailedRuns": 4,
       "totalRuns": 30,
       "failRatePct": 13.3,
-      "avgRecoveryHours": 18.0,
-      "avgDaysBetweenRecurrence": 5.0,
+      "avgRecoveryHours": 18,
+      "avgDaysBetweenRecurrence": 5,
       "isChronic": true,
       "history30": [
         {
@@ -3645,8 +3025,8 @@
       "totalFailedRuns": 10,
       "totalRuns": 30,
       "failRatePct": 33.3,
-      "avgRecoveryHours": 27.0,
-      "avgDaysBetweenRecurrence": 3.0,
+      "avgRecoveryHours": 27,
+      "avgDaysBetweenRecurrence": 3,
       "isChronic": true,
       "history30": [
         {
@@ -3954,7 +3334,7 @@
       "firstFailOfCurrentCycleAt": "2026-08-17T09:00:00+07:00",
       "totalFailedRuns": 3,
       "totalRuns": 30,
-      "failRatePct": 10.0,
+      "failRatePct": 10,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -4110,8 +3490,8 @@
       "totalFailedRuns": 10,
       "totalRuns": 30,
       "failRatePct": 33.3,
-      "avgRecoveryHours": 27.0,
-      "avgDaysBetweenRecurrence": 3.0,
+      "avgRecoveryHours": 27,
+      "avgDaysBetweenRecurrence": 3,
       "isChronic": true,
       "history30": [
         {
@@ -4264,7 +3644,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -4419,7 +3799,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -4575,7 +3955,7 @@
       "totalFailedRuns": 4,
       "totalRuns": 30,
       "failRatePct": 13.3,
-      "avgRecoveryHours": 48.0,
+      "avgRecoveryHours": 48,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
       "history30": [
@@ -4729,7 +4109,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -4884,8 +4264,8 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 3,
       "totalRuns": 30,
-      "failRatePct": 10.0,
-      "avgRecoveryHours": 36.0,
+      "failRatePct": 10,
+      "avgRecoveryHours": 36,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
       "history30": [
@@ -5640,7 +5020,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -5795,7 +5175,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -5951,7 +5331,7 @@
       "totalFailedRuns": 4,
       "totalRuns": 30,
       "failRatePct": 13.3,
-      "avgRecoveryHours": 48.0,
+      "avgRecoveryHours": 48,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
       "history30": [
@@ -6105,7 +5485,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -6260,8 +5640,8 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 3,
       "totalRuns": 30,
-      "failRatePct": 10.0,
-      "avgRecoveryHours": 36.0,
+      "failRatePct": 10,
+      "avgRecoveryHours": 36,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
       "history30": [
@@ -6415,7 +5795,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -6571,8 +5951,8 @@
       "totalFailedRuns": 4,
       "totalRuns": 30,
       "failRatePct": 13.3,
-      "avgRecoveryHours": 18.0,
-      "avgDaysBetweenRecurrence": 5.0,
+      "avgRecoveryHours": 18,
+      "avgDaysBetweenRecurrence": 5,
       "isChronic": true,
       "history30": [
         {
@@ -6881,8 +6261,8 @@
       "totalFailedRuns": 10,
       "totalRuns": 30,
       "failRatePct": 33.3,
-      "avgRecoveryHours": 27.0,
-      "avgDaysBetweenRecurrence": 3.0,
+      "avgRecoveryHours": 27,
+      "avgDaysBetweenRecurrence": 3,
       "isChronic": true,
       "history30": [
         {
@@ -7345,7 +6725,7 @@
       "firstFailOfCurrentCycleAt": "2026-08-17T09:00:00+07:00",
       "totalFailedRuns": 3,
       "totalRuns": 30,
-      "failRatePct": 10.0,
+      "failRatePct": 10,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -7810,7 +7190,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -7910,471 +7290,6 @@
         {
           "timestamp": "2026-08-15T09:00:00+07:00",
           "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-15T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-16T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-16T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-17T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-17T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-18T09:00:00+07:00",
-          "status": "Success"
-        }
-      ]
-    },
-    {
-      "id": "rule_055",
-      "assetId": "asset_013",
-      "ruleName": "subscriptions_057_completeness",
-      "testCaseFqn": "snowflake_analytics.dwh.public.subscriptions_057.created_at.subscriptions_057_completeness",
-      "table": "subscriptions_057",
-      "tableFqn": "snowflake_analytics.dwh.public.subscriptions_057",
-      "column": "created_at",
-      "service": "snowflake_analytics",
-      "domain": "Marketing",
-      "ruleType": "completeness",
-      "healthDimension": "Completeness",
-      "tier": "Tier1",
-      "owner": "Marketing Ops",
-      "systemOwner": "Analytics",
-      "businessRuleOwner": "Sales Ops",
-      "ruleCreator": "Data Platform",
-      "previousResult": "Pass",
-      "latestResult": "Pass",
-      "previousRunAt": "2026-08-17T21:00:00+07:00",
-      "latestRunAt": "2026-08-18T09:00:00+07:00",
-      "lifecycleState": "Stable",
-      "recurrenceCount": 0,
-      "currentFailStreak": 0,
-      "lastRecurrenceAt": null,
-      "firstFailOfCurrentCycleAt": null,
-      "totalFailedRuns": 0,
-      "totalRuns": 30,
-      "failRatePct": 0.0,
-      "avgRecoveryHours": null,
-      "avgDaysBetweenRecurrence": null,
-      "isChronic": false,
-      "history30": [
-        {
-          "timestamp": "2026-08-03T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-04T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-04T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-05T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-05T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-06T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-06T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-07T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-07T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-08T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-08T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-09T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-09T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-10T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-10T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-11T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-11T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-12T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-12T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-13T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-13T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-14T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-14T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-15T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-15T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-16T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-16T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-17T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-17T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-18T09:00:00+07:00",
-          "status": "Success"
-        }
-      ]
-    },
-    {
-      "id": "rule_056",
-      "assetId": "asset_013",
-      "ruleName": "subscriptions_057_freshness",
-      "testCaseFqn": "snowflake_analytics.dwh.public.subscriptions_057.updated_at.subscriptions_057_freshness",
-      "table": "subscriptions_057",
-      "tableFqn": "snowflake_analytics.dwh.public.subscriptions_057",
-      "column": "updated_at",
-      "service": "snowflake_analytics",
-      "domain": "Marketing",
-      "ruleType": "freshness",
-      "healthDimension": "Freshness",
-      "tier": "Tier1",
-      "owner": "Data Platform",
-      "systemOwner": "Analytics",
-      "businessRuleOwner": "Finance Ops",
-      "ruleCreator": "Analytics",
-      "previousResult": "Pass",
-      "latestResult": "Pass",
-      "previousRunAt": "2026-08-17T21:00:00+07:00",
-      "latestRunAt": "2026-08-18T09:00:00+07:00",
-      "lifecycleState": "Stable",
-      "recurrenceCount": 0,
-      "currentFailStreak": 0,
-      "lastRecurrenceAt": null,
-      "firstFailOfCurrentCycleAt": null,
-      "totalFailedRuns": 0,
-      "totalRuns": 30,
-      "failRatePct": 0.0,
-      "avgRecoveryHours": null,
-      "avgDaysBetweenRecurrence": null,
-      "isChronic": false,
-      "history30": [
-        {
-          "timestamp": "2026-08-03T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-04T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-04T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-05T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-05T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-06T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-06T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-07T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-07T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-08T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-08T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-09T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-09T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-10T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-10T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-11T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-11T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-12T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-12T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-13T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-13T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-14T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-14T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-15T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-15T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-16T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-16T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-17T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-17T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-18T09:00:00+07:00",
-          "status": "Success"
-        }
-      ]
-    },
-    {
-      "id": "rule_057",
-      "assetId": "asset_013",
-      "ruleName": "subscriptions_057_uniqueness",
-      "testCaseFqn": "snowflake_analytics.dwh.public.subscriptions_057.id.subscriptions_057_uniqueness",
-      "table": "subscriptions_057",
-      "tableFqn": "snowflake_analytics.dwh.public.subscriptions_057",
-      "column": "id",
-      "service": "snowflake_analytics",
-      "domain": "Marketing",
-      "ruleType": "uniqueness",
-      "healthDimension": "Uniqueness",
-      "tier": "Tier1",
-      "owner": "Content",
-      "systemOwner": "Analytics",
-      "businessRuleOwner": "Operations Ops",
-      "ruleCreator": "Content",
-      "previousResult": "Pass",
-      "latestResult": "Pass",
-      "previousRunAt": "2026-08-17T21:00:00+07:00",
-      "latestRunAt": "2026-08-18T09:00:00+07:00",
-      "lifecycleState": "Recovered",
-      "recurrenceCount": 1,
-      "currentFailStreak": 0,
-      "lastRecurrenceAt": "2026-08-13T21:00:00+07:00",
-      "firstFailOfCurrentCycleAt": null,
-      "totalFailedRuns": 4,
-      "totalRuns": 30,
-      "failRatePct": 13.3,
-      "avgRecoveryHours": 48.0,
-      "avgDaysBetweenRecurrence": null,
-      "isChronic": false,
-      "history30": [
-        {
-          "timestamp": "2026-08-03T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-04T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-04T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-05T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-05T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-06T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-06T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-07T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-07T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-08T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-08T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-09T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-09T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-10T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-10T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-11T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-11T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-12T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-12T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-13T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-13T21:00:00+07:00",
-          "status": "Failed"
-        },
-        {
-          "timestamp": "2026-08-14T09:00:00+07:00",
-          "status": "Failed"
-        },
-        {
-          "timestamp": "2026-08-14T21:00:00+07:00",
-          "status": "Failed"
-        },
-        {
-          "timestamp": "2026-08-15T09:00:00+07:00",
-          "status": "Failed"
         },
         {
           "timestamp": "2026-08-15T21:00:00+07:00",
@@ -8430,7 +7345,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -8585,7 +7500,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -8741,7 +7656,7 @@
       "totalFailedRuns": 4,
       "totalRuns": 30,
       "failRatePct": 13.3,
-      "avgRecoveryHours": 48.0,
+      "avgRecoveryHours": 48,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
       "history30": [
@@ -8895,7 +7810,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -9050,8 +7965,8 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 3,
       "totalRuns": 30,
-      "failRatePct": 10.0,
-      "avgRecoveryHours": 36.0,
+      "failRatePct": 10,
+      "avgRecoveryHours": 36,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
       "history30": [
@@ -9205,7 +8120,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -9360,7 +8275,7 @@
       "firstFailOfCurrentCycleAt": "2026-08-15T21:00:00+07:00",
       "totalFailedRuns": 6,
       "totalRuns": 30,
-      "failRatePct": 20.0,
+      "failRatePct": 20,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -9825,7 +8740,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -9981,7 +8896,7 @@
       "totalFailedRuns": 7,
       "totalRuns": 30,
       "failRatePct": 23.3,
-      "avgRecoveryHours": 24.0,
+      "avgRecoveryHours": 24,
       "avgDaysBetweenRecurrence": 3.8,
       "isChronic": true,
       "history30": [
@@ -10136,8 +9051,8 @@
       "totalFailedRuns": 10,
       "totalRuns": 30,
       "failRatePct": 33.3,
-      "avgRecoveryHours": 27.0,
-      "avgDaysBetweenRecurrence": 3.0,
+      "avgRecoveryHours": 27,
+      "avgDaysBetweenRecurrence": 3,
       "isChronic": true,
       "history30": [
         {
@@ -10446,7 +9361,7 @@
       "totalFailedRuns": 7,
       "totalRuns": 30,
       "failRatePct": 23.3,
-      "avgRecoveryHours": 24.0,
+      "avgRecoveryHours": 24,
       "avgDaysBetweenRecurrence": 3.8,
       "isChronic": true,
       "history30": [
@@ -10724,471 +9639,6 @@
         {
           "timestamp": "2026-08-18T09:00:00+07:00",
           "status": "Failed"
-        }
-      ]
-    },
-    {
-      "id": "rule_073",
-      "assetId": "asset_017",
-      "ruleName": "kyc_check_completeness",
-      "testCaseFqn": "postgres_dwh.dwh.public.kyc_check.created_at.kyc_check_completeness",
-      "table": "kyc_check",
-      "tableFqn": "postgres_dwh.dwh.public.kyc_check",
-      "column": "created_at",
-      "service": "postgres_dwh",
-      "domain": "Compliance",
-      "ruleType": "completeness",
-      "healthDimension": "Completeness",
-      "tier": "Tier2",
-      "owner": "Finance Ops",
-      "systemOwner": "Marketing Ops",
-      "businessRuleOwner": "Sales Ops",
-      "ruleCreator": "Marketing Ops",
-      "previousResult": "Pass",
-      "latestResult": "Pass",
-      "previousRunAt": "2026-08-17T21:00:00+07:00",
-      "latestRunAt": "2026-08-18T09:00:00+07:00",
-      "lifecycleState": "Stable",
-      "recurrenceCount": 0,
-      "currentFailStreak": 0,
-      "lastRecurrenceAt": null,
-      "firstFailOfCurrentCycleAt": null,
-      "totalFailedRuns": 0,
-      "totalRuns": 30,
-      "failRatePct": 0.0,
-      "avgRecoveryHours": null,
-      "avgDaysBetweenRecurrence": null,
-      "isChronic": false,
-      "history30": [
-        {
-          "timestamp": "2026-08-03T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-04T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-04T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-05T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-05T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-06T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-06T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-07T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-07T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-08T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-08T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-09T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-09T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-10T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-10T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-11T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-11T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-12T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-12T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-13T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-13T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-14T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-14T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-15T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-15T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-16T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-16T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-17T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-17T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-18T09:00:00+07:00",
-          "status": "Success"
-        }
-      ]
-    },
-    {
-      "id": "rule_074",
-      "assetId": "asset_017",
-      "ruleName": "kyc_check_freshness",
-      "testCaseFqn": "postgres_dwh.dwh.public.kyc_check.updated_at.kyc_check_freshness",
-      "table": "kyc_check",
-      "tableFqn": "postgres_dwh.dwh.public.kyc_check",
-      "column": "updated_at",
-      "service": "postgres_dwh",
-      "domain": "Compliance",
-      "ruleType": "freshness",
-      "healthDimension": "Freshness",
-      "tier": "Tier2",
-      "owner": "Analytics",
-      "systemOwner": "Marketing Ops",
-      "businessRuleOwner": "Finance Ops",
-      "ruleCreator": "Finance Ops",
-      "previousResult": "Pass",
-      "latestResult": "Pass",
-      "previousRunAt": "2026-08-17T21:00:00+07:00",
-      "latestRunAt": "2026-08-18T09:00:00+07:00",
-      "lifecycleState": "Stable",
-      "recurrenceCount": 0,
-      "currentFailStreak": 0,
-      "lastRecurrenceAt": null,
-      "firstFailOfCurrentCycleAt": null,
-      "totalFailedRuns": 0,
-      "totalRuns": 30,
-      "failRatePct": 0.0,
-      "avgRecoveryHours": null,
-      "avgDaysBetweenRecurrence": null,
-      "isChronic": false,
-      "history30": [
-        {
-          "timestamp": "2026-08-03T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-04T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-04T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-05T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-05T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-06T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-06T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-07T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-07T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-08T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-08T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-09T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-09T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-10T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-10T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-11T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-11T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-12T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-12T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-13T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-13T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-14T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-14T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-15T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-15T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-16T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-16T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-17T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-17T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-18T09:00:00+07:00",
-          "status": "Success"
-        }
-      ]
-    },
-    {
-      "id": "rule_075",
-      "assetId": "asset_017",
-      "ruleName": "kyc_check_uniqueness",
-      "testCaseFqn": "postgres_dwh.dwh.public.kyc_check.id.kyc_check_uniqueness",
-      "table": "kyc_check",
-      "tableFqn": "postgres_dwh.dwh.public.kyc_check",
-      "column": "id",
-      "service": "postgres_dwh",
-      "domain": "Compliance",
-      "ruleType": "uniqueness",
-      "healthDimension": "Uniqueness",
-      "tier": "Tier2",
-      "owner": "Marketing Ops",
-      "systemOwner": "Marketing Ops",
-      "businessRuleOwner": "Operations Ops",
-      "ruleCreator": "Data Platform",
-      "previousResult": "Pass",
-      "latestResult": "Pass",
-      "previousRunAt": "2026-08-17T21:00:00+07:00",
-      "latestRunAt": "2026-08-18T09:00:00+07:00",
-      "lifecycleState": "Recovered",
-      "recurrenceCount": 1,
-      "currentFailStreak": 0,
-      "lastRecurrenceAt": "2026-08-13T21:00:00+07:00",
-      "firstFailOfCurrentCycleAt": null,
-      "totalFailedRuns": 4,
-      "totalRuns": 30,
-      "failRatePct": 13.3,
-      "avgRecoveryHours": 48.0,
-      "avgDaysBetweenRecurrence": null,
-      "isChronic": false,
-      "history30": [
-        {
-          "timestamp": "2026-08-03T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-04T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-04T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-05T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-05T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-06T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-06T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-07T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-07T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-08T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-08T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-09T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-09T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-10T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-10T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-11T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-11T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-12T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-12T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-13T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-13T21:00:00+07:00",
-          "status": "Failed"
-        },
-        {
-          "timestamp": "2026-08-14T09:00:00+07:00",
-          "status": "Failed"
-        },
-        {
-          "timestamp": "2026-08-14T21:00:00+07:00",
-          "status": "Failed"
-        },
-        {
-          "timestamp": "2026-08-15T09:00:00+07:00",
-          "status": "Failed"
-        },
-        {
-          "timestamp": "2026-08-15T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-16T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-16T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-17T09:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-17T21:00:00+07:00",
-          "status": "Success"
-        },
-        {
-          "timestamp": "2026-08-18T09:00:00+07:00",
-          "status": "Success"
         }
       ]
     },
@@ -11889,7 +10339,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -12045,7 +10495,7 @@
       "totalFailedRuns": 7,
       "totalRuns": 30,
       "failRatePct": 23.3,
-      "avgRecoveryHours": 24.0,
+      "avgRecoveryHours": 24,
       "avgDaysBetweenRecurrence": 3.8,
       "isChronic": true,
       "history30": [
@@ -12199,7 +10649,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -12354,7 +10804,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -12509,8 +10959,8 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 3,
       "totalRuns": 30,
-      "failRatePct": 10.0,
-      "avgRecoveryHours": 36.0,
+      "failRatePct": 10,
+      "avgRecoveryHours": 36,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
       "history30": [
@@ -12664,7 +11114,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -12820,8 +11270,8 @@
       "totalFailedRuns": 4,
       "totalRuns": 30,
       "failRatePct": 13.3,
-      "avgRecoveryHours": 18.0,
-      "avgDaysBetweenRecurrence": 5.0,
+      "avgRecoveryHours": 18,
+      "avgDaysBetweenRecurrence": 5,
       "isChronic": true,
       "history30": [
         {
@@ -13130,8 +11580,8 @@
       "totalFailedRuns": 10,
       "totalRuns": 30,
       "failRatePct": 33.3,
-      "avgRecoveryHours": 27.0,
-      "avgDaysBetweenRecurrence": 3.0,
+      "avgRecoveryHours": 27,
+      "avgDaysBetweenRecurrence": 3,
       "isChronic": true,
       "history30": [
         {
@@ -13284,7 +11734,7 @@
       "firstFailOfCurrentCycleAt": "2026-08-15T21:00:00+07:00",
       "totalFailedRuns": 6,
       "totalRuns": 30,
-      "failRatePct": 20.0,
+      "failRatePct": 20,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -13749,7 +12199,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -13905,7 +12355,7 @@
       "totalFailedRuns": 7,
       "totalRuns": 30,
       "failRatePct": 23.3,
-      "avgRecoveryHours": 24.0,
+      "avgRecoveryHours": 24,
       "avgDaysBetweenRecurrence": 3.8,
       "isChronic": true,
       "history30": [
@@ -14060,7 +12510,7 @@
       "totalFailedRuns": 4,
       "totalRuns": 30,
       "failRatePct": 13.3,
-      "avgRecoveryHours": 48.0,
+      "avgRecoveryHours": 48,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
       "history30": [
@@ -14214,7 +12664,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -14369,7 +12819,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -14525,7 +12975,7 @@
       "totalFailedRuns": 4,
       "totalRuns": 30,
       "failRatePct": 13.3,
-      "avgRecoveryHours": 48.0,
+      "avgRecoveryHours": 48,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
       "history30": [
@@ -14679,7 +13129,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -14834,8 +13284,8 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 3,
       "totalRuns": 30,
-      "failRatePct": 10.0,
-      "avgRecoveryHours": 36.0,
+      "failRatePct": 10,
+      "avgRecoveryHours": 36,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
       "history30": [
@@ -14989,7 +13439,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -15144,7 +13594,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -15299,8 +13749,8 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 3,
       "totalRuns": 30,
-      "failRatePct": 10.0,
-      "avgRecoveryHours": 36.0,
+      "failRatePct": 10,
+      "avgRecoveryHours": 36,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
       "history30": [
@@ -15454,7 +13904,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -15609,7 +14059,7 @@
       "firstFailOfCurrentCycleAt": "2026-08-15T21:00:00+07:00",
       "totalFailedRuns": 6,
       "totalRuns": 30,
-      "failRatePct": 20.0,
+      "failRatePct": 20,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -16075,8 +14525,8 @@
       "totalFailedRuns": 4,
       "totalRuns": 30,
       "failRatePct": 13.3,
-      "avgRecoveryHours": 18.0,
-      "avgDaysBetweenRecurrence": 5.0,
+      "avgRecoveryHours": 18,
+      "avgDaysBetweenRecurrence": 5,
       "isChronic": true,
       "history30": [
         {
@@ -16385,8 +14835,8 @@
       "totalFailedRuns": 10,
       "totalRuns": 30,
       "failRatePct": 33.3,
-      "avgRecoveryHours": 27.0,
-      "avgDaysBetweenRecurrence": 3.0,
+      "avgRecoveryHours": 27,
+      "avgDaysBetweenRecurrence": 3,
       "isChronic": true,
       "history30": [
         {
@@ -16694,7 +15144,7 @@
       "firstFailOfCurrentCycleAt": "2026-08-17T09:00:00+07:00",
       "totalFailedRuns": 3,
       "totalRuns": 30,
-      "failRatePct": 10.0,
+      "failRatePct": 10,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -16850,8 +15300,8 @@
       "totalFailedRuns": 10,
       "totalRuns": 30,
       "failRatePct": 33.3,
-      "avgRecoveryHours": 27.0,
-      "avgDaysBetweenRecurrence": 3.0,
+      "avgRecoveryHours": 27,
+      "avgDaysBetweenRecurrence": 3,
       "isChronic": true,
       "history30": [
         {
@@ -17004,7 +15454,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -17159,7 +15609,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -17315,7 +15765,7 @@
       "totalFailedRuns": 4,
       "totalRuns": 30,
       "failRatePct": 13.3,
-      "avgRecoveryHours": 48.0,
+      "avgRecoveryHours": 48,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
       "history30": [
@@ -17469,7 +15919,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -17624,8 +16074,8 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 3,
       "totalRuns": 30,
-      "failRatePct": 10.0,
-      "avgRecoveryHours": 36.0,
+      "failRatePct": 10,
+      "avgRecoveryHours": 36,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
       "history30": [
@@ -18380,7 +16830,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -18535,7 +16985,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -18691,7 +17141,7 @@
       "totalFailedRuns": 4,
       "totalRuns": 30,
       "failRatePct": 13.3,
-      "avgRecoveryHours": 48.0,
+      "avgRecoveryHours": 48,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
       "history30": [
@@ -18845,7 +17295,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
@@ -19000,8 +17450,8 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 3,
       "totalRuns": 30,
-      "failRatePct": 10.0,
-      "avgRecoveryHours": 36.0,
+      "failRatePct": 10,
+      "avgRecoveryHours": 36,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,
       "history30": [
@@ -19155,7 +17605,7 @@
       "firstFailOfCurrentCycleAt": null,
       "totalFailedRuns": 0,
       "totalRuns": 30,
-      "failRatePct": 0.0,
+      "failRatePct": 0,
       "avgRecoveryHours": null,
       "avgDaysBetweenRecurrence": null,
       "isChronic": false,

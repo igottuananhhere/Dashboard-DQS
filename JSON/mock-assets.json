@@ -478,7 +478,8 @@
             "Consistency": 43
           }
         }
-      ]
+      ],
+      "recordCount": 4263384
     },
     {
       "id": "asset_002",
@@ -866,7 +867,8 @@
             "Consistency": 80
           }
         }
-      ]
+      ],
+      "recordCount": 711098
     },
     {
       "id": "asset_003",
@@ -1252,7 +1254,8 @@
             "Consistency": 100
           }
         }
-      ]
+      ],
+      "recordCount": 79917
     },
     {
       "id": "asset_004",
@@ -1274,7 +1277,7 @@
         "Consistency": 100
       },
       "failingDimensions": [],
-      "testsTotal": 4,
+      "testsTotal": 0,
       "testsFailed": 0,
       "lastRunAt": "2026-08-18T05:00:00+07:00",
       "history30d": [
@@ -1638,7 +1641,8 @@
             "Consistency": 100
           }
         }
-      ]
+      ],
+      "recordCount": 4635890
     },
     {
       "id": "asset_005",
@@ -2026,7 +2030,8 @@
             "Consistency": 79
           }
         }
-      ]
+      ],
+      "recordCount": 841725
     },
     {
       "id": "asset_006",
@@ -2415,7 +2420,8 @@
             "Consistency": 3
           }
         }
-      ]
+      ],
+      "recordCount": 69093
     },
     {
       "id": "asset_007",
@@ -2801,7 +2807,8 @@
             "Consistency": 95
           }
         }
-      ]
+      ],
+      "recordCount": 4067572
     },
     {
       "id": "asset_008",
@@ -2826,7 +2833,8 @@
       "testsTotal": 4,
       "testsFailed": 0,
       "lastRunAt": null,
-      "history30d": []
+      "history30d": [],
+      "recordCount": 505021
     },
     {
       "id": "asset_009",
@@ -3214,7 +3222,8 @@
             "Consistency": 83
           }
         }
-      ]
+      ],
+      "recordCount": 38355
     },
     {
       "id": "asset_010",
@@ -3600,7 +3609,8 @@
             "Consistency": 100
           }
         }
-      ]
+      ],
+      "recordCount": 3124209
     },
     {
       "id": "asset_011",
@@ -3989,7 +3999,8 @@
             "Consistency": 27
           }
         }
-      ]
+      ],
+      "recordCount": 580924
     },
     {
       "id": "asset_012",
@@ -4377,7 +4388,8 @@
             "Consistency": 50
           }
         }
-      ]
+      ],
+      "recordCount": 83858
     },
     {
       "id": "asset_013",
@@ -4399,7 +4411,7 @@
         "Consistency": 99
       },
       "failingDimensions": [],
-      "testsTotal": 3,
+      "testsTotal": 0,
       "testsFailed": 0,
       "lastRunAt": "2026-08-17T20:00:00+07:00",
       "history30d": [
@@ -4763,7 +4775,8 @@
             "Consistency": 95
           }
         }
-      ]
+      ],
+      "recordCount": 4673290
     },
     {
       "id": "asset_014",
@@ -5149,7 +5162,8 @@
             "Consistency": 94
           }
         }
-      ]
+      ],
+      "recordCount": 795974
     },
     {
       "id": "asset_015",
@@ -5537,7 +5551,8 @@
             "Consistency": 94
           }
         }
-      ]
+      ],
+      "recordCount": 53371
     },
     {
       "id": "asset_016",
@@ -5926,7 +5941,8 @@
             "Consistency": 54
           }
         }
-      ]
+      ],
+      "recordCount": 3220254
     },
     {
       "id": "asset_017",
@@ -5948,7 +5964,7 @@
         "Consistency": 98
       },
       "failingDimensions": [],
-      "testsTotal": 3,
+      "testsTotal": 0,
       "testsFailed": 0,
       "lastRunAt": "2026-08-17T16:00:00+07:00",
       "history30d": [
@@ -6312,7 +6328,8 @@
             "Consistency": 99
           }
         }
-      ]
+      ],
+      "recordCount": 478560
     },
     {
       "id": "asset_018",
@@ -6337,7 +6354,8 @@
       "testsTotal": 6,
       "testsFailed": 0,
       "lastRunAt": null,
-      "history30d": []
+      "history30d": [],
+      "recordCount": 79174
     },
     {
       "id": "asset_019",
@@ -6725,7 +6743,8 @@
             "Consistency": 85
           }
         }
-      ]
+      ],
+      "recordCount": 5119437
     },
     {
       "id": "asset_020",
@@ -7111,7 +7130,8 @@
             "Consistency": 95
           }
         }
-      ]
+      ],
+      "recordCount": 890262
     },
     {
       "id": "asset_021",
@@ -7500,7 +7520,8 @@
             "Consistency": 50
           }
         }
-      ]
+      ],
+      "recordCount": 57658
     },
     {
       "id": "asset_022",
@@ -7888,7 +7909,8 @@
             "Consistency": 97
           }
         }
-      ]
+      ],
+      "recordCount": 3299773
     },
     {
       "id": "asset_023",
@@ -8274,7 +8296,8 @@
             "Consistency": 100
           }
         }
-      ]
+      ],
+      "recordCount": 891284
     },
     {
       "id": "asset_024",
@@ -8660,7 +8683,8 @@
             "Consistency": 100
           }
         }
-      ]
+      ],
+      "recordCount": 38183
     },
     {
       "id": "asset_025",
@@ -9048,7 +9072,8 @@
             "Consistency": 73
           }
         }
-      ]
+      ],
+      "recordCount": 4851526
     },
     {
       "id": "asset_026",
@@ -9437,7 +9462,8 @@
             "Consistency": 56
           }
         }
-      ]
+      ],
+      "recordCount": 959378
     },
     {
       "id": "asset_027",
@@ -9823,7 +9849,8 @@
             "Consistency": 94
           }
         }
-      ]
+      ],
+      "recordCount": 74641
     },
     {
       "id": "asset_028",
@@ -9848,7 +9875,8 @@
       "testsTotal": 4,
       "testsFailed": 0,
       "lastRunAt": null,
-      "history30d": []
+      "history30d": [],
+      "recordCount": 2768137
     },
     {
       "id": "asset_029",
@@ -10236,7 +10264,8 @@
             "Consistency": 77
           }
         }
-      ]
+      ],
+      "recordCount": 608732
     },
     {
       "id": "asset_030",
@@ -10622,7 +10651,8 @@
             "Consistency": 100
           }
         }
-      ]
+      ],
+      "recordCount": 90000000
     }
   ]
 }

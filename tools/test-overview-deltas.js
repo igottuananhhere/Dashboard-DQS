@@ -37,8 +37,6 @@ async function click(el) { el.dispatchEvent(new win.Event('click', { bubbles: tr
 
   console.log('\n=== Doc tu UI (khong filter gi, 30/30) ===');
   console.log('ovKpiOverallDelta:', doc.getElementById('ovKpiOverallDelta').textContent, '| class:', doc.getElementById('ovKpiOverallDelta').className);
-  console.log('ovKpiHealthyDelta:', doc.getElementById('ovKpiHealthyDelta').textContent, '| class:', doc.getElementById('ovKpiHealthyDelta').className);
-  console.log('ovKpiDegradedDelta:', doc.getElementById('ovKpiDegradedDelta').textContent, '| class:', doc.getElementById('ovKpiDegradedDelta').className);
   console.log('ovKpiCriticalDelta:', doc.getElementById('ovKpiCriticalDelta').textContent, '| class:', doc.getElementById('ovKpiCriticalDelta').className);
 
   console.log('\n=== Kiem tra mau sac thuc te qua CSS (up=green, down=red) ===');
@@ -47,7 +45,7 @@ async function click(el) { el.dispatchEvent(new win.Event('click', { bubbles: tr
     // nhung neu co inline color thi uu tien do; kiem tra class de suy ra mau ky vong.
     return el.className.includes('up') ? 'green(expected)' : el.className.includes('down') ? 'red(expected)' : 'muted(expected)';
   };
-  ['ovKpiOverallDelta','ovKpiHealthyDelta','ovKpiDegradedDelta','ovKpiCriticalDelta'].forEach(id=>{
+  ['ovKpiOverallDelta','ovKpiCriticalDelta'].forEach(id=>{
     console.log(id, '->', getColor(doc.getElementById(id)));
   });
 

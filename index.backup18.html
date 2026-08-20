@@ -187,36 +187,6 @@
   .radar-legend{font-size:11.5px;color:var(--muted);display:flex;flex-direction:column;gap:8px;white-space:nowrap;}
   .radar-legend .item{display:flex;align-items:center;gap:6px;}
 
-  /* Asset x Dimension heatmap (Overview) — CSS grid thuần, không canvas/svg/thư viện.
-     Card cao cố định (flex column) để đổi Top10/20/Tất cả KHÔNG kéo giãn card radar bên cạnh
-     (2 card cùng 1 hàng .grid-2, mặc định stretch theo chiều cao nhau) — vùng ma trận cuộn riêng
-     bên trong bằng flex:1 + overflow-y:auto, header/cột tên dùng sticky để giữ ngữ cảnh khi cuộn. */
-  /* Không đặt height cố định bằng px: .grid-2 là CSS grid, mặc định align-items:stretch nên 2 card
-     trong cùng hàng đã tự cao bằng nhau (bằng chiều cao nội dung của card radar bên trái, cao hơn).
-     Card này chỉ cần height:100% để "nhận" đúng chiều cao hàng đó rồi tự phân bổ bằng flex column —
-     nhờ vậy khi đổi Top10/20/Tất cả, card KHÔNG đổi cao (vẫn bám đúng card radar), và khi nội dung
-     card radar đổi (vd thêm cảnh báo trọng số), card này tự khớp theo mà không cần sửa số px. */
-  .dq-heatmap-card{display:flex;flex-direction:column;height:100%;}
-  .heatmap-scroll{flex:1;min-height:0;overflow:auto;}
-  .heatmap-grid{display:grid;grid-template-columns:130px repeat(6,1fr);min-width:420px;
-    --hm-row-h:18px;}
-  .heatmap-grid .hm-head{
-    position:sticky;top:0;z-index:2;background:var(--card);
-    font-size:10.5px;font-weight:700;color:var(--muted);padding:4px 4px 6px;text-align:center;
-    border-bottom:1px solid var(--border);white-space:nowrap;
-  }
-  .heatmap-grid .hm-head.hm-corner{text-align:left;left:0;z-index:3;}
-  .heatmap-grid .hm-name{
-    height:var(--hm-row-h);display:flex;align-items:center;font-size:11.5px;color:var(--text);
-    padding:0 6px 0 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;
-    border-bottom:1px solid #f3f4f7;position:sticky;left:0;z-index:1;background:var(--card);
-  }
-  .heatmap-grid .hm-name:hover{color:var(--link);}
-  .heatmap-grid .hm-cell{
-    height:var(--hm-row-h);display:flex;align-items:center;justify-content:center;
-    font-size:10px;font-weight:700;color:#fff;cursor:pointer;border-bottom:1px solid #fff;
-  }
-
   /* tables */
   table{width:100%;border-collapse:collapse;font-size:12.8px;}
   thead th{
@@ -414,13 +384,9 @@
 
       <div class="grid-kpi cols-4">
         <div class="card kpi">
-          <div class="label" style="display:flex;align-items:center;gap:6px;">
-            Điểm TB của các bảng
-            <span id="ovOverallInfoIcon" tabindex="0" style="cursor:default;color:var(--muted);font-size:11px;border:1px solid var(--border);border-radius:50%;width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">ⓘ</span>
-          </div>
-          <div class="value" id="ovKpiOverall" style="font-size:17px;">– / 100</div>
-          <div class="delta" id="ovKpiOverallDelta" style="color:var(--muted);"></div>
-          <div class="delta" id="ovKpiOverallVsSystem" style="color:var(--muted);margin-top:4px;">Điểm trung bình Health Score của các bảng đang được tính trong Overview.</div>
+          <div class="label">Overall Health</div>
+          <div class="value" id="ovKpiOverall">– / 100</div>
+          <div class="delta" id="ovKpiOverallDelta" style="color:var(--muted);">Trung bình healthScore trong tập đang lọc</div>
         </div>
         <div class="card kpi clickable" onclick="switchTab('health'); applyHealthFilter('Critical')">
           <div class="label">Critical Assets</div>
@@ -500,7 +466,7 @@
         </div>
       </div>
 
-      <div class="grid-2" style="grid-template-columns:1fr 1.4fr;">
+      <div class="grid-2">
         <div class="card panel">
           <h3 style="display:flex;align-items:center;gap:6px;">
             Data Quality Score — Toàn hệ thống
@@ -513,7 +479,7 @@
             <span class="item"><svg width="16" height="10" style="flex-shrink:0;"><line x1="0" y1="5" x2="16" y2="5" stroke="#9aa1ab" stroke-width="2" stroke-dasharray="3,2"/></svg>Mục tiêu</span>
           </div>
           <div id="dqWeightWarning"></div>
-          <div style="text-align:left;margin-top:18px;">
+          <div style="text-align:right;margin-top:10px;">
             <button class="btn-outline" id="dqDrilldownToggleBtn" onclick="toggleDQDrilldown()" style="font-size:11.5px;padding:5px 12px;">Xem chi tiết theo asset →</button>
           </div>
           <div id="dqDrilldownPanel" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
@@ -541,18 +507,28 @@
           </div>
         </div>
 
-        <div class="card panel dq-heatmap-card">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;">
-            <h3 style="margin:0;">Chất lượng theo Asset × Dimension</h3>
-            <div style="display:flex;gap:4px;" id="dqHeatmapRangeCtrl">
-              <button type="button" class="btn-outline" data-hm-range="10" style="padding:4px 10px;font-size:11px;">Top 10</button>
-              <button type="button" class="btn-outline" data-hm-range="20" style="padding:4px 10px;font-size:11px;background:var(--link);color:#fff;border-color:var(--link);">Top 20</button>
-              <button type="button" class="btn-outline" data-hm-range="all" style="padding:4px 10px;font-size:11px;">Tất cả</button>
+        <div class="card panel">
+          <h3>Health by Dimension</h3>
+          <div class="barlist">
+            <div class="barrow" onclick="switchTab('health'); applyDimensionFilter('Accuracy')">
+              <div class="lbl">Accuracy</div><div class="bartrack"><div class="barfill" id="ovDimFillAccuracy" style="width:0%;background:#9aa1ab;"></div></div><div class="num" id="ovDimNumAccuracy">–</div>
+            </div>
+            <div class="barrow" onclick="switchTab('health'); applyDimensionFilter('Completeness')">
+              <div class="lbl">Completeness</div><div class="bartrack"><div class="barfill" id="ovDimFillCompleteness" style="width:0%;background:#9aa1ab;"></div></div><div class="num" id="ovDimNumCompleteness">–</div>
+            </div>
+            <div class="barrow" onclick="switchTab('health'); applyDimensionFilter('Uniqueness')">
+              <div class="lbl">Uniqueness</div><div class="bartrack"><div class="barfill" id="ovDimFillUniqueness" style="width:0%;background:#9aa1ab;"></div></div><div class="num" id="ovDimNumUniqueness">–</div>
+            </div>
+            <div class="barrow" onclick="switchTab('health'); applyDimensionFilter('Validity')">
+              <div class="lbl">Validity</div><div class="bartrack"><div class="barfill" id="ovDimFillValidity" style="width:0%;background:#9aa1ab;"></div></div><div class="num" id="ovDimNumValidity">–</div>
+            </div>
+            <div class="barrow" onclick="switchTab('health'); applyDimensionFilter('Consistency')">
+              <div class="lbl">Consistency</div><div class="bartrack"><div class="barfill" id="ovDimFillConsistency" style="width:0%;background:#9aa1ab;"></div></div><div class="num" id="ovDimNumConsistency">–</div>
+            </div>
+            <div class="barrow" onclick="switchTab('health'); applyDimensionFilter('Freshness')">
+              <div class="lbl">Freshness</div><div class="bartrack"><div class="barfill" id="ovDimFillFreshness" style="width:0%;background:#9aa1ab;"></div></div><div class="num" id="ovDimNumFreshness">–</div>
             </div>
           </div>
-          <div id="dqHeatmapWrap" class="heatmap-scroll"></div>
-          <div class="legend-row" id="dqHeatmapLegend" style="margin-top:10px;font-size:11px;color:var(--muted);flex-shrink:0;"></div>
-          <div id="dqHeatmapFooter" style="margin-top:8px;font-size:11.5px;color:var(--muted);flex-shrink:0;"></div>
         </div>
       </div>
 
@@ -1060,12 +1036,6 @@ function runCoverageChecks(assets, rules){
   expect('assetsCoRule + assetsKhongRule === assets.length', assetsCoRule + assetsKhongRule, assets.length);
   console.groupEnd();
 
-  console.group('COVERAGE.md checks — DQ Heatmap (Asset x Dimension, Overview)');
-  const hmRows = document.querySelectorAll('#dqHeatmapWrap .hm-name').length;
-  const hmExpected = dqHeatmapRange === 'all' ? filterOverviewAssets(assets).length : Math.min(dqHeatmapRange, filterOverviewAssets(assets).length);
-  expect('so dong heatmap === min(dqHeatmapRange, filtered.length)', hmRows, hmExpected);
-  console.groupEnd();
-
   console.group('COVERAGE.md checks — Trend chart geometry (1 nguon du lieu duy nhat)');
   ['line-overall','line-completeness','line-freshness'].forEach(id=>{
     const el = document.getElementById(id);
@@ -1194,9 +1164,7 @@ function renderNeedsAttention(list){
   needsAttentionListIds = rows.map(a=>a.id);
   body.innerHTML = rows.length ? rows.map(a=>{
     const score = a.healthScore;
-    // Trước đây so <50 (chỉ đỏ/cam, không có nhánh xanh) — lệch hẳn thang màu THRESHOLDS của cả
-    // dashboard (90/70): điểm 60 từng hiện cam như thể "khá ổn" trong khi đúng thang chung phải đỏ.
-    const color = scoreColor(score);
+    const color = score==null ? 'var(--gray)' : score<50?'#e0453f':'#e8912b';
     return `<tr class="rowlink" data-asset-id="${a.id}" data-list-source="needsAttention">
       <td>
         <span class="asset-link">${a.name}</span>
@@ -1260,8 +1228,8 @@ function clearOverviewFilters(){
   renderOverview();
 }
 
-// applyHealthFilter (KPI card, stackbar) điều hướng sang tab Health — dùng state filter riêng của
-// Health tab (healthStatusFilters/...), không đụng vào state Overview này.
+// applyHealthFilter/applyDimensionFilter (KPI card, stackbar, dimension bar) điều hướng sang tab Health —
+// chúng dùng state filter riêng của Health tab (healthStatusFilters/...), không đụng vào state Overview này.
 function radarPoint(dim, val){
   // Tâm (110,100), 6 trục hình lục giác — offset lấy từ chính toạ độ 100% vertex có sẵn trong SVG gốc.
   const offsets = {
@@ -1275,28 +1243,19 @@ function radarPoint(dim, val){
 const RADAR_DIMS = ["Accuracy","Completeness","Uniqueness","Validity","Consistency","Freshness"];
 const RADAR_COLORS = ["#3762d6","#e8912b","#e0453f"];
 
-// ===================== NGƯỠNG MÀU/CHẤT LƯỢNG DUY NHẤT CHO TOÀN DASHBOARD =====================
-// Trước đây có 4 hệ ngưỡng khác nhau cho cùng khái niệm "điểm số tốt/xấu" (90/70 hardcode rải rác
-// ở nhiều nơi, 85/70 riêng cho DQ status, 80 riêng cho radar target) khiến cùng 1 điểm số (vd 82)
-// vừa "cam" ở bảng Health, vừa "Cảnh báo" ở DQ Score, vừa "đạt mục tiêu" trên radar — 3 thông điệp
-// trái nhau. Từ giờ MỌI chỗ liên quan tới màu/trạng thái điểm số (0-100) phải đọc từ THRESHOLDS này
-// — không được khai hằng số ngưỡng thứ hai cho cùng khái niệm, không hardcode 90/70 nơi khác.
-const THRESHOLDS = { green: 90, amber: 70 };
-
 /* ===================== Data Quality Score — Toàn hệ thống (Overview) =====================
    Luôn tính trên TOÀN BỘ assetsMock (không theo filter bar) — đúng vai trò Overview trả lời
-   "hệ thống đang ở mức nào", khác với heatmap "Chất lượng theo Asset × Dimension" bên cạnh (vẫn
-   theo filter, trả lời "trong tập đang xem thì sao"). Weighted average theo recordCount, KHÔNG dùng trung bình cộng —
-   asset lớn phải ảnh hưởng nhiều hơn asset nhỏ, đúng yêu cầu nghiệp vụ.
-   Target radar + ngưỡng "Tốt" của badge trạng thái DÙNG CHUNG THRESHOLDS.green (không còn
-   DQ_TARGET_SCORE=80 hay DQ_STATUS_THRESHOLDS.good=85 riêng) — để 1 điểm số không thể vừa "đạt
-   mục tiêu" trên radar vừa "Cảnh báo" ở badge như bug đã nêu. */
+   "hệ thống đang ở mức nào", khác với "Health by Dimension" bên cạnh (vẫn theo filter, trả lời
+   "trong tập đang xem thì sao"). Weighted average theo recordCount, KHÔNG dùng trung bình cộng —
+   asset lớn phải ảnh hưởng nhiều hơn asset nhỏ, đúng yêu cầu nghiệp vụ. */
+const DQ_TARGET_SCORE = 80; // ngưỡng mục tiêu/SLA dùng chung cho baseline radar + tooltip, không hardcode rải rác
+const DQ_STATUS_THRESHOLDS = { good: 85, warning: 70 }; // >=85 Tốt, 70-84 Cảnh báo, <70 Nghiêm trọng
 const DQ_WEIGHT_WARNING_PCT = 60; // 1 asset chiếm >60% tổng recordCount thì cảnh báo điểm có thể bị 1 asset "nuốt"
 
 function dqStatusFor(score){
   if(score==null) return {key:'unknown', label:'—', badgeClass:'unknown'};
-  if(score>=THRESHOLDS.green) return {key:'good', label:'Tốt', badgeClass:'healthy'};
-  if(score>=THRESHOLDS.amber) return {key:'warning', label:'Cảnh báo', badgeClass:'degraded'};
+  if(score>=DQ_STATUS_THRESHOLDS.good) return {key:'good', label:'Tốt', badgeClass:'healthy'};
+  if(score>=DQ_STATUS_THRESHOLDS.warning) return {key:'warning', label:'Cảnh báo', badgeClass:'degraded'};
   return {key:'critical', label:'Nghiêm trọng', badgeClass:'critical'};
 }
 
@@ -1372,7 +1331,7 @@ function buildSystemDQRadarHtml(scores){
     return `<line x1="${RADAR2_CENTER}" y1="${RADAR2_CENTER}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="#eceef2"/>`;
   }).join('');
 
-  const targetPts = RADAR_DIMS.map((_,i)=>radar2Point(radar2Angle(i), RADAR2_MAX_R*THRESHOLDS.green/100).join(',')).join(' ');
+  const targetPts = RADAR_DIMS.map((_,i)=>radar2Point(radar2Angle(i), RADAR2_MAX_R*DQ_TARGET_SCORE/100).join(',')).join(' ');
   const currentPts = RADAR_DIMS.map((dim,i)=>{
     const v = Math.max(0, Math.min(100, scores[dim] ?? 0));
     return radar2Point(radar2Angle(i), RADAR2_MAX_R*v/100).join(',');
@@ -1383,7 +1342,7 @@ function buildSystemDQRadarHtml(scores){
     const v = scores[dim];
     const clamped = Math.max(0, Math.min(100, v ?? 0));
     const [x,y] = radar2Point(angle, RADAR2_MAX_R*clamped/100);
-    const belowTarget = v!=null && v < THRESHOLDS.green;
+    const belowTarget = v!=null && v < DQ_TARGET_SCORE;
     const dotColor = v==null ? 'var(--gray)' : belowTarget ? 'var(--red)' : 'var(--green)';
     return `
       <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.5" fill="${dotColor}" stroke="#fff" stroke-width="1.4"/>
@@ -1391,23 +1350,20 @@ function buildSystemDQRadarHtml(scores){
         data-dq-dim="${dim}" style="cursor:pointer;outline:none;"/>`;
   }).join('');
 
-  // Ghi kèm điểm số ngay cạnh nhãn trục (tspan riêng, nhỏ hơn + đậm hơn + màu theo scoreColor dùng
-  // chung) để radar tự đủ thông tin số liệu, không còn phụ thuộc bar list "Health by Dimension" bên
-  // cạnh (đã bị gỡ) mới biết được con số của từng chiều.
   const axisLabels = RADAR_DIMS.map((dim,i)=>{
     const angle = radar2Angle(i);
     const [x,y] = radar2Point(angle, RADAR2_MAX_R + 18);
     const v = scores[dim];
-    const valText = v==null ? '—' : Math.round(v);
+    const belowTarget = v!=null && v < DQ_TARGET_SCORE;
     return `<text x="${x.toFixed(1)}" y="${(y+radar2Dy(angle)).toFixed(1)}" font-size="12" text-anchor="${radar2Anchor(angle)}"
-      fill="#6b7280" font-weight="600"
-      data-dq-dim="${dim}" style="cursor:pointer;">${dim} <tspan font-size="11" font-weight="700" fill="${scoreColor(v)}">${valText}</tspan></text>`;
+      fill="${belowTarget?'var(--red)':'#6b7280'}" font-weight="${belowTarget?700:600}"
+      data-dq-dim="${dim}" style="cursor:pointer;">${dim}</text>`;
   }).join('');
 
   return `
     <div style="width:100%;max-width:340px;aspect-ratio:1/1;margin:0 auto;display:flex;align-items:center;justify-content:center;">
       <svg viewBox="0 0 ${RADAR2_SIZE} ${RADAR2_SIZE}" width="100%" height="100%" role="img"
-        aria-label="Radar Data Quality Score toàn hệ thống, 6 chiều, so với mục tiêu ${THRESHOLDS.green}/100">
+        aria-label="Radar Data Quality Score toàn hệ thống, 6 chiều, so với mục tiêu ${DQ_TARGET_SCORE}/100">
         ${rings}
         ${spokes}
         <polygon points="${targetPts}" fill="none" stroke="#9aa1ab" stroke-width="1.4" stroke-dasharray="5,4" opacity="0.7"/>
@@ -1424,11 +1380,11 @@ function wireSystemDQTooltip(container, scores){
   const tooltip = getRadarTooltipEl();
   const showFor = (dim, clientX, clientY)=>{
     const v = scores[dim];
-    const diff = v==null ? null : Math.round(v) - THRESHOLDS.green;
+    const diff = v==null ? null : Math.round(v) - DQ_TARGET_SCORE;
     const below = diff!=null && diff<0;
     tooltip.innerHTML = `<b>${dim}</b>
       <div>Hiện tại: ${v==null?'—':Math.round(v)}</div>
-      <div>Mục tiêu: ${THRESHOLDS.green}</div>
+      <div>Mục tiêu: ${DQ_TARGET_SCORE}</div>
       ${diff==null ? '' : `<div class="${below?'warn':''}" style="${below?'':'color:#8ee6a0;'}">${diff>=0?'▲ +':'▼ '}${diff} so với mục tiêu</div>`}`;
     tooltip.classList.add('show');
     positionRadarTooltip(tooltip, clientX, clientY);
@@ -1452,7 +1408,7 @@ function wireDQInfoTooltip(){
   icon.dataset.wired = '1';
   const tooltip = getRadarTooltipEl();
   const show = (x,y)=>{
-    tooltip.innerHTML = `<b>Cách tính</b><div>Health Score = (Accuracy + Completeness + Uniqueness + Validity + Consistency + Freshness) / 6</div><div>Ngưỡng mục tiêu: ${THRESHOLDS.green}/100 mỗi chiều</div>`;
+    tooltip.innerHTML = `<b>Cách tính</b><div>dimension_score = Σ(score × record_count) / Σ(record_count)</div><div>Ngưỡng mục tiêu: ${DQ_TARGET_SCORE}/100 mỗi chiều</div>`;
     tooltip.classList.add('show');
     positionRadarTooltip(tooltip, x, y);
   };
@@ -1464,21 +1420,15 @@ function wireDQInfoTooltip(){
   icon.addEventListener('blur', hide);
 }
 
-// Điểm hệ thống chính thức (weighted theo recordCount) — lưu lại để KPI "Overall Health" (trung
-// bình cộng đơn giản, theo filter) bên trên có thể tự sinh dòng "Chênh N điểm so với điểm hệ
-// thống", tránh 2 con số tự nhận là "điểm tổng" mà không giải thích vì sao khác nhau.
-let dqSystemOverallScore = null;
-
 function renderSystemDQCard(){
   const { scores } = weightedDimensionScores(assetsMock, null);
   const { scores: prevScores } = weightedDimensionScores(assetsMock, 1);
   const current = dqOverallScore(scores);
   const previous = dqOverallScore(prevScores);
-  dqSystemOverallScore = current;
 
   document.getElementById('dqKpiRow').innerHTML = buildDQKpiHtml(current, previous);
   document.getElementById('dqRadarWrap').innerHTML = buildSystemDQRadarHtml(scores);
-  document.getElementById('dqWeightWarning').innerHTML = '';
+  document.getElementById('dqWeightWarning').innerHTML = buildWeightWarningHtml(assetsMock);
   wireSystemDQTooltip(document.getElementById('dqRadarWrap'), scores);
   wireDQInfoTooltip();
 }
@@ -1490,20 +1440,16 @@ function toggleDQDrilldown(){
   document.getElementById('dqDrilldownToggleBtn').style.display = open ? '' : 'none';
 }
 
-// Ngưỡng RIÊNG, KHÁC HẲN THRESHOLDS — không được gộp. THRESHOLDS là thang màu 2 mức (green/amber)
-// dùng để tô màu 1 điểm số. Ở đây cần tái tạo lại đúng 3 giá trị của field categorical
-// `healthStatus` (Critical/Warning/Healthy) từ 1 điểm liên tục trong history30d (vốn không lưu
-// healthStatus theo từng ngày) — mục đích là PHÂN LOẠI trạng thái, không phải TÔ MÀU chất lượng,
-// nên không thể quy về THRESHOLDS.green/amber (90/70) mà cần đúng 2 mốc cắt của 3 loại trạng thái.
-// Không phải số liệu chính thức — là quy ước hợp lý, an toàn 100% với data hiện có: điểm thật của
-// asset chỉ rơi vào 27-32 (Critical), 66-69 (Warning), 89-95 (Healthy) — không có điểm nào nằm
-// trong vùng biên 33-65 hay 70-88 nên đổi ngưỡng trong 2 khoảng trống này không đổi kết quả phân
-// loại của bất kỳ asset nào trong mock hiện tại.
-const HEALTH_STATUS_BUCKET = { criticalMax: 50, warningMax: 80 };
+// Quy ước suy ra bucket Critical/Warning/Healthy từ healthScore lịch sử (history30d chỉ có điểm
+// số, không có healthStatus categorical theo ngày). Ngưỡng <50 / 50-79 / >=80 không phải số liệu
+// chính thức — là quy ước hợp lý, nhưng an toàn 100% với data hiện có: điểm thật của asset chỉ rơi
+// vào 27-32 (Critical), 66-69 (Warning), 89-95 (Healthy) — không có điểm nào nằm trong vùng biên
+// 33-65 hay 70-88 nên đổi ngưỡng trong 2 khoảng trống này không đổi kết quả phân loại của bất kỳ
+// asset nào trong mock hiện tại.
 function scoreToStatusBucket(score){
   if(score==null) return null;
-  if(score<HEALTH_STATUS_BUCKET.criticalMax) return 'Critical';
-  if(score<HEALTH_STATUS_BUCKET.warningMax) return 'Warning';
+  if(score<50) return 'Critical';
+  if(score<80) return 'Warning';
   return 'Healthy';
 }
 
@@ -1542,7 +1488,7 @@ function computeYesterdayDeltas(filtered){
 // Set trực tiếp className+textContent (không qua innerHTML) — .delta.up/.delta.down cần cả 2 class
 // cùng lúc mới lên đúng màu (xem CSS .delta.up/.delta.down), nên phải gán className cho chính div,
 // không lồng thêm span con.
-// decimals=0 cho KPI đếm số lượng asset (không có "nửa asset"); decimals=1 cho Overall Health vì
+// decimals=0 cho 3 KPI đếm số lượng asset (không có "nửa asset"); decimals=1 cho Overall Health vì
 // điểm trung bình là số liên tục — làm tròn số nguyên xoá mất biến động nhỏ có thật mỗi ngày (vd
 // +0.26 điểm bị Math.round về 0, trông như "không đổi" trong khi thật ra có nhích).
 function applyDelta(elId, delta, unit, fallbackText, decimals){
@@ -1623,126 +1569,6 @@ function renderLastFullScanKpi(){
     : `● Overdue (${lastFullScanMinutesAgo}m trước, kỳ vọng ≤ ${expectedScanIntervalMinutes}m)`;
 }
 
-// Tooltip cho card "Điểm TB của các bảng" — giải thích công thức Overview Score = trung bình
-// Health Score của các bảng đang tính trong Overview (không tính lại từ 6 dimension ở tầng này).
-function wireOverallInfoTooltip(){
-  const icon = document.getElementById('ovOverallInfoIcon');
-  if(!icon || icon.dataset.wired) return; // chỉ gắn listener 1 lần, tránh cộng dồn qua các lần renderOverview()
-  icon.dataset.wired = '1';
-  const tooltip = getRadarTooltipEl();
-  const show = (x,y)=>{
-    tooltip.innerHTML = `<b>Cách tính</b><div>Overview Score = Σ Health Score của các bảng / Số lượng bảng</div><div>Ví dụ: 30 bảng → Tổng Health Score / 30</div>`;
-    tooltip.classList.add('show');
-    positionRadarTooltip(tooltip, x, y);
-  };
-  const hide = ()=>tooltip.classList.remove('show');
-  icon.addEventListener('mouseenter', e=>show(e.clientX, e.clientY));
-  icon.addEventListener('mousemove', e=>positionRadarTooltip(tooltip, e.clientX, e.clientY));
-  icon.addEventListener('mouseleave', hide);
-  icon.addEventListener('focus', ()=>{ const r=icon.getBoundingClientRect(); show(r.left+r.width/2, r.top); });
-  icon.addEventListener('blur', hide);
-}
-
-/* ===================== Heatmap Chất lượng theo Asset × Dimension (Overview) =====================
-   Thay cho card "Health by Dimension" (bar list) đã gỡ — heatmap vẫn theo filter bar (khác radar
-   DQ Score bên cạnh, luôn tính toàn hệ thống có trọng số), nên KHÔNG mất khả năng "xem theo tập
-   đang lọc" mà bar list cũ cung cấp; chỉ đổi từ 6 số trung bình sang chi tiết theo từng asset —
-   nhiều thông tin hơn (lộ ra pattern theo domain/asset), không phải thu hẹp thông tin.
-   Số dòng hiển thị do dqHeatmapRange quyết định (10/20/'all'), ĐỘC LẬP với filter bar: filter bar
-   thu hẹp tập dữ liệu trước, dqHeatmapRange chỉ quyết định hiển thị bao nhiêu dòng trong tập đó —
-   luôn hiện hết nếu tập sau lọc ít hơn số dòng chọn (không báo lỗi, không cắt bớt âm thầm). */
-let dqHeatmapRange = 20; // 10 | 20 | 'all' — mặc định Top 20
-const DQ_HEATMAP_ROW_MIN = 22, DQ_HEATMAP_ROW_MAX = 34;
-const DQ_HEATMAP_SHORT = {Accuracy:'Accur.', Completeness:'Compl.', Uniqueness:'Uniq.', Validity:'Valid.', Consistency:'Consist.', Freshness:'Fresh.'};
-
-function setDQHeatmapRange(range){
-  dqHeatmapRange = range;
-  document.querySelectorAll('#dqHeatmapRangeCtrl [data-hm-range]').forEach(btn=>{
-    const active = String(btn.dataset.hmRange) === String(range);
-    btn.style.background = active ? 'var(--link)' : '';
-    btn.style.color = active ? '#fff' : '';
-    btn.style.borderColor = active ? 'var(--link)' : '';
-  });
-  renderDQHeatmap(filterOverviewAssets(assetsMock));
-}
-
-// Chiều cao dòng co giãn để lấp khung khi ít dòng (Top 10), nhưng chặn trên/dưới để không giãn
-// giả tạo hoặc bẹp dí — chỉ đo SAU khi grid đã render xong layout (clientHeight lúc DOM vừa gắn
-// vào có thể vẫn bằng 0 nếu đo ngay, nên gọi qua requestAnimationFrame).
-function computeDQHeatmapRowHeight(container, rowCount){
-  if(rowCount === 0) return DQ_HEATMAP_ROW_MAX;
-  const available = container.clientHeight;
-  const ideal = available / rowCount;
-  return Math.max(DQ_HEATMAP_ROW_MIN, Math.min(DQ_HEATMAP_ROW_MAX, ideal));
-}
-
-function renderDQHeatmap(filtered){
-  const wrap = document.getElementById('dqHeatmapWrap');
-  const footer = document.getElementById('dqHeatmapFooter');
-  document.getElementById('dqHeatmapLegend').innerHTML = `
-    <span class="item" style="cursor:default;"><span class="dot" style="background:var(--green);"></span>&ge; ${THRESHOLDS.green} Tốt</span>
-    <span class="item" style="cursor:default;"><span class="dot" style="background:var(--orange);"></span>${THRESHOLDS.amber}–${THRESHOLDS.green-1} Cảnh báo</span>
-    <span class="item" style="cursor:default;"><span class="dot" style="background:var(--red);"></span>&lt; ${THRESHOLDS.amber} Nghiêm trọng</span>
-    <span class="item" style="cursor:default;"><span class="dot" style="background:var(--gray);"></span>Không có dữ liệu</span>`;
-
-  if(!filtered.length){
-    wrap.innerHTML = `<div class="empty-note">Không có asset khớp filter hiện tại.</div>`;
-    footer.textContent = '';
-    return;
-  }
-
-  const scored = filtered.filter(a=>a.healthScore!=null).sort((a,b)=>a.healthScore-b.healthScore);
-  const unscored = filtered.filter(a=>a.healthScore==null);
-  const ordered = scored.concat(unscored);
-  const shown = dqHeatmapRange === 'all' ? ordered : ordered.slice(0, dqHeatmapRange);
-
-  const headHtml = `<div class="hm-head hm-corner">Asset</div>` +
-    RADAR_DIMS.map(dim=>`<div class="hm-head" title="${dim}">${DQ_HEATMAP_SHORT[dim]}</div>`).join('');
-
-  const rowsHtml = shown.map(a=>{
-    const nameCell = `<div class="hm-name" data-asset-id="${a.id}" data-list-source="dqHeatmap" title="${a.name}">${a.name}</div>`;
-    const cells = RADAR_DIMS.map(dim=>{
-      const v = a.healthDimensions[dim];
-      const color = v==null ? 'var(--gray)' : scoreColor(v);
-      return `<div class="hm-cell" style="background:${color};" data-asset-id="${a.id}" data-list-source="dqHeatmap" data-scroll-dim="${dim}"
-        title="${a.name} · ${dim}: ${v==null?'không có dữ liệu':v+'/100'}">${v==null?'—':v}</div>`;
-    }).join('');
-    return nameCell + cells;
-  }).join('');
-
-  wrap.innerHTML = `<div class="heatmap-grid" id="dqHeatmapGrid">${headHtml}${rowsHtml}</div>`;
-
-  footer.innerHTML = dqHeatmapRange === 'all'
-    ? `Hiển thị toàn bộ ${filtered.length} asset · <span class="primary-issue" onclick="switchTab('health')">Xem tất cả →</span>`
-    : `Hiển thị ${shown.length}/${filtered.length} asset điểm thấp nhất · <span class="primary-issue" onclick="switchTab('health')">Xem tất cả →</span>`;
-
-  // Đo container SAU khi grid vừa được gắn vào DOM (innerHTML ở trên) để layout đã ổn định —
-  // đo ngay trong cùng tick có thể vẫn ra clientHeight=0 ở 1 số trình duyệt/thời điểm.
-  requestAnimationFrame(()=>{
-    const grid = document.getElementById('dqHeatmapGrid');
-    if(!grid) return; // đã re-render lần khác (đổi filter/range liên tiếp) trước khi frame này chạy
-    applyDQHeatmapRowHeight(grid, wrap, shown.length);
-  });
-}
-
-// Hàng tiêu đề (sticky) chiếm 1 phần clientHeight của vùng cuộn nhưng không phải chỗ dành cho dữ
-// liệu — trừ đi chiều cao thật của nó trước khi tính "available" cho computeDQHeatmapRowHeight,
-// đúng yêu cầu "hàng tiêu đề không tính vào available".
-function applyDQHeatmapRowHeight(grid, wrap, rowCount){
-  const headEl = grid.querySelector('.hm-head');
-  const headH = headEl ? headEl.offsetHeight : 0;
-  const availableForRows = { clientHeight: Math.max(0, wrap.clientHeight - headH) };
-  const rowH = computeDQHeatmapRowHeight(availableForRows, rowCount);
-  grid.style.setProperty('--hm-row-h', rowH.toFixed(1) + 'px');
-}
-
-window.addEventListener('resize', ()=>{
-  const grid = document.getElementById('dqHeatmapGrid');
-  if(!grid) return;
-  const wrap = document.getElementById('dqHeatmapWrap');
-  applyDQHeatmapRowHeight(grid, wrap, grid.querySelectorAll('.hm-name').length);
-});
-
 function renderOverview(){
   const filtered = filterOverviewAssets(assetsMock);
   const total = assetsMock.length;
@@ -1754,14 +1580,13 @@ function renderOverview(){
   const scored = filtered.filter(a=>a.healthScore!=null);
   const avgScore = scored.length ? Math.round(scored.reduce((s,a)=>s+a.healthScore,0)/scored.length) : null;
   document.getElementById('ovKpiOverall').textContent = avgScore==null ? '— / 100' : `${avgScore} / 100`;
-  wireOverallInfoTooltip();
 
   const byStatus = {Healthy:0, Warning:0, Critical:0, Unknown:0};
   filtered.forEach(a=>{ if(byStatus[a.healthStatus]!==undefined) byStatus[a.healthStatus]++; });
   document.getElementById('ovKpiCritical').textContent = byStatus.Critical;
 
   const deltas = computeYesterdayDeltas(filtered);
-  applyDelta('ovKpiOverallDelta', deltas && deltas.overallDelta, ' điểm', '', 1);
+  applyDelta('ovKpiOverallDelta', deltas && deltas.overallDelta, ' điểm', 'Trung bình healthScore trong tập đang lọc', 1);
   applyDelta('ovKpiCriticalDelta', deltas && deltas.criticalDelta, ' asset');
 
   renderRuleCoverageKpi(filtered);
@@ -1783,7 +1608,14 @@ function renderOverview(){
     document.getElementById(legId).textContent = count;
   });
 
-  renderDQHeatmap(filtered);
+  RADAR_DIMS.forEach(dim=>{
+    const vals = filtered.map(a=>a.healthDimensions[dim]).filter(v=>v!=null);
+    const avg = vals.length ? Math.round(vals.reduce((s,v)=>s+v,0)/vals.length) : null;
+    const color = avg==null ? '#9aa1ab' : avg>=90?'#2f9e5b':avg>=70?'#e8912b':'#e0453f';
+    document.getElementById('ovDimFill'+dim).style.width = (avg ?? 0) + '%';
+    document.getElementById('ovDimFill'+dim).style.background = color;
+    document.getElementById('ovDimNum'+dim).textContent = avg==null ? '—' : avg;
+  });
 
   const lowest = filtered.filter(a=>a.healthScore!=null).sort((a,b)=>a.healthScore-b.healthScore).slice(0,3);
   radarListIds = lowest.map(a=>a.id);
@@ -1837,7 +1669,7 @@ function renderHealthTable(){
   const pageRows = list.slice((healthTablePage-1)*PAGE_SIZE, healthTablePage*PAGE_SIZE);
   body.innerHTML = pageRows.map(a=>{
     const score = a.healthScore;
-    const barColor = scoreColor(score);
+    const barColor = score==null ? 'var(--gray)' : score>=90?'#2f9e5b':score>=70?'#e8912b':'#e0453f';
     const primaryIssue = a.failingDimensions.length ? a.failingDimensions.join(', ') + ' failing' : '';
     return `<tr class="rowlink" data-asset-id="${a.id}" data-list-source="healthTable">
       <td><span class="asset-link">${a.name}</span><span class="fqn">${a.fqn}</span></td>
@@ -1866,6 +1698,7 @@ function toggleHealthDimFilter(dim){
 }
 // giữ tên cũ cho tương thích với các chỗ gọi từ Overview (KPI card, stacked bar)
 function applyHealthFilter(status){ switchTab('health'); toggleHealthStatusFilter(status); }
+function applyDimensionFilter(dim){ switchTab('health'); toggleHealthDimFilter(dim); }
 
 function clearHealthFilters(){
   healthStatusFilters = []; healthDomainFilters = []; healthServiceFilters = []; healthOwnerFilters = [];
@@ -2196,7 +2029,7 @@ function openAssetDetail(id, scrollDim){
     ["Validity", a.validity],
   ];
   document.getElementById('dimBreakdown').innerHTML = dims.map(([name,val])=>{
-    const color = scoreColor(val);
+    const color = val>=90?'#2f9e5b':val>=70?'#e8912b':'#e0453f';
     return `<div class="dim-row" onclick="filterFailedTests('${name}')">
       <div class="top"><span>${name}</span><span>${val}</span></div>
       <div class="dim-track"><div class="dim-fill" style="width:${val}%;background:${color};"></div></div>
@@ -2339,8 +2172,7 @@ const trendX = i => TREND_GEO.x0 + (TREND_GEO.x1 - TREND_GEO.x0) * (i / (trendDa
 const trendY = v => TREND_GEO.yBottom
   - ((v - TREND_GEO.min) / (TREND_GEO.max - TREND_GEO.min)) * (TREND_GEO.yBottom - TREND_GEO.yTop);
 
-// THRESHOLDS dùng chung đã khai báo 1 lần duy nhất ở phần "Data Quality Score" phía trên — Trend
-// chart tái dùng đúng nó cho 2 đường ngưỡng ngang (Target/Amber), không khai lại.
+const THRESHOLDS = { green: 90, amber: 70 };
 const TREND_SERIES = [
   {key:'overall', color:'#3762d6', label:'Overall'},
   {key:'completeness', color:'#2f9e5b', label:'Completeness'},
@@ -2490,10 +2322,8 @@ function copyToClipboard(text){
   });
 }
 
-// Hàm màu điểm số DUY NHẤT của toàn dashboard — mọi nơi cần tô màu theo điểm 0-100 phải gọi hàm
-// này (đọc từ THRESHOLDS), không tự viết lại ternary >=90/>=70 ở chỗ khác.
 function scoreColor(score){
-  return score==null ? 'var(--gray)' : score>=THRESHOLDS.green ? 'var(--green)' : score>=THRESHOLDS.amber ? 'var(--orange)' : 'var(--red)';
+  return score==null ? 'var(--gray)' : score>=90?'#2f9e5b':score>=70?'#e8912b':'#e0453f';
 }
 
 /* ===================== Asset Detail (full page, dùng lại view-detail + showView) =====================
@@ -2512,34 +2342,12 @@ function getAssetById(id){ return assetsMock.find(a=>a.id===id); }
 
 let currentAssetDetailId = null;
 let assetDetailListIds = [];
-// Heatmap Asset x Dimension (Overview) truyền kèm dimension cần cuộn tới qua data-scroll-dim —
-// lưu tạm ở đây vì openAssetDetail() có thể đổi location.hash (mở hashchange bất đồng bộ), nên
-// applyPendingScrollDim() phải được gọi SAU khi showView('detail') xong (không thể truyền tham số
-// xuyên qua chuỗi hashchange).
-let pendingScrollDim = null;
 
 document.addEventListener('click', (e)=>{
-  const rangeBtn = e.target.closest('[data-hm-range]');
-  if(rangeBtn){
-    const r = rangeBtn.dataset.hmRange === 'all' ? 'all' : Number(rangeBtn.dataset.hmRange);
-    setDQHeatmapRange(r);
-    return;
-  }
   const el = e.target.closest('[data-asset-id]');
   if(!el) return;
-  pendingScrollDim = el.dataset.scrollDim || null;
   openAssetDetail(el.dataset.assetId, el.dataset.listSource);
 });
-
-function applyPendingScrollDim(){
-  if(!pendingScrollDim) return;
-  const dim = pendingScrollDim;
-  pendingScrollDim = null;
-  const hit = document.querySelector(`#dimBreakdown [data-radar-hit][data-dim="${dim}"]`);
-  if(!hit) return;
-  document.getElementById('dimBreakdown').scrollIntoView({block:'center', behavior:'instant'});
-  hit.focus(); // dùng lại đúng cơ chế tooltip theo bàn phím đã có (focus -> hiện tooltip điểm số)
-}
 
 function computeAssetDetailListForSource(source){
   if(source==='needsAttention' && needsAttentionListIds.length) return needsAttentionListIds;
@@ -2557,7 +2365,6 @@ function openAssetDetail(assetId, source){
     currentAssetDetailId = assetId;
     renderAssetDetailPage();
     showView('detail');
-    applyPendingScrollDim();
   } else {
     location.hash = targetHash; // trigger hashchange -> handleHashChange() lo phần mở + render
   }
@@ -2585,7 +2392,6 @@ function handleHashChange(){
     if(!assetDetailListIds.includes(id)) assetDetailListIds = assetsMock.map(a=>a.id);
     renderAssetDetailPage();
     showView('detail');
-    applyPendingScrollDim();
   } else if(currentAssetDetailId){
     switchTab('health'); showView('main');
     currentAssetDetailId = null;

@@ -69,7 +69,7 @@ async function main() {
     console.log('view-main active:', doc.getElementById('view-main').classList.contains('active'), '(expect false)');
     console.log('detailTitle:', doc.getElementById('detailTitle').textContent);
     console.log('detailNavIndex:', doc.getElementById('detailNavIndex').textContent);
-    console.log('KPI grid cells:', doc.querySelectorAll('#detailKpiGrid .kpi').length, '(expect 4)');
+    console.log('KPI grid cells:', doc.querySelectorAll('#detailKpiGrid .kpi').length, '(expect 5, da gop Health Score vao KPI)');
     console.log('rule table rows:', doc.querySelectorAll('#detailRuleBody tr').length);
     console.log('trend svg rendered:', !!doc.querySelector('#detailTrendChart svg'));
   }

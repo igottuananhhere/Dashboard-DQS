@@ -191,12 +191,7 @@
      Card cao cố định (flex column) để đổi Top10/20/Tất cả KHÔNG kéo giãn card radar bên cạnh
      (2 card cùng 1 hàng .grid-2, mặc định stretch theo chiều cao nhau) — vùng ma trận cuộn riêng
      bên trong bằng flex:1 + overflow-y:auto, header/cột tên dùng sticky để giữ ngữ cảnh khi cuộn. */
-  /* Không đặt height cố định bằng px: .grid-2 là CSS grid, mặc định align-items:stretch nên 2 card
-     trong cùng hàng đã tự cao bằng nhau (bằng chiều cao nội dung của card radar bên trái, cao hơn).
-     Card này chỉ cần height:100% để "nhận" đúng chiều cao hàng đó rồi tự phân bổ bằng flex column —
-     nhờ vậy khi đổi Top10/20/Tất cả, card KHÔNG đổi cao (vẫn bám đúng card radar), và khi nội dung
-     card radar đổi (vd thêm cảnh báo trọng số), card này tự khớp theo mà không cần sửa số px. */
-  .dq-heatmap-card{display:flex;flex-direction:column;height:100%;}
+  .dq-heatmap-card{display:flex;flex-direction:column;height:360px;}
   .heatmap-scroll{flex:1;min-height:0;overflow:auto;}
   .heatmap-grid{display:grid;grid-template-columns:130px repeat(6,1fr);min-width:420px;
     --hm-row-h:18px;}
@@ -414,13 +409,10 @@
 
       <div class="grid-kpi cols-4">
         <div class="card kpi">
-          <div class="label" style="display:flex;align-items:center;gap:6px;">
-            Điểm TB của các bảng
-            <span id="ovOverallInfoIcon" tabindex="0" style="cursor:default;color:var(--muted);font-size:11px;border:1px solid var(--border);border-radius:50%;width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">ⓘ</span>
-          </div>
+          <div class="label">Điểm TB của tập đang lọc (chưa trọng số)</div>
           <div class="value" id="ovKpiOverall" style="font-size:17px;">– / 100</div>
-          <div class="delta" id="ovKpiOverallDelta" style="color:var(--muted);"></div>
-          <div class="delta" id="ovKpiOverallVsSystem" style="color:var(--muted);margin-top:4px;">Điểm trung bình Health Score của các bảng đang được tính trong Overview.</div>
+          <div class="delta" id="ovKpiOverallDelta" style="color:var(--muted);">Trung bình healthScore trong tập đang lọc</div>
+          <div class="delta" id="ovKpiOverallVsSystem" style="color:var(--muted);margin-top:4px;"></div>
         </div>
         <div class="card kpi clickable" onclick="switchTab('health'); applyHealthFilter('Critical')">
           <div class="label">Critical Assets</div>
@@ -513,7 +505,7 @@
             <span class="item"><svg width="16" height="10" style="flex-shrink:0;"><line x1="0" y1="5" x2="16" y2="5" stroke="#9aa1ab" stroke-width="2" stroke-dasharray="3,2"/></svg>Mục tiêu</span>
           </div>
           <div id="dqWeightWarning"></div>
-          <div style="text-align:left;margin-top:18px;">
+          <div style="text-align:right;margin-top:10px;">
             <button class="btn-outline" id="dqDrilldownToggleBtn" onclick="toggleDQDrilldown()" style="font-size:11.5px;padding:5px 12px;">Xem chi tiết theo asset →</button>
           </div>
           <div id="dqDrilldownPanel" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
@@ -1452,7 +1444,7 @@ function wireDQInfoTooltip(){
   icon.dataset.wired = '1';
   const tooltip = getRadarTooltipEl();
   const show = (x,y)=>{
-    tooltip.innerHTML = `<b>Cách tính</b><div>Health Score = (Accuracy + Completeness + Uniqueness + Validity + Consistency + Freshness) / 6</div><div>Ngưỡng mục tiêu: ${THRESHOLDS.green}/100 mỗi chiều</div>`;
+    tooltip.innerHTML = `<b>Cách tính</b><div>dimension_score = Σ(score × record_count) / Σ(record_count)</div><div>Ngưỡng mục tiêu: ${THRESHOLDS.green}/100 mỗi chiều</div>`;
     tooltip.classList.add('show');
     positionRadarTooltip(tooltip, x, y);
   };
@@ -1478,7 +1470,7 @@ function renderSystemDQCard(){
 
   document.getElementById('dqKpiRow').innerHTML = buildDQKpiHtml(current, previous);
   document.getElementById('dqRadarWrap').innerHTML = buildSystemDQRadarHtml(scores);
-  document.getElementById('dqWeightWarning').innerHTML = '';
+  document.getElementById('dqWeightWarning').innerHTML = buildWeightWarningHtml(assetsMock);
   wireSystemDQTooltip(document.getElementById('dqRadarWrap'), scores);
   wireDQInfoTooltip();
 }
@@ -1623,24 +1615,18 @@ function renderLastFullScanKpi(){
     : `● Overdue (${lastFullScanMinutesAgo}m trước, kỳ vọng ≤ ${expectedScanIntervalMinutes}m)`;
 }
 
-// Tooltip cho card "Điểm TB của các bảng" — giải thích công thức Overview Score = trung bình
-// Health Score của các bảng đang tính trong Overview (không tính lại từ 6 dimension ở tầng này).
-function wireOverallInfoTooltip(){
-  const icon = document.getElementById('ovOverallInfoIcon');
-  if(!icon || icon.dataset.wired) return; // chỉ gắn listener 1 lần, tránh cộng dồn qua các lần renderOverview()
-  icon.dataset.wired = '1';
-  const tooltip = getRadarTooltipEl();
-  const show = (x,y)=>{
-    tooltip.innerHTML = `<b>Cách tính</b><div>Overview Score = Σ Health Score của các bảng / Số lượng bảng</div><div>Ví dụ: 30 bảng → Tổng Health Score / 30</div>`;
-    tooltip.classList.add('show');
-    positionRadarTooltip(tooltip, x, y);
-  };
-  const hide = ()=>tooltip.classList.remove('show');
-  icon.addEventListener('mouseenter', e=>show(e.clientX, e.clientY));
-  icon.addEventListener('mousemove', e=>positionRadarTooltip(tooltip, e.clientX, e.clientY));
-  icon.addEventListener('mouseleave', hide);
-  icon.addEventListener('focus', ()=>{ const r=icon.getBoundingClientRect(); show(r.left+r.width/2, r.top); });
-  icon.addEventListener('blur', hide);
+// Sinh dòng giải thích tự động cho chênh lệch giữa "Điểm TB của tập đang lọc" (trung bình cộng
+// đơn giản) và điểm hệ thống chính thức "Data Quality Score" (weighted theo recordCount) — để
+// người xem hiểu NGAY vì sao 2 con số khác nhau thay vì tự chọn số nào "dễ chịu hơn".
+function renderOverallVsSystemNote(avgScore){
+  const el = document.getElementById('ovKpiOverallVsSystem');
+  if(avgScore==null || dqSystemOverallScore==null){ el.textContent = ''; return; }
+  const diff = Math.round(avgScore - dqSystemOverallScore);
+  if(diff===0){ el.textContent = 'Khớp với điểm hệ thống (đã trọng số).'; return; }
+  const reason = diff<0
+    ? 'do một số asset lớn đang khỏe hơn mặt bằng chung'
+    : 'do một số asset lớn đang kém hơn mặt bằng chung';
+  el.textContent = `Chênh ${Math.abs(diff)} điểm so với điểm hệ thống ${reason}.`;
 }
 
 /* ===================== Heatmap Chất lượng theo Asset × Dimension (Overview) =====================
@@ -1754,14 +1740,14 @@ function renderOverview(){
   const scored = filtered.filter(a=>a.healthScore!=null);
   const avgScore = scored.length ? Math.round(scored.reduce((s,a)=>s+a.healthScore,0)/scored.length) : null;
   document.getElementById('ovKpiOverall').textContent = avgScore==null ? '— / 100' : `${avgScore} / 100`;
-  wireOverallInfoTooltip();
+  renderOverallVsSystemNote(avgScore);
 
   const byStatus = {Healthy:0, Warning:0, Critical:0, Unknown:0};
   filtered.forEach(a=>{ if(byStatus[a.healthStatus]!==undefined) byStatus[a.healthStatus]++; });
   document.getElementById('ovKpiCritical').textContent = byStatus.Critical;
 
   const deltas = computeYesterdayDeltas(filtered);
-  applyDelta('ovKpiOverallDelta', deltas && deltas.overallDelta, ' điểm', '', 1);
+  applyDelta('ovKpiOverallDelta', deltas && deltas.overallDelta, ' điểm', 'Trung bình healthScore trong tập đang lọc', 1);
   applyDelta('ovKpiCriticalDelta', deltas && deltas.criticalDelta, ' asset');
 
   renderRuleCoverageKpi(filtered);
