@@ -128,12 +128,14 @@
   .grid-kpi.cols-3{grid-template-columns:repeat(3,1fr);}
   .grid-kpi.cols-4{grid-template-columns:repeat(4,1fr);}
   @media (max-width:900px){.grid-kpi{grid-template-columns:repeat(2,1fr);}}
-  .kpi{padding:16px 18px;cursor:default;}
+  .kpi{padding:16px 18px;cursor:default;position:relative;}
+  .kpi-icon{position:absolute;top:12px;right:14px;font-size:19px;opacity:1;line-height:1;}
   .kpi.clickable{cursor:pointer;transition:box-shadow .15s, transform .05s;}
   .kpi.clickable:hover{box-shadow:0 2px 8px rgba(16,24,40,0.10);transform:translateY(-1px);}
-  .kpi .label{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:8px;}
+  .kpi .label{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:8px;padding-right:20px;}
   .kpi .value{font-size:24px;font-weight:700;letter-spacing:-0.3px;}
   .kpi .delta{font-size:11.5px;margin-top:6px;font-weight:600;}
+  .kpi-tag{display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:99px;background:#eef1f6;color:var(--muted);vertical-align:middle;}
   .delta.down{color:var(--red);}
   .delta.up{color:var(--green);}
 
@@ -244,6 +246,7 @@
   .badge.degraded{background:var(--orange);color:#fff;}
   .badge.healthy{background:var(--green);color:#fff;}
   .badge.unknown{background:var(--gray);color:#fff;}
+  .badge.pending{background:#6b7280;color:#fff;}
   .badge.reopened{background:var(--red-dark);color:#fff;}
 
   .recur-badge{display:inline-block;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:700;margin-left:6px;vertical-align:middle;}
@@ -410,8 +413,9 @@
         <div class="range-pill" id="ovCountBadge">30 / 30</div>
       </div>
 
-      <div class="grid-kpi cols-4">
+      <div class="grid-kpi">
         <div class="card kpi">
+          <span class="kpi-icon">📊</span>
           <div class="label" style="display:flex;align-items:center;gap:6px;">
             Điểm TB của các bảng
             <span id="ovOverallInfoIcon" tabindex="0" style="cursor:default;color:var(--muted);font-size:11px;border:1px solid var(--border);border-radius:50%;width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">ⓘ</span>
@@ -420,22 +424,30 @@
           <div class="delta" id="ovKpiOverallDelta" style="color:var(--muted);"></div>
           <div class="delta" id="ovKpiOverallVsSystem" style="color:var(--muted);margin-top:4px;">Điểm trung bình Health Score của các bảng đang được tính trong Overview.</div>
         </div>
-        <div class="card kpi clickable" onclick="switchTab('health'); applyHealthFilter('Critical')">
-          <div class="label">Critical Assets</div>
+        <div class="card kpi clickable" onclick="switchTab('health'); applyHealthFilter('Unhealthy')">
+          <span class="kpi-icon">⚠️</span>
+          <div class="label">Unhealthy Assets</div>
           <div class="value" id="ovKpiCritical">–</div>
           <div class="delta" id="ovKpiCriticalDelta"></div>
         </div>
         <div class="card kpi clickable" onclick="applyRuleCoverageFilter()">
+          <span class="kpi-icon">🎯</span>
           <div class="label">Rule Coverage</div>
-          <div class="value" id="ovKpiRuleCoverage">–</div>
+          <div class="value" id="ovKpiRuleCoverage" style="font-size:16px;">–</div>
           <div class="mini-track" style="width:100%;height:5px;margin-top:6px;"><div class="mini-fill" id="ovKpiRuleCoverageBar" style="height:100%;"></div></div>
           <div class="delta" id="ovKpiRuleCoverageNote" style="margin-top:6px;"></div>
         </div>
-        <div class="card kpi">
-          <div class="label">Last Full Scan</div>
-          <div class="value" id="ovKpiLastScan" style="font-size:17px;">–</div>
-          <div class="delta" id="ovKpiLastScanDelta"></div>
-          <div class="delta" style="color:var(--muted);margin-top:4px;">Chỉ số toàn hệ thống, không theo filter</div>
+        <div class="card kpi clickable" onclick="switchTab('health'); applyHealthFilter('Unknow')">
+          <span class="kpi-icon">❓</span>
+          <div class="label">Unknown Assets <span class="kpi-tag">Engine Status</span></div>
+          <div class="value" id="ovKpiUnknow" style="font-size:17px;">–</div>
+          <div class="delta" id="ovKpiUnknowDelta" style="color:var(--muted);" title="Số minh hoạ, chưa có lịch sử theo ngày thật cho chỉ số này">Không đổi so với lần chạy trước</div>
+        </div>
+        <div class="card kpi clickable" onclick="switchTab('health'); applyHealthFilter('Notest')">
+          <span class="kpi-icon">📋</span>
+          <div class="label">No Tests <span class="kpi-tag">Governance</span></div>
+          <div class="value" id="ovKpiNotest" style="font-size:17px;">–</div>
+          <div class="delta" id="ovKpiNotestDelta" style="color:var(--muted);" title="Số minh hoạ, chưa có lịch sử theo ngày thật cho chỉ số này">Không đổi so với lần chạy trước</div>
         </div>
       </div>
 
@@ -445,7 +457,7 @@
           <div class="trend-legend">
             <span onclick="toggleLine('overall')"><span class="dot" style="background:#3762d6"></span>Overall</span>
             <span onclick="toggleLine('completeness')"><span class="dot" style="background:#2f9e5b"></span>completeness</span>
-            <span onclick="toggleLine('freshness')"><span class="dot" style="background:#e8912b"></span>freshness</span>
+            <span onclick="toggleLine('freshness')"><span class="dot" style="background:#e8912b"></span>timeliness</span>
           </div>
           <svg id="trendSvg" viewBox="0 0 620 190" width="100%" height="190" style="overflow:visible;">
             <line x1="30" y1="10" x2="30" y2="160" stroke="#e4e6eb"/>
@@ -473,7 +485,7 @@
           <div class="stackbar-row">
             <div>
               <div class="stackbar-track">
-                <div class="stackbar-seg" id="ovSegCritical" style="width:0%;background:#e0453f;" onclick="switchTab('health'); applyHealthFilter('Critical')" title="Critical · 0 assets">
+                <div class="stackbar-seg" id="ovSegCritical" style="width:0%;background:#e0453f;" onclick="switchTab('health'); applyHealthFilter('Unhealthy')" title="Unhealthy · 0 assets">
                   <span class="seg-label"></span>
                 </div>
                 <div class="stackbar-seg" id="ovSegDegraded" style="width:0%;background:#e8912b;" onclick="switchTab('health'); applyHealthFilter('Warning')" title="Degraded · 0 assets">
@@ -482,17 +494,21 @@
                 <div class="stackbar-seg" id="ovSegHealthy" style="width:0%;background:#2f9e5b;" onclick="switchTab('health'); applyHealthFilter('Healthy')" title="Healthy · 0 assets">
                   <span class="seg-label"></span>
                 </div>
-                <div class="stackbar-seg" id="ovSegUnknown" style="width:0%;background:#9aa1ab;" onclick="switchTab('health'); applyHealthFilter('Unmonitored')" title="Unmonitored · 0 assets">
+                <div class="stackbar-seg" id="ovSegUnknow" style="width:0%;background:#6b7280;" onclick="switchTab('health'); applyHealthFilter('Unknow')" title="Unknow · 0 assets">
+                  <span class="seg-label"></span>
+                </div>
+                <div class="stackbar-seg" id="ovSegNotest" style="width:0%;background:#9aa1ab;" onclick="switchTab('health'); applyHealthFilter('Notest')" title="Notest · 0 assets">
                   <span class="seg-label"></span>
                 </div>
               </div>
               <div class="stackbar-scale"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>
             </div>
             <div class="legend-row">
-              <div class="item" onclick="switchTab('health'); applyHealthFilter('Critical')"><span class="dot" style="background:#e0453f"></span>Critical &nbsp;<span id="ovLegCritical">0</span></div>
+              <div class="item" onclick="switchTab('health'); applyHealthFilter('Unhealthy')"><span class="dot" style="background:#e0453f"></span>Unhealthy &nbsp;<span id="ovLegCritical">0</span></div>
               <div class="item" onclick="switchTab('health'); applyHealthFilter('Warning')"><span class="dot" style="background:#e8912b"></span>Degraded &nbsp;<span id="ovLegDegraded">0</span></div>
               <div class="item" onclick="switchTab('health'); applyHealthFilter('Healthy')"><span class="dot" style="background:#2f9e5b"></span>Healthy &nbsp;<span id="ovLegHealthy">0</span></div>
-              <div class="item" onclick="switchTab('health'); applyHealthFilter('Unmonitored')"><span class="dot" style="background:#9aa1ab"></span>Unmonitored &nbsp;<span id="ovLegUnknown">0</span></div>
+              <div class="item" onclick="switchTab('health'); applyHealthFilter('Unknow')"><span class="dot" style="background:#6b7280"></span>Unknow &nbsp;<span id="ovLegUnknow">0</span></div>
+              <div class="item" onclick="switchTab('health'); applyHealthFilter('Notest')"><span class="dot" style="background:#9aa1ab"></span>Notest &nbsp;<span id="ovLegNotest">0</span></div>
             </div>
           </div>
         </div>
@@ -515,24 +531,26 @@
             <button class="btn-outline" id="dqDrilldownToggleBtn" onclick="toggleDQDrilldown()" style="font-size:11.5px;padding:5px 12px;">Xem chi tiết theo asset →</button>
           </div>
           <div id="dqDrilldownPanel" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-              <span style="font-size:12.5px;font-weight:700;color:var(--text);">Dimension Spotlight — Lowest-Scoring Assets</span>
-              <button class="btn-outline" id="dqDrilldownCloseBtn" onclick="toggleDQDrilldown()" style="font-size:11px;padding:3px 9px;">← Ẩn</button>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:10px;flex-wrap:wrap;">
+              <span style="font-size:12.5px;font-weight:700;color:var(--text);" id="dqRadarSpotlightTitle">Dimension Spotlight — Lowest-Scoring Assets</span>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="ddown" id="ddRadarAssetFilter">Chọn asset</div>
+                <button class="btn-outline" id="dqDrilldownCloseBtn" onclick="toggleDQDrilldown()" style="font-size:11px;padding:3px 9px;">← Ẩn</button>
+              </div>
             </div>
+            <div id="dqRadarFilterWarning" style="display:none;font-size:11px;color:var(--muted);margin-bottom:8px;"></div>
             <div class="radar-wrap">
               <svg width="320" height="246" viewBox="-20 0 260 200" style="overflow:visible;flex-shrink:0;">
                 <polygon points="110,20 175,60 175,140 110,180 45,140 45,60" fill="none" stroke="#eceef2"/>
                 <polygon points="110,50 152,72 152,128 110,150 68,128 68,72" fill="none" stroke="#eceef2"/>
                 <polygon points="110,80 129,86 129,114 110,120 91,114 91,86" fill="none" stroke="#eceef2"/>
-                <polygon id="ovRadarPoly0" points="" fill="#3762d6" fill-opacity="0.18" stroke="#3762d6" stroke-width="1.4"/>
-                <polygon id="ovRadarPoly1" points="" fill="#e8912b" fill-opacity="0.15" stroke="#e8912b" stroke-width="1.4"/>
-                <polygon id="ovRadarPoly2" points="" fill="#e0453f" fill-opacity="0.15" stroke="#e0453f" stroke-width="1.4"/>
+                <g id="ovRadarPolyGroup"></g>
                 <text x="105" y="14" font-size="9" fill="#6b7280">Accuracy</text>
                 <text x="180" y="63" font-size="9" fill="#6b7280">Completeness</text>
                 <text x="180" y="145" font-size="9" fill="#6b7280">Uniqueness</text>
                 <text x="98" y="196" font-size="9" fill="#6b7280">Validity</text>
                 <text x="-18" y="145" font-size="9" fill="#6b7280">Consistency</text>
-                <text x="-18" y="63" font-size="9" fill="#6b7280">Freshness</text>
+                <text x="-18" y="63" font-size="9" fill="#6b7280">Timeliness</text>
               </svg>
               <div class="radar-legend" id="ovRadarLegend"></div>
             </div>
@@ -555,7 +573,14 @@
       </div>
 
       <div class="card panel">
-        <h3>Needs Attention</h3>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;">
+          <h3 style="margin:0;">Needs Attention</h3>
+          <select id="needsAttentionRangeSelect" onchange="setNeedsAttentionRange(this.value)" style="padding:4px 10px;font-size:11px;border:1px solid var(--border);border-radius:6px;background:#fff;color:var(--text);cursor:pointer;">
+            <option value="5" selected>Top 5</option>
+            <option value="10">Top 10</option>
+            <option value="20">Top 20</option>
+          </select>
+        </div>
         <table>
           <thead>
             <tr><th>Asset</th><th>Health</th><th>Primary Issue</th><th>Domain</th><th>Owner</th><th>Last Evaluated</th></tr>
@@ -585,8 +610,12 @@
         <table>
           <thead>
             <tr>
-              <th>Asset</th><th>Health Score</th><th>Completeness</th><th>Uniqueness</th><th>Validity</th>
-              <th>Consistency</th><th>Freshness</th><th>Accuracy</th><th>Status</th><th>Primary Issue</th><th>Owner</th>
+              <th>Asset</th>
+              <th id="thHealthScore" onclick="setHealthTableSort('healthScore')" style="cursor:pointer;white-space:nowrap;" title="Bấm để sort theo Health Score">Health Score</th>
+              <th>Completeness</th><th>Uniqueness</th><th>Validity</th>
+              <th>Consistency</th><th>Timeliness</th><th>Accuracy</th>
+              <th id="thHealthStatus" onclick="setHealthTableSort('status')" style="cursor:pointer;white-space:nowrap;" title="Bấm để sort theo Status">Status</th>
+              <th>Primary Issue</th><th>Owner</th>
             </tr>
           </thead>
           <tbody id="healthTableBody"></tbody>
@@ -642,7 +671,9 @@
         <h3>Top Rule Bất Ổn — Ưu Tiên Xử Lý Tuần Này</h3>
         <table>
           <thead>
-            <tr><th>Rule / Test</th><th>Table</th><th>Số lần tái phát</th><th>Chu kỳ lỗi hiện tại</th><th>Fail / Total</th><th>Trạng thái</th></tr>
+            <tr><th>Rule / Test</th><th>Table</th>
+              <th id="thTopUnstableRecurrence" onclick="toggleTopUnstableSort()" style="cursor:pointer;white-space:nowrap;" title="Bấm để sort theo Số lần tái phát">Số lần tái phát</th>
+              <th>Chu kỳ lỗi hiện tại</th><th>Fail / Total</th><th>Trạng thái</th></tr>
           </thead>
           <tbody id="topUnstableBody"></tbody>
         </table>
@@ -655,10 +686,15 @@
         <table>
           <thead>
             <tr>
-              <th class="sticky-col">Rule / Test</th><th>Table / Column</th><th>Previous Run → Current Run</th><th>Trạng thái</th>
-              <th>Lịch sử gần đây</th><th>Số lần tái phát</th><th>Chu kỳ lỗi hiện tại</th><th>Lần tái phát gần nhất</th>
-              <th>Khoảng cách tái phát TB</th><th>Fail / Total</th><th>Thời gian khắc phục TB</th>
-              <th>Người xử lý</th><th>Chủ sở hữu hệ thống</th><th>Chủ sở hữu Business Rule</th><th>Người tạo Rule</th>
+              <th class="sticky-col" id="thRuleName" onclick="setRuleLifecycleSort('ruleName')" style="cursor:pointer;white-space:nowrap;" title="Bấm để sort theo Rule / Test">Rule / Test</th>
+              <th>Table / Column</th><th>Previous Run → Current Run</th>
+              <th id="thRuleSeverity" onclick="setRuleLifecycleSort('severity')" style="cursor:pointer;white-space:nowrap;" title="Bấm để sort theo Severity">Severity</th>
+              <th>Trạng thái</th>
+              <th>Lịch sử gần đây</th>
+              <th id="thRuleRecurrence" onclick="setRuleLifecycleSort('recurrenceCount')" style="cursor:pointer;white-space:nowrap;" title="Bấm để sort theo Số lần tái phát">Số lần tái phát</th>
+              <th id="thRuleFailStreak" onclick="setRuleLifecycleSort('currentFailStreak')" style="cursor:pointer;white-space:nowrap;" title="Bấm để sort theo Chu kỳ lỗi hiện tại">Chu kỳ lỗi hiện tại</th>
+              <th>Lần tái phát gần nhất</th>
+              <th>Khoảng cách tái phát TB</th><th>Fail / Total</th>
             </tr>
           </thead>
           <tbody id="ruleLifecycleBody"></tbody>
@@ -707,7 +743,10 @@
 
     <div class="grid-2" style="grid-template-columns:1fr 1.4fr;">
       <div class="card panel">
-        <h3>Dimension Breakdown</h3>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+          <h3 style="margin:0;">Dimension Breakdown</h3>
+          <div class="ddown" id="ddDimBreakdownFilter">Dimension</div>
+        </div>
         <div id="dimBreakdown"></div>
       </div>
 
@@ -897,6 +936,17 @@ function fmtRunTs(iso){
 
 const lifecycleBadgeClass = {New:"degraded", Reopened:"reopened", Ongoing:"critical", Recovered:"healthy", Stable:"unknown", "No data":"unknown"};
 
+// Severity của bảng "Rule Lifecycle — Chi tiết theo Rule" — mock ngẫu nhiên theo yêu cầu, không gắn
+// điều kiện gì với dữ liệu thật của rule. Gán 1 LẦN DUY NHẤT ngay sau khi rulesMock load xong
+// (assignRuleSeverities(), gọi trong bootstrap) rồi lưu vào r.severity — không random lại mỗi lần
+// renderRuleLifecycle(), nếu không bảng sẽ đổi giá trị liên tục mỗi khi sort/filter/phân trang.
+const SEVERITY_LEVELS = ['Critical','High','Medium','Low'];
+const SEVERITY_ORDER = {Critical:4, High:3, Medium:2, Low:1};
+const SEVERITY_BADGE_CLASS = {Critical:'critical', High:'degraded', Medium:'pending', Low:'healthy'};
+function assignRuleSeverities(){
+  rulesMock.forEach(r=>{ if(!r.severity) r.severity = SEVERITY_LEVELS[Math.floor(Math.random()*SEVERITY_LEVELS.length)]; });
+}
+
 // Test tự động tối thiểu: đối chiếu số liệu load được với từng assertion trong Docs/COVERAGE.md.
 // Không có test runner trong repo (file tĩnh, không build tooling) nên chạy trong console thay cho tsc/jest.
 // Cập nhật theo Docs/COVERAGE.md bản mới (30 asset + 135 rule, ngày 2026-08-18) — bản cũ đối chiếu
@@ -988,6 +1038,14 @@ function runCoverageChecks(assets, rules){
   expect('so dong heatmap === min(dqHeatmapRange, filtered.length)', hmRows, hmExpected);
   console.groupEnd();
 
+  console.group('COVERAGE.md checks — Needs Attention (Top N)');
+  const naRows = document.querySelectorAll('#needsAttentionBody tr[data-asset-id]').length;
+  const naEligible = filterOverviewAssets(assets).filter(a=>a.failingDimensions && a.failingDimensions.length>0).length;
+  expect('so dong Needs Attention === min(needsAttentionRange, so asset co failingDimensions)',
+    naRows, Math.min(needsAttentionRange, naEligible));
+  expect('needsAttentionRange nam trong 3 muc Top 5/10/20', [5,10,20].includes(needsAttentionRange), true);
+  console.groupEnd();
+
   console.group('COVERAGE.md checks — Trend chart geometry (1 nguon du lieu duy nhat)');
   ['line-overall','line-completeness','line-freshness'].forEach(id=>{
     const el = document.getElementById(id);
@@ -1012,14 +1070,20 @@ function runCoverageChecks(assets, rules){
   const unmonitoredCheck = withScoreCheck.length - scoredCheck.length;
   expect('Overview avg: so scored + so unmonitored === tong so asset', scoredCheck.length + unmonitoredCheck, assets.length);
 
-  const statusDist = {Critical:0, Warning:0, Healthy:0, Unmonitored:0};
-  withScoreCheck.forEach(x=>{ const st = statusForScore(x.score); if(statusDist[st]!==undefined) statusDist[st]++; });
-  expect('tong 4 bucket status (Critical+Warning+Healthy+Unmonitored) === tong asset',
-    statusDist.Critical + statusDist.Warning + statusDist.Healthy + statusDist.Unmonitored, assets.length);
-  expect('payment/subscriptions_057/kyc_check deu roi vao bucket Unmonitored (khong lot vao Healthy/Degraded/Critical)',
+  const statusDist = {Unhealthy:0, Warning:0, Healthy:0, Unknow:0, Notest:0};
+  withScoreCheck.forEach(x=>{ const st = computeAssetStatus(x.a.id); if(statusDist[st]!==undefined) statusDist[st]++; });
+  expect('tong 5 bucket status (Unhealthy+Warning+Healthy+Unknow+Notest) === tong asset',
+    statusDist.Unhealthy + statusDist.Warning + statusDist.Healthy + statusDist.Unknow + statusDist.Notest, assets.length);
+  expect('payment/subscriptions_057/kyc_check deu roi vao bucket Notest (khong co rule nao)',
     ['payment','subscriptions_057','kyc_check'].every(name=>{
       const a = assets.find(x=>x.name===name);
-      return statusForScore(healthScore(a.id).score) === 'Unmonitored';
+      return computeAssetStatus(a.id) === 'Notest';
+    }), true);
+  expect('asset_008/asset_018/asset_028 deu roi vao bucket Unknow (co rule nhung engine chua quet lan nao)',
+    ['asset_008','asset_018','asset_028'].every(id=>{
+      const a = assets.find(x=>x.id===id);
+      return a.lastRunAt===null && (rulesByAssetId[id]||[]).length>0
+        && healthScore(id).score===null && computeAssetStatus(id)==='Unknow';
     }), true);
   console.groupEnd();
 
@@ -1028,7 +1092,7 @@ function runCoverageChecks(assets, rules){
   const domainOpts = DOMAIN_OPTIONS.length;
   const ownerOpts = OWNER_OPTIONS.length;
   const dimOpts = DIMENSION_OPTIONS.length;
-  expect('Health status dropdown co 4 options', statusOpts, 4);
+  expect('Health status dropdown co 5 options', statusOpts, 5);
   expect('Domain dropdown co 6 options', domainOpts, 6);
   expect('Owner dropdown co 5 options', ownerOpts, 5);
   expect('Dimension dropdown co 6 options', dimOpts, 6);
@@ -1137,9 +1201,23 @@ function statusBadge(status){
 }
 
 // Needs Attention = asset trong tập đang lọc có failingDimensions.length>0, sort theo healthScore tăng dần
-// (xấu nhất lên đầu), giới hạn 5 dòng. Click mở Asset Detail (full page) qua event delegation
+// (xấu nhất lên đầu). Click mở Asset Detail (full page) qua event delegation
 // (data-asset-id/data-list-source) — xem listener chung ở phần "Asset Detail".
+//
+// Số dòng hiển thị do needsAttentionRange quyết định (5/10/20), ĐỘC LẬP với filter bar — cùng
+// convention như dqHeatmapRange ở heatmap bên trên: filter bar thu hẹp tập dữ liệu trước, dropdown
+// Top-N chỉ quyết định hiển thị bao nhiêu dòng xấu nhất trong tập đó (không phải 1 filter thứ hai).
+let needsAttentionRange = 5; // 5 | 10 | 20 — mặc định Top 5
 let needsAttentionListIds = [];
+
+function setNeedsAttentionRange(range){
+  needsAttentionRange = Number(range);
+  const select = document.getElementById('needsAttentionRangeSelect');
+  if(select) select.value = String(needsAttentionRange);
+  // Render lại đúng tập đang lọc của Overview (không tự lọc lại theo cách khác, tránh lệch với
+  // các panel còn lại của tab).
+  renderNeedsAttention(filterOverviewAssets(assetsMock));
+}
 function renderNeedsAttention(list){
   const body = document.getElementById('needsAttentionBody');
   const rows = list
@@ -1151,7 +1229,7 @@ function renderNeedsAttention(list){
       if(sb==null) return -1;
       return sa-sb;
     })
-    .slice(0,5);
+    .slice(0, needsAttentionRange);
   needsAttentionListIds = rows.map(a=>a.id);
   body.innerHTML = rows.length ? rows.map(a=>{
     const score = healthScore(a.id).score;
@@ -1167,7 +1245,7 @@ function renderNeedsAttention(list){
         ${score==null ? '<span class="primary-issue none">—</span>' : `<span class="health-num" style="color:${color}">${score}</span>
         <div class="mini-track"><div class="mini-fill" style="width:${score}%;background:${color};"></div></div>`}
       </td>
-      <td><span class="primary-issue">${a.failingDimensions.join(', ')} failing</span></td>
+      <td><span class="primary-issue">${a.failingDimensions.map(dimLabel).join(', ')} failing</span></td>
       <td>${a.domain}</td>
       <td><span class="owner-link">${a.owner}</span></td>
       <td>${fmtRunTs(a.lastRunAt)}</td>
@@ -1186,7 +1264,7 @@ let radarListIds = [];
 // không khớp healthDimensions).
 function filterOverviewAssets(list){
   return list.filter(a=>{
-    if(ovStatusFilters.length && !ovStatusFilters.includes(statusForScore(healthScore(a.id).score))) return false;
+    if(ovStatusFilters.length && !ovStatusFilters.includes(computeAssetStatus(a.id))) return false;
     if(ovDomainFilters.length && !ovDomainFilters.includes(a.domain)) return false;
     if(ovOwnerFilters.length && !ovOwnerFilters.includes(a.owner)) return false;
     if(ovDimFilters.length && !ovDimFilters.some(d=>a.failingDimensions.includes(d))) return false;
@@ -1208,6 +1286,7 @@ function initOverviewFilterDropdowns(){
   msOvDimension = createMultiSelectDropdown(document.getElementById('ddOvDimension'), {
     label:'Health dimension', options:()=>DIMENSION_OPTIONS, getSelected:()=>ovDimFilters,
     onChange:v=>{ ovDimFilters=v; renderOverview(); }});
+  initRadarAssetFilterDropdown();
 }
 function clearOverviewFilters(){
   ovStatusFilters=[]; ovDomainFilters=[]; ovOwnerFilters=[]; ovDimFilters=[];
@@ -1228,7 +1307,15 @@ function radarPoint(dim, val){
   return [110+ox*v, 100+oy*v];
 }
 const RADAR_DIMS = ["Accuracy","Completeness","Uniqueness","Validity","Consistency","Freshness"];
-const RADAR_COLORS = ["#3762d6","#e8912b","#e0453f"];
+// Nhãn hiển thị cho user — KHÔNG đổi giá trị "Freshness" bên trên hay field/value "healthDimension"/"freshness"
+// thật trong mock-assets.js/mock-rules.js (đổi sẽ làm mọi chỗ join/match theo dimension này gãy, vì dữ liệu vẫn
+// lưu "Freshness"). dimLabel() chỉ tách phần TEXT hiển thị ra khỏi giá trị dùng để so khớp dữ liệu.
+const DIM_DISPLAY_LABEL = { Freshness: "Timeliness", freshness: "timeliness" };
+function dimLabel(dim){ return DIM_DISPLAY_LABEL[dim] || dim; }
+const RADAR_COLORS = ["#3762d6","#e8912b","#e0453f","#7c5cbf","#1f8a8c","#8a5a44","#c74e8b","#5b7f37"];
+const RADAR_MAX_RECOMMENDED = RADAR_COLORS.length;
+let radarAssetFilter = []; // id asset do user tự chọn qua ddRadarAssetFilter; rỗng = auto (3 asset điểm thấp nhất trong tập đang lọc)
+let msRadarAssetFilter = null;
 
 // ===================== NGƯỠNG MÀU/CHẤT LƯỢNG DUY NHẤT CHO TOÀN DASHBOARD =====================
 // Trước đây có 4 hệ ngưỡng khác nhau cho cùng khái niệm "điểm số tốt/xấu" (90/70 hardcode rải rác
@@ -1246,7 +1333,13 @@ const THRESHOLDS = { green: 90, amber: 70 };
 // `dimension`), pass = latestResult==='Pass' (field/value thật là `latestResult`/'Pass', không phải
 // `lastResult`/'pass' như gợi ý ban đầu).
 // null = KHÔNG có rule nào đo dimension này (khác hoàn toàn với điểm 0 = có rule nhưng toàn Fail).
+// asset.lastRunAt===null (asset_008/asset_018/asset_028) nghĩa là ĐÃ có rule cấu hình nhưng engine
+// CHƯA quét lần nào cho asset này — coi như chưa đo được dimension nào (khác "Notest" = không có rule
+// nào cả), bất kể field latestResult của từng rule đang lưu gì (dữ liệu mock cũ trước khi tách 2
+// khái niệm này, xem computeAssetStatus()).
 function dimensionScore(assetId, dim){
+  const asset = getAssetById(assetId);
+  if(asset && asset.lastRunAt===null) return null;
   const rules = rulesMock.filter(r=>r.assetId===assetId && r.healthDimension===dim);
   // latestResult=null nghĩa là rule đã tạo nhưng CHƯA chạy lần nào — khác "Fail" (đã chạy, không đạt).
   // Loại khỏi mẫu số thay vì tính là fail, nếu không asset chỉ có rule chưa chạy sẽ bị chấm điểm 0
@@ -1257,7 +1350,8 @@ function dimensionScore(assetId, dim){
 }
 
 // { score, measuredDims, totalDims }; score=null nếu không dimension nào đo được (asset chưa có
-// rule nào = "Unmonitored"). Dùng RADAR_DIMS làm danh sách 6 dimension chuẩn — HEALTH_DIMS (khai
+// rule nào = "Notest", hoặc có rule nhưng engine chưa quét lần nào = "Unknow" — xem computeAssetStatus()).
+// Dùng RADAR_DIMS làm danh sách 6 dimension chuẩn — HEALTH_DIMS (khai
 // báo ở phần Health table, dưới) chỉ là 1 THỨ TỰ HIỂN THỊ khác cho cùng 6 giá trị này (thứ tự cột
 // bảng khác thứ tự đỉnh lục giác radar), không phải danh sách dimension thứ 2 — không gộp 2 hằng số
 // này vì đổi 1 trong 2 sẽ làm lệch thứ tự hiển thị đang có (cột bảng / đỉnh radar).
@@ -1272,27 +1366,30 @@ function healthScore(assetId){
 
 // Trạng thái asset DUY NHẤT của toàn dashboard, luôn suy từ CÙNG healthScore()/THRESHOLDS mà
 // scoreColor() dùng — để 1 điểm số không thể vừa xanh (scoreColor) vừa hiện badge khác màu (bug cũ
-// khi 2 ternary ngưỡng độc lập bị lệch nhau). score===null (chưa có rule nào đo được dimension nào)
-// -> 'Unmonitored', khác với "Unknown" cũ trong mock JSON (asset CÓ rule nhưng rule chưa chạy lần
-// nào / latestResult null — 1 khái niệm khác, xem asset_008/asset_018/asset_028) — không gộp 2
-// khái niệm này, nhưng vì status giờ luôn suy từ điểm rule thật nên "Unknown" cũ (field tĩnh trong
-// mock JSON) không còn được đọc trực tiếp ở bất kỳ đâu nữa.
-function statusForScore(score){
-  if(score==null) return 'Unmonitored';
+// khi 2 ternary ngưỡng độc lập bị lệch nhau). 5 bucket, tách theo 2 câu hỏi độc lập trước khi xét
+// điểm số: (1) asset có rule nào cấu hình không (rulesByAssetId) -> không có = 'Notest'; (2) nếu có
+// rule, engine đã quét lần nào chưa (asset.lastRunAt!=null, xem dimensionScore()) -> chưa quét lần
+// nào = 'Unknow' (asset_008/asset_018/asset_028 trong mock). Còn lại mới xét điểm thật để chia
+// Healthy/Warning/Unhealthy — nhận assetId (không phải score) vì cần cả 2 field trên, không chỉ điểm.
+function computeAssetStatus(assetId){
+  if(!(rulesByAssetId[assetId] || []).length) return 'Notest';
+  const score = healthScore(assetId).score;
+  if(score==null) return 'Unknow';
   if(score>=THRESHOLDS.green) return 'Healthy';
   if(score>=THRESHOLDS.amber) return 'Warning';
-  return 'Critical';
+  return 'Unhealthy';
 }
-const ASSET_STATUSES = ['Critical','Warning','Healthy','Unmonitored'];
+const ASSET_STATUSES = ['Unhealthy','Warning','Healthy','Unknow','Notest'];
 const HEALTH_STATUS_OPTIONS = [
-  {value:'Critical', label:'Critical'},
+  {value:'Unhealthy', label:'Unhealthy'},
   {value:'Warning',  label:'Degraded'},
   {value:'Healthy',  label:'Healthy'},
-  {value:'Unmonitored',  label:'Unmonitored'},
+  {value:'Unknow',  label:'Unknow'},
+  {value:'Notest',  label:'Notest'},
 ];
 const DOMAIN_OPTIONS = ["Compliance","Finance","Marketing","Operations","Risk","Sales"];
 const OWNER_OPTIONS = ["Analytics","Content","Data Platform","Finance Ops","Marketing Ops"];
-const DIMENSION_OPTIONS = ["Accuracy","Completeness","Uniqueness","Validity","Consistency","Freshness"];
+const DIMENSION_OPTIONS = RADAR_DIMS.map(d=>({value:d, label:dimLabel(d)}));
 
 /* ===================== Data Quality Score — Toàn hệ thống (Overview) =====================
    Luôn tính trên TOÀN BỘ assetsMock (không theo filter bar) — đúng vai trò Overview trả lời
@@ -1412,7 +1509,7 @@ function buildSystemDQRadarHtml(scores){
     const valText = v==null ? '—' : Math.round(v);
     return `<text x="${x.toFixed(1)}" y="${(y+radar2Dy(angle)).toFixed(1)}" font-size="12" text-anchor="${radar2Anchor(angle)}"
       fill="#6b7280" font-weight="600"
-      data-dq-dim="${dim}" style="cursor:pointer;">${dim} <tspan font-size="11" font-weight="700" fill="${scoreColor(v)}">${valText}</tspan></text>`;
+      data-dq-dim="${dim}" style="cursor:pointer;">${dimLabel(dim)} <tspan font-size="11" font-weight="700" fill="${scoreColor(v)}">${valText}</tspan></text>`;
   }).join('');
 
   return `
@@ -1437,7 +1534,7 @@ function wireSystemDQTooltip(container, scores){
     const v = scores[dim];
     const diff = v==null ? null : Math.round(v) - THRESHOLDS.green;
     const below = diff!=null && diff<0;
-    tooltip.innerHTML = `<b>${dim}</b>
+    tooltip.innerHTML = `<b>${dimLabel(dim)}</b>
       <div>Hiện tại: ${v==null?'—':Math.round(v)}</div>
       <div>Mục tiêu: ${THRESHOLDS.green}</div>
       ${diff==null ? '' : `<div class="${below?'warn':''}" style="${below?'':'color:#8ee6a0;'}">${diff>=0?'▲ +':'▼ '}${diff} so với mục tiêu</div>`}`;
@@ -1463,7 +1560,7 @@ function wireDQInfoTooltip(){
   icon.dataset.wired = '1';
   const tooltip = getRadarTooltipEl();
   const show = (x,y)=>{
-    tooltip.innerHTML = `<b>Cách tính</b><div>Health Score = (Accuracy + Completeness + Uniqueness + Validity + Consistency + Freshness) / 6</div><div>Ngưỡng mục tiêu: ${THRESHOLDS.green}/100 mỗi chiều</div>`;
+    tooltip.innerHTML = `<b>Cách tính</b><div>Health Score = (Accuracy + Completeness + Uniqueness + Validity + Consistency + Timeliness) / 6</div><div>Ngưỡng mục tiêu: ${THRESHOLDS.green}/100 mỗi chiều</div>`;
     tooltip.classList.add('show');
     positionRadarTooltip(tooltip, x, y);
   };
@@ -1662,7 +1759,7 @@ function wireOverallInfoTooltip(){
    luôn hiện hết nếu tập sau lọc ít hơn số dòng chọn (không báo lỗi, không cắt bớt âm thầm). */
 let dqHeatmapRange = 20; // 10 | 20 | 'all' — mặc định Top 20
 const DQ_HEATMAP_ROW_MIN = 22, DQ_HEATMAP_ROW_MAX = 34;
-const DQ_HEATMAP_SHORT = {Accuracy:'Accur.', Completeness:'Compl.', Uniqueness:'Uniq.', Validity:'Valid.', Consistency:'Consist.', Freshness:'Fresh.'};
+const DQ_HEATMAP_SHORT = {Accuracy:'Accur.', Completeness:'Compl.', Uniqueness:'Uniq.', Validity:'Valid.', Consistency:'Consist.', Freshness:'Timel.'};
 
 function setDQHeatmapRange(range){
   dqHeatmapRange = range === 'all' ? 'all' : Number(range);
@@ -1703,7 +1800,7 @@ function renderDQHeatmap(filtered){
   const shown = dqHeatmapRange === 'all' ? ordered : ordered.slice(0, dqHeatmapRange);
 
   const headHtml = `<div class="hm-head hm-corner">Asset</div>` +
-    RADAR_DIMS.map(dim=>`<div class="hm-head" title="${dim}">${DQ_HEATMAP_SHORT[dim]}</div>`).join('');
+    RADAR_DIMS.map(dim=>`<div class="hm-head" title="${dimLabel(dim)}">${DQ_HEATMAP_SHORT[dim]}</div>`).join('');
 
   const rowsHtml = shown.map(a=>{
     const nameCell = `<div class="hm-name" data-asset-id="${a.id}" data-list-source="dqHeatmap" title="${a.name}">${a.name}</div>`;
@@ -1770,23 +1867,25 @@ function renderOverview(){
     : `Overall ${avgScore}/100 — tính trên ${scored.length}/${filtered.length} asset. ${unmonitoredCount} asset chưa được giám sát.`;
   wireOverallInfoTooltip();
 
-  const byStatus = {Healthy:0, Warning:0, Critical:0, Unmonitored:0};
-  filtered.forEach(a=>{ const st = statusForScore(healthScore(a.id).score); if(byStatus[st]!==undefined) byStatus[st]++; });
-  document.getElementById('ovKpiCritical').textContent = byStatus.Critical;
+  const byStatus = {Healthy:0, Warning:0, Unhealthy:0, Unknow:0, Notest:0};
+  filtered.forEach(a=>{ const st = computeAssetStatus(a.id); if(byStatus[st]!==undefined) byStatus[st]++; });
+  document.getElementById('ovKpiCritical').textContent = byStatus.Unhealthy;
+  document.getElementById('ovKpiUnknow').textContent = byStatus.Unknow;
+  document.getElementById('ovKpiNotest').textContent = byStatus.Notest;
 
   const deltas = computeYesterdayDeltas(filtered);
   applyDelta('ovKpiOverallDelta', deltas && deltas.overallDelta, ' điểm', '', 1);
   applyDelta('ovKpiCriticalDelta', deltas && deltas.criticalDelta, ' asset');
 
   renderRuleCoverageKpi(filtered);
-  renderLastFullScanKpi();
 
   document.getElementById('ovDistTotal').textContent = `${filtered.length} assets total`;
   const segs = [
-    ['ovSegCritical','ovLegCritical', byStatus.Critical, 'Critical'],
+    ['ovSegCritical','ovLegCritical', byStatus.Unhealthy, 'Unhealthy'],
     ['ovSegDegraded','ovLegDegraded', byStatus.Warning, 'Degraded'],
     ['ovSegHealthy','ovLegHealthy', byStatus.Healthy, 'Healthy'],
-    ['ovSegUnknown','ovLegUnknown', byStatus.Unmonitored, 'Unmonitored'],
+    ['ovSegUnknow','ovLegUnknow', byStatus.Unknow, 'Unknow'],
+    ['ovSegNotest','ovLegNotest', byStatus.Notest, 'Notest'],
   ];
   segs.forEach(([segId, legId, count, label])=>{
     const pct = filtered.length ? (count/filtered.length*100) : 0;
@@ -1799,16 +1898,32 @@ function renderOverview(){
 
   renderDQHeatmap(filtered);
 
-  const lowest = withScore.filter(x=>x.score!=null).sort((x,y)=>x.score-y.score).slice(0,3).map(x=>x.a);
-  radarListIds = lowest.map(a=>a.id);
-  RADAR_COLORS.forEach((color,i)=>{
-    const poly = document.getElementById('ovRadarPoly'+i);
-    const a = lowest[i];
-    poly.setAttribute('points', a ? RADAR_DIMS.map(dim=>radarPoint(dim, dimensionScore(a.id, dim)).join(',')).join(' ') : '');
-  });
-  document.getElementById('ovRadarLegend').innerHTML = lowest.length ? lowest.map((a,i)=>
-    `<div class="item" data-asset-id="${a.id}" data-list-source="radar" style="cursor:pointer;"><span class="dot" style="background:${RADAR_COLORS[i]};border-radius:50%;width:8px;height:8px;"></span>${a.name}</div>`
-  ).join('') : `<div class="empty-note">Không có asset nào có healthScore trong tập đang lọc.</div>`;
+  // Mặc định: 3 asset điểm thấp nhất trong tập đang lọc (auto). Nếu user tự chọn asset qua
+  // ddRadarAssetFilter thì dùng đúng danh sách đã chọn (giữ nguyên thứ tự chọn), không auto nữa —
+  // filter luôn lấy trên assetsMock (không phụ thuộc filter bar Overview) để chọn được cả asset đang
+  // bị filter bar ẩn đi.
+  const spotlight = radarAssetFilter.length
+    ? radarAssetFilter.map(id=>assetsMock.find(a=>a.id===id)).filter(Boolean)
+    : withScore.filter(x=>x.score!=null).sort((x,y)=>x.score-y.score).slice(0,3).map(x=>x.a);
+  radarListIds = spotlight.map(a=>a.id);
+  document.getElementById('dqRadarSpotlightTitle').textContent = radarAssetFilter.length
+    ? `Dimension Spotlight — Asset đã chọn (${spotlight.length})`
+    : 'Dimension Spotlight — Lowest-Scoring Assets';
+  const warnEl = document.getElementById('dqRadarFilterWarning');
+  if(spotlight.length > RADAR_MAX_RECOMMENDED){
+    warnEl.style.display = 'block';
+    warnEl.textContent = `Đang so sánh ${spotlight.length} asset — chọn ít hơn ${RADAR_MAX_RECOMMENDED} để biểu đồ dễ đọc hơn.`;
+  } else {
+    warnEl.style.display = 'none';
+  }
+  document.getElementById('ovRadarPolyGroup').innerHTML = spotlight.map((a,i)=>{
+    const color = RADAR_COLORS[i % RADAR_COLORS.length];
+    const pts = RADAR_DIMS.map(dim=>radarPoint(dim, dimensionScore(a.id, dim)).join(',')).join(' ');
+    return `<polygon points="${pts}" fill="${color}" fill-opacity="0.15" stroke="${color}" stroke-width="1.4"/>`;
+  }).join('');
+  document.getElementById('ovRadarLegend').innerHTML = spotlight.length ? spotlight.map((a,i)=>
+    `<div class="item" data-asset-id="${a.id}" data-list-source="radar" style="cursor:pointer;"><span class="dot" style="background:${RADAR_COLORS[i % RADAR_COLORS.length]};border-radius:50%;width:8px;height:8px;"></span>${a.name}</div>`
+  ).join('') : `<div class="empty-note">Không có asset nào được chọn / có healthScore trong tập đang lọc.</div>`;
 
   renderNeedsAttention(filtered);
 }
@@ -1818,15 +1933,27 @@ function dimCell(val){
   return val==null ? '<span class="primary-issue none" title="Chưa có rule đo dimension này">—</span>' : `<span class="cellnum">${val}</span>`;
 }
 
-const assetStatusBadgeClass = {Critical:"critical", Warning:"degraded", Healthy:"healthy", Unmonitored:"unknown"};
+const assetStatusBadgeClass = {Unhealthy:"critical", Warning:"degraded", Healthy:"healthy", Unknow:"pending", Notest:"unknown"};
 function assetStatusBadge(status){
   return `<span class="badge ${assetStatusBadgeClass[status]||'unknown'}">${status}</span>`;
 }
 
 const HEALTH_DIMS = ["Completeness","Uniqueness","Validity","Consistency","Freshness","Accuracy"];
 
+// Rank dùng để sort cột Status theo đúng thứ tự nghiệp vụ yêu cầu — KHÔNG phải alphabet. Số lớn hơn
+// = "tốt hơn"/lên trước khi sort desc (mặc định khi mới bấm vào header, giống quy ước dirMul đang
+// dùng cho cột Health Score: bấm lần 1 = giảm dần). Vì vậy Healthy phải là rank CAO NHẤT để bấm 1
+// lần vào "Status" ra đúng thứ tự Healthy → Degraded → Unhealthy → Unknow → Notest.
+const HEALTH_TABLE_STATUS_ORDER = {Healthy:5, Warning:4, Unhealthy:3, Unknow:2, Notest:1};
+
 let healthTableListIds = [];
 let healthTablePage = 1;
+let healthTableSort = {key:null, dir:'desc'}; // key=null: giữ nguyên thứ tự lọc gốc, chưa bấm sort cột nào
+function setHealthTableSort(key){
+  healthTableSort = { key, dir: healthTableSort.key===key && healthTableSort.dir==='desc' ? 'asc' : 'desc' };
+  healthTablePage = 1; // đổi sort thì quay về trang 1, tránh đứng ở trang lẻ không còn khớp thứ tự mới
+  renderHealthTable();
+}
 function goToHealthTablePage(p){ healthTablePage = p; renderHealthTable(); }
 function renderHealthTable(){
   const body = document.getElementById('healthTableBody');
@@ -1834,7 +1961,7 @@ function renderHealthTable(){
   // Lưu ý: filter dimension khớp theo failingDimensions (dimension đang lỗi), KHÔNG khớp theo
   // object healthDimensions (điểm số mọi dimension) — đúng ràng buộc trong prompt.
   let list = assetsMock.filter(a=>{
-    if(healthStatusFilters.length && !healthStatusFilters.includes(statusForScore(healthScore(a.id).score))) return false;
+    if(healthStatusFilters.length && !healthStatusFilters.includes(computeAssetStatus(a.id))) return false;
     if(healthDomainFilters.length && !healthDomainFilters.includes(a.domain)) return false;
     if(healthOwnerFilters.length && !healthOwnerFilters.includes(a.owner)) return false;
     if(healthTierFilters.length && !healthTierFilters.includes(a.tier)) return false;
@@ -1843,7 +1970,32 @@ function renderHealthTable(){
     if(q && !(a.name.toLowerCase().includes(q) || a.fqn.toLowerCase().includes(q))) return false;
     return true;
   });
-  // healthTableListIds giữ TOÀN BỘ tập đã lọc (không chỉ trang hiện tại) — dùng cho nút Trước/Sau
+  // Sort áp dụng SAU filter, TRƯỚC phân trang — chỉ 1 cột active tại 1 thời điểm, giống cơ chế đã
+  // dùng cho bảng Rule Lifecycle. key=null (chưa bấm sort cột nào) thì giữ nguyên thứ tự lọc gốc.
+  if(healthTableSort.key){
+    const dirMul = healthTableSort.dir==='desc' ? -1 : 1;
+    if(healthTableSort.key==='healthScore'){
+      list = list.slice().sort((a,b)=>{
+        const av = healthScore(a.id).score, bv = healthScore(b.id).score;
+        // null (chưa đo được) luôn xếp CUỐI, không phụ thuộc chiều asc/desc — không coi như 0.
+        if(av==null && bv==null) return 0;
+        if(av==null) return 1;
+        if(bv==null) return -1;
+        return dirMul*(av-bv);
+      });
+    } else if(healthTableSort.key==='status'){
+      list = list.slice().sort((a,b)=>
+        dirMul*(HEALTH_TABLE_STATUS_ORDER[computeAssetStatus(a.id)]-HEALTH_TABLE_STATUS_ORDER[computeAssetStatus(b.id)]));
+    }
+  }
+  [['healthScore','thHealthScore'],['status','thHealthStatus']].forEach(([key, thId])=>{
+    const th = document.getElementById(thId);
+    if(!th) return;
+    const label = th.textContent.replace(/ [▾▴⇅]$/, '');
+    const icon = healthTableSort.key!==key ? '⇅' : healthTableSort.dir==='desc' ? '▾' : '▴';
+    th.textContent = label + ' ' + icon;
+  });
+  // healthTableListIds giữ TOÀN BỘ tập đã lọc/sort (không chỉ trang hiện tại) — dùng cho nút Trước/Sau
   // ở trang Asset Detail, phải duyệt được qua mọi trang chứ không chỉ 10 dòng đang hiển thị.
   healthTableListIds = list.map(a=>a.id);
   healthTablePage = renderPagination('healthTablePagination', list.length, healthTablePage, 'goToHealthTablePage');
@@ -1851,15 +2003,17 @@ function renderHealthTable(){
   body.innerHTML = pageRows.map(a=>{
     const hs = healthScore(a.id);
     const score = hs.score;
-    const status = statusForScore(score);
+    const status = computeAssetStatus(a.id);
     const barColor = scoreColor(score);
-    // Unmonitored (chưa có rule nào) phải nói rõ ràng "Chưa có rule kiểm tra", không được để "—"
-    // như 1 ô dữ liệu trống bình thường — 2 trạng thái khác nghĩa nhau hoàn toàn.
-    const primaryIssue = status==='Unmonitored' ? 'Chưa có rule kiểm tra'
-      : a.failingDimensions.length ? a.failingDimensions.join(', ') + ' failing' : '';
-    // "Độ tin cậy thấp": asset CÓ 1 số rule nhưng đo được chưa tới nửa số dimension — khác Unmonitored
-    // (hoàn toàn không có rule nào).
-    const lowConfidence = status!=='Unmonitored' && hs.measuredDims/hs.totalDims < 0.5;
+    // Notest (chưa có rule nào) và Unknow (có rule nhưng engine chưa quét lần nào) đều phải nói rõ
+    // lý do, không được để "—" như 1 ô dữ liệu trống bình thường — khác nghĩa nhau và khác nghĩa với
+    // "có đo, không lỗi dimension nào" (chuỗi rỗng).
+    const primaryIssue = status==='Notest' ? 'Chưa có rule kiểm tra'
+      : status==='Unknow' ? 'Đã có rule, engine chưa quét lần nào'
+      : a.failingDimensions.length ? a.failingDimensions.map(dimLabel).join(', ') + ' failing' : '';
+    // "Độ tin cậy thấp": asset CÓ 1 số rule nhưng đo được chưa tới nửa số dimension — khác Notest
+    // (không có rule nào) và Unknow (có rule nhưng chưa quét lần nào, đã có message riêng ở trên).
+    const lowConfidence = status!=='Notest' && status!=='Unknow' && hs.measuredDims/hs.totalDims < 0.5;
     return `<tr class="rowlink" data-asset-id="${a.id}" data-list-source="healthTable">
       <td><span class="asset-link">${a.name}</span><span class="fqn">${a.fqn}</span></td>
       <td>
@@ -1869,7 +2023,7 @@ function renderHealthTable(){
       </td>
       ${HEALTH_DIMS.map(d=>`<td onclick="event.stopPropagation(); toggleHealthDimFilter('${d}')">${dimCell(dimensionScore(a.id, d))}</td>`).join('')}
       <td onclick="event.stopPropagation(); toggleHealthStatusFilter('${status}')">${assetStatusBadge(status)}</td>
-      <td>${status==='Unmonitored' ? `<span class="primary-issue">${primaryIssue}</span>` : (primaryIssue?`<span class="primary-issue">${primaryIssue}</span>`:'<span class="primary-issue none">—</span>')}</td>
+      <td>${primaryIssue ? `<span class="primary-issue">${primaryIssue}</span>` : '<span class="primary-issue none">—</span>'}</td>
       <td><span class="owner-link" onclick="event.stopPropagation(); showToast('Filter theo Owner: ${a.owner} (demo placeholder).')">${a.owner}</span></td>
     </tr>`;
   }).join('') || `<tr><td colspan="11" class="empty-note">Không có dữ liệu khớp filter. <span class="failed-rows-link" onclick="clearHealthFilters()">Clear</span></td></tr>`;
@@ -1918,6 +2072,17 @@ function initHealthFilterDropdowns(){
     onChange:v=>{ healthTierFilters=v; renderHealthTable(); }});
 }
 
+function initRadarAssetFilterDropdown(){
+  msRadarAssetFilter = createMultiSelectDropdown(document.getElementById('ddRadarAssetFilter'), {
+    label:'Chọn asset',
+    options:()=>assetsMock
+      .filter(a=>healthScore(a.id).score!=null)
+      .map(a=>({value:a.id, label:a.name}))
+      .sort((a,b)=>a.label.localeCompare(b.label)),
+    getSelected:()=>radarAssetFilter,
+    onChange:v=>{ radarAssetFilter=v; renderOverview(); }});
+}
+
 /* ===================== RENDER: Rule Lifecycle ===================== */
 let ruleStateFilters = [];
 let ruleDomainFilters = [];
@@ -1927,6 +2092,23 @@ let ruleBizOwnerFilters = [];
 let ruleTierFilters = [];
 let ruleRecurFilters = []; // subset of '0' | '1-2' | '3+'
 let ruleFailOnlyMode = false;
+// Sort chung cho bảng "Rule Lifecycle — Chi tiết theo Rule" — chỉ 1 cột active tại 1 thời điểm.
+// Mặc định recurrenceCount/desc để giữ đúng hành vi gốc của bảng (top rule bất ổn lên đầu).
+let ruleLifecycleSort = {key:'recurrenceCount', dir:'desc'};
+const RULE_LIFECYCLE_SORT_HEADERS = {
+  ruleName: 'thRuleName', severity: 'thRuleSeverity',
+  recurrenceCount: 'thRuleRecurrence', currentFailStreak: 'thRuleFailStreak',
+};
+const RULE_LIFECYCLE_SORT_COMPARATORS = {
+  ruleName: (a,b)=>a.ruleName.localeCompare(b.ruleName),
+  severity: (a,b)=>SEVERITY_ORDER[a.severity]-SEVERITY_ORDER[b.severity],
+  recurrenceCount: (a,b)=>a.recurrenceCount-b.recurrenceCount,
+  currentFailStreak: (a,b)=>a.currentFailStreak-b.currentFailStreak,
+};
+function setRuleLifecycleSort(key){
+  ruleLifecycleSort = { key, dir: ruleLifecycleSort.key===key && ruleLifecycleSort.dir==='desc' ? 'asc' : 'desc' };
+  renderRuleLifecycle();
+}
 
 function sparklineHtml(history30){
   if(!history30 || history30.length===0) return '<span class="primary-issue none">—</span>';
@@ -1975,7 +2157,7 @@ function initRuleFilterDropdowns(){
     label:'Owner', options:()=>OWNER_OPTIONS, getSelected:()=>ruleOwnerFilters,
     onChange:v=>{ ruleOwnerFilters=v; renderRuleLifecycle(); }});
   msRuleType = createMultiSelectDropdown(document.getElementById('ddRuleType'), {
-    label:'Loại rule', options:()=>uniq('ruleType'), getSelected:()=>ruleTypeFilters,
+    label:'Loại rule', options:()=>uniq('ruleType').map(v=>({value:v, label:dimLabel(v)})), getSelected:()=>ruleTypeFilters,
     onChange:v=>{ ruleTypeFilters=v; renderRuleLifecycle(); }});
   msRuleBizOwner = createMultiSelectDropdown(document.getElementById('ddRuleBizOwner'), {
     label:'Business Rule Owner', options:()=>uniq('businessRuleOwner'), getSelected:()=>ruleBizOwnerFilters,
@@ -2001,6 +2183,12 @@ function computeRuleLifecycleSayLine(rows){
 const PAGE_SIZE = 10;
 let topUnstablePage = 1;
 let ruleLifecyclePage = 1;
+let topUnstableSortDir = 'desc'; // mặc định desc (rule bất ổn nhất lên đầu, đúng mục đích của bảng)
+function toggleTopUnstableSort(){
+  topUnstableSortDir = topUnstableSortDir==='desc' ? 'asc' : 'desc';
+  topUnstablePage = 1; // đổi sort thì quay về trang 1, tránh đứng ở trang lẻ không còn khớp thứ tự mới
+  renderRuleLifecycle();
+}
 
 // Generic pager: reuses the existing .pagination/.pg/.arrow classes. Clamps page to valid range
 // so a filter that shrinks the result set never leaves the view stuck on an empty page.
@@ -2039,8 +2227,12 @@ function renderRuleLifecycle(){
   document.getElementById('rlKpiOngoing').textContent = counts.Ongoing;
   document.getElementById('rlKpiRecovered').textContent = counts.Recovered;
 
-  // Top rule bất ổn: toàn bộ rule có recurrenceCount>0, sort giảm dần — phân trang 10 dòng/trang.
-  const topUnstableAll = rows.filter(r=>r.recurrenceCount>0).sort((a,b)=>b.recurrenceCount - a.recurrenceCount);
+  // Top rule bất ổn: toàn bộ rule có recurrenceCount>0, sort theo topUnstableSortDir (mặc định giảm
+  // dần, bấm header "Số lần tái phát" để đảo chiều) — phân trang 10 dòng/trang.
+  const topUnstableDirMul = topUnstableSortDir==='desc' ? -1 : 1;
+  const topUnstableAll = rows.filter(r=>r.recurrenceCount>0).sort((a,b)=>topUnstableDirMul*(a.recurrenceCount-b.recurrenceCount));
+  const thTopUnstableRecurrence = document.getElementById('thTopUnstableRecurrence');
+  if(thTopUnstableRecurrence) thTopUnstableRecurrence.textContent = 'Số lần tái phát ' + (topUnstableSortDir==='desc' ? '▾' : '▴');
   topUnstablePage = renderPagination('topUnstablePagination', topUnstableAll.length, topUnstablePage, 'goToTopUnstablePage');
   const topUnstable = topUnstableAll.slice((topUnstablePage-1)*PAGE_SIZE, topUnstablePage*PAGE_SIZE);
   document.getElementById('topUnstableBody').innerHTML = topUnstable.length ? topUnstable.map(r=>`
@@ -2066,8 +2258,19 @@ function renderRuleLifecycle(){
     if(q && !(r.ruleName.toLowerCase().includes(q) || r.table.toLowerCase().includes(q))) return false;
     return true;
   });
-  // Default sort = recurrenceCount giảm dần, đúng yêu cầu cốt lõi của spec.
-  filtered.sort((a,b)=>b.recurrenceCount - a.recurrenceCount);
+  // Sort theo cột đang active trong ruleLifecycleSort (setRuleLifecycleSort) — mặc định
+  // recurrenceCount/desc, đúng hành vi gốc của bảng (top rule bất ổn lên đầu).
+  {
+    const dirMul = ruleLifecycleSort.dir==='desc' ? -1 : 1;
+    filtered.sort((a,b)=>dirMul*RULE_LIFECYCLE_SORT_COMPARATORS[ruleLifecycleSort.key](a,b));
+  }
+  Object.entries(RULE_LIFECYCLE_SORT_HEADERS).forEach(([key, thId])=>{
+    const th = document.getElementById(thId);
+    if(!th) return;
+    const label = th.textContent.replace(/ [▾▴⇅]$/, '');
+    const icon = ruleLifecycleSort.key!==key ? '⇅' : ruleLifecycleSort.dir==='desc' ? '▾' : '▴';
+    th.textContent = label + ' ' + icon;
+  });
   ruleLifecyclePage = renderPagination('ruleLifecyclePagination', filtered.length, ruleLifecyclePage, 'goToRuleLifecyclePage');
   const pageRows = filtered.slice((ruleLifecyclePage-1)*PAGE_SIZE, ruleLifecyclePage*PAGE_SIZE);
 
@@ -2080,6 +2283,7 @@ function renderRuleLifecycle(){
       <td class="sticky-col"><span class="test-name">${r.ruleName}</span>${recurrenceBadgeHtml(r.recurrenceCount)}</td>
       <td>${r.table}<span class="fqn">${r.column}</span></td>
       <td>${prevCell}</td>
+      <td><span class="badge ${SEVERITY_BADGE_CLASS[r.severity]}">${r.severity}</span></td>
       <td><span class="badge ${lifecycleBadgeClass[r.lifecycleState]}">${r.lifecycleState}</span></td>
       <td>${sparklineHtml(r.history30)}</td>
       <td class="cellnum">${r.recurrenceCount}</td>
@@ -2087,13 +2291,8 @@ function renderRuleLifecycle(){
       <td>${r.lastRecurrenceAt ? fmtRunTs(r.lastRecurrenceAt) : '<span class="primary-issue none">—</span>'}</td>
       <td>${r.avgDaysBetweenRecurrence!=null ? r.avgDaysBetweenRecurrence.toFixed(1)+' ngày' : '<span class="primary-issue none">—</span>'}</td>
       <td>${r.totalRuns ? `${r.totalFailedRuns} / ${r.totalRuns} (${r.failRatePct}%)` : '<span class="primary-issue none">—</span>'}</td>
-      <td>${r.avgRecoveryHours!=null ? r.avgRecoveryHours.toFixed(1)+' giờ' : '<span class="primary-issue none">—</span>'}</td>
-      <td>${r.owner}</td>
-      <td>${r.systemOwner}</td>
-      <td>${r.businessRuleOwner}</td>
-      <td>${r.ruleCreator}</td>
     </tr>`;
-  }).join('') : `<tr><td colspan="15" class="empty-note">Không có rule nào khớp bộ lọc hiện tại.</td></tr>`;
+  }).join('') : `<tr><td colspan="11" class="empty-note">Không có rule nào khớp bộ lọc hiện tại.</td></tr>`;
 }
 
 /* ===================== Tabs & Views ===================== */
@@ -2290,7 +2489,7 @@ const trendY = v => TREND_GEO.yBottom
 const TREND_SERIES = [
   {key:'overall', color:'#3762d6', label:'Overall'},
   {key:'completeness', color:'#2f9e5b', label:'Completeness'},
-  {key:'freshness', color:'#e8912b', label:'Freshness'},
+  {key:'freshness', color:'#e8912b', label:'Timeliness'},
 ];
 const TREND_DEFAULT_TOOLTIP = 'Di chuột qua đường biểu đồ để xem điểm số từng dimension tại ngày đó.';
 
@@ -2360,7 +2559,7 @@ function renderTrendHoverdots(){
   const hoverdots = document.getElementById('hoverdots');
   hoverdots.innerHTML = '';
   const showTooltip = pt => document.getElementById('trendTooltip').textContent =
-    `${fmtTrendDate(pt.date)} — Overall: ${pt.overall} · Completeness: ${pt.completeness} · Freshness: ${pt.freshness}`;
+    `${fmtTrendDate(pt.date)} — Overall: ${pt.overall} · Completeness: ${pt.completeness} · Timeliness: ${pt.freshness}`;
   const resetTooltip = () => document.getElementById('trendTooltip').textContent = TREND_DEFAULT_TOOLTIP;
 
   trendData.forEach((pt,i)=>{
@@ -2583,7 +2782,7 @@ function buildTrendSvgHtml(asset){
     <div id="detailTrendTooltip" style="font-size:11px;color:var(--muted);margin-top:2px;">Di chuột qua đường biểu đồ để xem theo ngày.</div>
     <div class="legend-row" style="margin-top:8px;">
       ${Object.entries(DIM_TREND_COLORS).map(([dim,color])=>`<label class="item" style="font-size:11px;">
-        <input type="checkbox" data-toggle-dim="${dim}"><span class="dot" style="background:${color}"></span>${dim}
+        <input type="checkbox" data-toggle-dim="${dim}"><span class="dot" style="background:${color}"></span>${dimLabel(dim)}
       </label>`).join('')}
     </div>`;
 }
@@ -2616,7 +2815,32 @@ function radar2Dy(angleDeg){
   return 4;                    // nhãn 2 bên hông -> căn giữa theo chiều dọc so với điểm
 }
 
-function buildDimensionRadarHtml(asset){
+// Filter "Chọn dimension" cho radar Dimension Breakdown — rỗng = hiện đủ 6 chiều (mặc định). Chỉ ẩn
+// nhãn/điểm của chiều KHÔNG được chọn để giảm rối mắt; không đổi hình dạng polygon (vẫn tính đủ 6
+// điểm như cũ) vì polygon biểu diễn điểm số THẬT của asset, không phải thứ nên bị cắt bớt theo filter.
+let dimBreakdownFilter = [];
+let msDimBreakdownFilter = null;
+function initDimBreakdownFilterDropdown(){
+  msDimBreakdownFilter = createMultiSelectDropdown(document.getElementById('ddDimBreakdownFilter'), {
+    label:'Dimension', options:()=>DIMENSION_OPTIONS, getSelected:()=>dimBreakdownFilter,
+    onChange:v=>{ dimBreakdownFilter=v; renderDimBreakdown(); }});
+}
+function renderDimBreakdown(assetParam){
+  const asset = assetParam || getAssetById(currentAssetDetailId);
+  if(!asset) return;
+  if(healthScore(asset.id).score===null){
+    const msg = computeAssetStatus(asset.id)==='Unknow'
+      ? 'Asset đã có rule cấu hình nhưng engine chưa quét lần nào. Chưa thể đánh giá chất lượng.'
+      : 'Asset này chưa có rule nào. Chưa thể đánh giá chất lượng.';
+    document.getElementById('dimBreakdown').innerHTML = `<div class="empty-note">${msg}</div>`;
+    return;
+  }
+  document.getElementById('dimBreakdown').innerHTML = buildDimensionRadarHtml(asset, dimBreakdownFilter);
+  wireDimensionRadarTooltip(document.getElementById('dimBreakdown'), asset);
+}
+
+function buildDimensionRadarHtml(asset, visibleDims){
+  const dimsToShow = (visibleDims && visibleDims.length) ? visibleDims : RADAR_DIMS;
   const color = scoreColor(healthScore(asset.id).score);
   const rings = [1, 0.66, 0.33].map(frac=>{
     const pts = RADAR_DIMS.map((_,i)=>radar2Point(radar2Angle(i), RADAR2_MAX_R*frac).join(',')).join(' ');
@@ -2639,17 +2863,18 @@ function buildDimensionRadarHtml(asset){
   const ariaSummary = RADAR_DIMS.map(dim=>{
     const v = dimensionScore(asset.id, dim);
     const failing = asset.failingDimensions.includes(dim);
-    return `${dim} ${v==null?'không có dữ liệu':v+'/100'}${failing?' (đang lỗi)':''}`;
+    return `${dimLabel(dim)} ${v==null?'không có dữ liệu':v+'/100'}${failing?' (đang lỗi)':''}`;
   }).join(', ');
 
   const vertexHtml = RADAR_DIMS.map((dim,i)=>{
+    if(!dimsToShow.includes(dim)) return '';
     const angle = radar2Angle(i);
     const val = dimensionScore(asset.id, dim);
     const failing = asset.failingDimensions.includes(dim);
     const clamped = val==null ? 0 : Math.max(0, Math.min(100, val));
     const [x,y] = radar2Point(angle, RADAR2_MAX_R * clamped/100);
     const dotColor = val==null ? 'var(--gray)' : failing ? 'var(--red)' : color;
-    const label = `${dim}: ${val==null?'—':val+' / 100'}${failing?' — ⚠ Đang lỗi':''}`;
+    const label = `${dimLabel(dim)}: ${val==null?'—':val+' / 100'}${failing?' — ⚠ Đang lỗi':''}`;
     // Chấm nhỏ hiển thị thật + vùng hover/focus lớn hơn vô hình đè lên trên (chấm 4px quá nhỏ để
     // rê trúng chính xác) — cả 2 đều mang data-dim để JS gắn tooltip theo con trỏ / theo bàn phím.
     return `
@@ -2659,14 +2884,15 @@ function buildDimensionRadarHtml(asset){
   }).join('');
 
   const axisLabels = RADAR_DIMS.map((dim,i)=>{
+    if(!dimsToShow.includes(dim)) return '';
     const angle = radar2Angle(i);
     const [x,y] = radar2Point(angle, RADAR2_LABEL_R);
     const failing = asset.failingDimensions.includes(dim);
     const val = dimensionScore(asset.id, dim);
-    const label = `${dim}: ${val==null?'—':val+' / 100'}${failing?' — ⚠ Đang lỗi':''}`;
+    const label = `${dimLabel(dim)}: ${val==null?'—':val+' / 100'}${failing?' — ⚠ Đang lỗi':''}`;
     return `<text x="${x.toFixed(1)}" y="${(y+radar2Dy(angle)).toFixed(1)}" font-size="12" text-anchor="${radar2Anchor(angle)}"
       fill="${failing?'var(--red)':'#6b7280'}" font-weight="${failing?700:600}"
-      data-dim="${dim}" data-radar-hit="1" style="cursor:pointer;">${dim}</text>`;
+      data-dim="${dim}" data-radar-hit="1" style="cursor:pointer;">${dimLabel(dim)}</text>`;
   }).join('');
 
   return `
@@ -2711,7 +2937,7 @@ function wireDimensionRadarTooltip(container, asset){
   const showFor = (dim, clientX, clientY)=>{
     const val = dimensionScore(asset.id, dim);
     const failing = asset.failingDimensions.includes(dim);
-    tooltip.innerHTML = `<b>${dim}</b><div>${val==null?'—':val + ' / 100'}</div>${failing?'<div class="warn">⚠ Đang lỗi</div>':''}`;
+    tooltip.innerHTML = `<b>${dimLabel(dim)}</b><div>${val==null?'—':val + ' / 100'}</div>${failing?'<div class="warn">⚠ Đang lỗi</div>':''}`;
     tooltip.classList.add('show');
     positionRadarTooltip(tooltip, clientX, clientY);
   };
@@ -2738,7 +2964,7 @@ function buildRuleRowsHtml(rules){
     return `<tr>
       <td><span class="test-name">${r.ruleName}</span>${recurrenceBadgeHtml(r.recurrenceCount)}</td>
       <td>${r.column}</td>
-      <td>${r.healthDimension}</td>
+      <td>${dimLabel(r.healthDimension)}</td>
       <td>${prevCell}</td>
       <td><span class="badge ${lifecycleBadgeClass[r.lifecycleState]}">${r.lifecycleState}</span></td>
       <td class="cellnum">${r.recurrenceCount}</td>
@@ -2774,17 +3000,20 @@ function renderAssetDetailPage(){
   document.getElementById('detailNextBtn').disabled = idx<0 || idx>=total-1;
 
   const hs = healthScore(asset.id);
-  const detailStatus = statusForScore(hs.score);
+  const detailStatus = computeAssetStatus(asset.id);
   const isUnmonitored = hs.score === null;
   const lowConfidence = !isUnmonitored && hs.measuredDims/hs.totalDims < 0.5;
   const lowConfidenceBadgeHtml = lowConfidence
     ? `<span class="badge unknown" title="Chỉ ${hs.measuredDims}/${hs.totalDims} dimension có rule đo">Độ tin cậy thấp</span>` : '';
+  const noScoreMessage = detailStatus==='Unknow'
+    ? 'Asset đã có rule cấu hình nhưng engine chưa quét lần nào. Chưa thể đánh giá chất lượng.'
+    : 'Asset này chưa có rule nào. Chưa thể đánh giá chất lượng.';
 
   document.getElementById('detailKpiGrid').innerHTML = `
     <div class="card kpi">
       <div class="label">Health Score</div>
       ${isUnmonitored ? `
-        <div class="empty-note" style="margin-top:6px;">Asset này chưa có rule nào. Chưa thể đánh giá chất lượng.</div>
+        <div class="empty-note" style="margin-top:6px;">${noScoreMessage}</div>
         <button class="btn-outline" disabled title="Sẽ có ở bản kế tiếp" style="margin-top:8px;">Tạo rule</button>
       ` : `
         <div class="value"><span id="detailScore"></span> <small style="font-size:12px;font-weight:600;color:var(--muted);">/ 100</small> ${lowConfidenceBadgeHtml}</div>
@@ -2809,16 +3038,16 @@ function renderAssetDetailPage(){
 
   // Unmonitored = chưa có rule nào -> không vẽ radar/dimension gì cả, thay bằng empty state (khác
   // hẳn "có rule nhưng điểm 0", không phải overlay lên trên radar rỗng).
+  document.getElementById('ddDimBreakdownFilter').classList.toggle('disabled', isUnmonitored);
   if(isUnmonitored){
-    document.getElementById('dimBreakdown').innerHTML = `<div class="empty-note">Asset này chưa có rule nào. Chưa thể đánh giá chất lượng.</div>`;
+    document.getElementById('dimBreakdown').innerHTML = `<div class="empty-note">${noScoreMessage}</div>`;
   } else {
-    document.getElementById('dimBreakdown').innerHTML = buildDimensionRadarHtml(asset);
-    wireDimensionRadarTooltip(document.getElementById('dimBreakdown'), asset);
+    renderDimBreakdown(asset);
   }
-  // Unmonitored: history30d là dữ liệu mock cũ gắn sẵn theo asset, KHÔNG bắt nguồn từ rule nào —
-  // vẫn vẽ trend sẽ mâu thuẫn với "chưa có rule nào" ở khối Health Score phía trên, nên ẩn luôn.
+  // Notest/Unknow: history30d là dữ liệu mock cũ gắn sẵn theo asset, KHÔNG bắt nguồn từ rule nào —
+  // vẫn vẽ trend sẽ mâu thuẫn với khối Health Score phía trên, nên ẩn luôn trong cả 2 trường hợp.
   document.getElementById('detailTrendChart').innerHTML = isUnmonitored
-    ? `<div class="empty-note">Asset này chưa có rule nào nên chưa có lịch sử điểm số để hiển thị.</div>`
+    ? `<div class="empty-note">${detailStatus==='Unknow' ? 'Engine chưa quét lần nào nên chưa có lịch sử điểm số để hiển thị.' : 'Asset này chưa có rule nào nên chưa có lịch sử điểm số để hiển thị.'}</div>`
     : buildTrendSvgHtml(asset);
 
   document.getElementById('detailRuleCount').textContent = rules.length;
@@ -2866,16 +3095,18 @@ async function bootstrap(){
     return;
   }
   buildRulesByAssetIndex();
+  assignRuleSeverities();
   initOverviewFilterDropdowns();
   initHealthFilterDropdowns();
   initRuleFilterDropdowns();
+  initDimBreakdownFilterDropdown();
   renderOverview();
   renderHealthTable();
   renderRuleLifecycle();
-  const critical = assetsMock.filter(a=>statusForScore(healthScore(a.id).score)==='Critical').length;
+  const critical = assetsMock.filter(a=>computeAssetStatus(a.id)==='Unhealthy').length;
   const noData = assetsMock.filter(a=>a.lastRunAt===null).length;
   document.getElementById('cautionBanner').textContent =
-    `⚠ ${critical} asset đang ở mức Critical, ${noData} asset chưa có dữ liệu đánh giá gần đây trong danh sách hiện tại.`;
+    `⚠ ${critical} asset đang ở mức Unhealthy, ${noData} asset chưa có dữ liệu đánh giá gần đây trong danh sách hiện tại.`;
   runCoverageChecks(assetsMock, rulesMock);
   handleHashChange(); // deep link: nếu URL đã có #asset=... khi load trang thì tự mở đúng trang chi tiết
 }
