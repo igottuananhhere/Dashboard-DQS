@@ -349,6 +349,34 @@
   .view{display:none;}
   .view.active{display:block;}
 
+  /* Test detail (Tầng 4) — filters */
+  .time-pill-group{display:flex;gap:6px;}
+  .time-pill{
+    border:1px solid var(--border);background:var(--card);border-radius:14px;
+    padding:4px 12px;font-size:11.5px;font-weight:600;color:var(--muted);cursor:pointer;
+  }
+  .time-pill:hover{background:#f7f9fc;}
+  .time-pill.active{background:var(--link);border-color:var(--link);color:#fff;}
+  .trend-kpi-line{display:flex;gap:18px;font-size:12px;color:var(--text);margin-top:8px;flex-wrap:wrap;}
+  .trend-kpi-line b{font-weight:700;}
+  .lifecycle-note{font-size:11.5px;color:var(--muted);margin-bottom:10px;}
+  .cycle-row{display:grid;grid-template-columns:1fr 1fr 90px 90px;gap:8px;padding:7px 4px;border-bottom:1px solid #eef0f3;font-size:12px;}
+  .cycle-row:last-child{border-bottom:none;}
+  .cycle-row.head{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.02em;}
+  .cycle-row .open-tag{color:var(--red);font-weight:600;}
+  .test-filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center;}
+  .test-filter-row .search{max-width:180px;flex:none;}
+  .test-filter-row select{padding:6px 10px;font-size:12px;border:1px solid var(--border);border-radius:6px;background:#fff;color:var(--text);cursor:pointer;}
+  .panel-header-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;}
+  .panel-header-row h3{margin:0;}
+  .sample-count{font-size:11.5px;color:var(--muted);font-weight:500;}
+  .act-type-tag{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:8px;margin-right:6px;display:inline-block;}
+  .act-type-tag.system{background:#eef1f6;color:#4b5568;}
+  .act-type-tag.user{background:var(--orange-bg);color:var(--orange);}
+  .act-type-tag.note{background:var(--green-bg);color:var(--green);}
+  .activity-item{padding:6px 0;border-bottom:1px solid #f3f4f6;font-size:12px;}
+  .activity-item:last-child{border-bottom:none;}
+
   /* ---------- Asset Detail (full page) — hầu hết tái dùng .card/.panel/.grid-kpi/.dim-row/.kv
      đã có sẵn; chỉ thêm phần disabled cho nút Trước/Sau. ---------- */
   .btn-outline:disabled{opacity:.4;cursor:default;}
@@ -396,7 +424,7 @@
   <div class="tabs">
     <button class="tab active" data-tab="overview" onclick="switchTab('overview')">Overview</button>
     <button class="tab" data-tab="health" onclick="switchTab('health')">Health</button>
-    <button class="tab" data-tab="rulelifecycle" onclick="switchTab('rulelifecycle')">Rule Lifecycle</button>
+    <button class="tab" data-tab="rulelifecycle" onclick="switchTab('rulelifecycle')">Test Result</button>
   </div>
 
   <!-- ======================= OVERVIEW + HEALTH (shared header) ======================= -->
@@ -430,12 +458,11 @@
           <div class="value" id="ovKpiCritical">–</div>
           <div class="delta" id="ovKpiCriticalDelta"></div>
         </div>
-        <div class="card kpi clickable" onclick="applyRuleCoverageFilter()">
-          <span class="kpi-icon">🎯</span>
-          <div class="label">Rule Coverage</div>
-          <div class="value" id="ovKpiRuleCoverage" style="font-size:16px;">–</div>
-          <div class="mini-track" style="width:100%;height:5px;margin-top:6px;"><div class="mini-fill" id="ovKpiRuleCoverageBar" style="height:100%;"></div></div>
-          <div class="delta" id="ovKpiRuleCoverageNote" style="margin-top:6px;"></div>
+        <div class="card kpi clickable" onclick="switchTab('health'); applyHealthFilter('Warning')">
+          <span class="kpi-icon">📉</span>
+          <div class="label">Degraded Assets</div>
+          <div class="value" id="ovKpiDegraded">–</div>
+          <div class="delta" id="ovKpiDegradedDelta"></div>
         </div>
         <div class="card kpi clickable" onclick="switchTab('health'); applyHealthFilter('Unknow')">
           <span class="kpi-icon">❓</span>
@@ -494,10 +521,10 @@
                 <div class="stackbar-seg" id="ovSegHealthy" style="width:0%;background:#2f9e5b;" onclick="switchTab('health'); applyHealthFilter('Healthy')" title="Healthy · 0 assets">
                   <span class="seg-label"></span>
                 </div>
-                <div class="stackbar-seg" id="ovSegUnknow" style="width:0%;background:#6b7280;" onclick="switchTab('health'); applyHealthFilter('Unknow')" title="Unknow · 0 assets">
+                <div class="stackbar-seg" id="ovSegUnknow" style="width:0%;background:#6b7280;" onclick="switchTab('health'); applyHealthFilter('Unknow')" title="Unknown · 0 assets">
                   <span class="seg-label"></span>
                 </div>
-                <div class="stackbar-seg" id="ovSegNotest" style="width:0%;background:#9aa1ab;" onclick="switchTab('health'); applyHealthFilter('Notest')" title="Notest · 0 assets">
+                <div class="stackbar-seg" id="ovSegNotest" style="width:0%;background:#9aa1ab;" onclick="switchTab('health'); applyHealthFilter('Notest')" title="No Tests · 0 assets">
                   <span class="seg-label"></span>
                 </div>
               </div>
@@ -507,8 +534,8 @@
               <div class="item" onclick="switchTab('health'); applyHealthFilter('Unhealthy')"><span class="dot" style="background:#e0453f"></span>Unhealthy &nbsp;<span id="ovLegCritical">0</span></div>
               <div class="item" onclick="switchTab('health'); applyHealthFilter('Warning')"><span class="dot" style="background:#e8912b"></span>Degraded &nbsp;<span id="ovLegDegraded">0</span></div>
               <div class="item" onclick="switchTab('health'); applyHealthFilter('Healthy')"><span class="dot" style="background:#2f9e5b"></span>Healthy &nbsp;<span id="ovLegHealthy">0</span></div>
-              <div class="item" onclick="switchTab('health'); applyHealthFilter('Unknow')"><span class="dot" style="background:#6b7280"></span>Unknow &nbsp;<span id="ovLegUnknow">0</span></div>
-              <div class="item" onclick="switchTab('health'); applyHealthFilter('Notest')"><span class="dot" style="background:#9aa1ab"></span>Notest &nbsp;<span id="ovLegNotest">0</span></div>
+              <div class="item" onclick="switchTab('health'); applyHealthFilter('Unknow')"><span class="dot" style="background:#6b7280"></span>Unknown &nbsp;<span id="ovLegUnknow">0</span></div>
+              <div class="item" onclick="switchTab('health'); applyHealthFilter('Notest')"><span class="dot" style="background:#9aa1ab"></span>No Tests &nbsp;<span id="ovLegNotest">0</span></div>
             </div>
           </div>
         </div>
@@ -681,7 +708,7 @@
       </div>
 
       <div class="card panel">
-        <h3>Rule Lifecycle — Chi tiết theo Rule</h3>
+        <h3>Test Result — Chi tiết theo Rule</h3>
         <div style="overflow-x:auto;">
         <table>
           <thead>
@@ -770,7 +797,7 @@
       </table>
       </div>
       <div style="margin-top:12px;">
-        <button class="btn-outline" id="detailRuleLifecycleBtn">Xem trong Rule Lifecycle</button>
+        <button class="btn-outline" id="detailRuleLifecycleBtn">Xem trong Test Result</button>
       </div>
     </div>
 
@@ -808,22 +835,54 @@
         <div class="code-box" id="tdSql"></div>
       </div>
       <div class="card panel">
-        <h3>Failure Trend (test này)</h3>
+        <div class="panel-header-row">
+          <h3>Failure Trend (test này)</h3>
+          <div class="time-pill-group" id="testTrendRangePills">
+            <span class="time-pill" data-range="7" onclick="setTestTimeRange(7)">7D</span>
+            <span class="time-pill" data-range="30" onclick="setTestTimeRange(30)">30D</span>
+            <span class="time-pill" data-range="90" onclick="setTestTimeRange(90)">90D</span>
+          </div>
+        </div>
         <svg viewBox="0 0 260 150" width="100%" height="150">
           <line x1="20" y1="10" x2="20" y2="120" stroke="#e4e6eb"/>
           <line x1="20" y1="120" x2="250" y2="120" stroke="#e4e6eb"/>
-          <text x="0" y="14" font-size="8" fill="#9aa1ab">20%</text>
+          <text x="0" y="14" font-size="8" fill="#9aa1ab" id="testTrendAxisTop">20%</text>
           <text x="8" y="122" font-size="8" fill="#9aa1ab">0%</text>
-          <polyline id="testTrendLine" fill="none" stroke="#e0453f" stroke-width="1.6"
-            points="20,90 55,70 90,80 125,50 160,60 195,40 230,55"/>
-          <text x="20" y="136" font-size="8" fill="#9aa1ab">7 lần chạy gần nhất</text>
+          <polyline id="testTrendLine" fill="none" stroke="#e0453f" stroke-width="1.6" points=""/>
+          <text x="20" y="136" font-size="8" fill="#9aa1ab" id="testTrendAxisLabel"></text>
         </svg>
-        <div class="empty-note">Hover từng điểm để xem failure rate theo từng lần chạy (demo tĩnh).</div>
+        <div class="trend-kpi-line">
+          <span>Tỉ lệ fail hiện tại: <b id="testTrendCurrentRate"></b></span>
+          <span>Đỉnh trong kỳ: <b id="testTrendPeakRate"></b></span>
+        </div>
       </div>
     </div>
 
     <div class="card panel" style="margin-bottom:16px;">
-      <h3>Failed Records Sample</h3>
+      <h3 style="margin:0 0 4px;">Lifecycle History</h3>
+      <div class="lifecycle-note" id="lifecycleRangeNote"></div>
+      <div class="cycle-row head">
+        <div>Bắt đầu</div><div>Kết thúc</div><div>Số ngày</div><div>Đỉnh fail</div>
+      </div>
+      <div id="lifecycleCyclesBody"></div>
+    </div>
+
+    <div class="card panel" style="margin-bottom:16px;">
+      <div class="panel-header-row">
+        <h3>Failed Records Sample</h3>
+        <span class="sample-count" id="sampleRowsCount"></span>
+      </div>
+      <div class="test-filter-row">
+        <input class="search" id="sampleSearchInput" placeholder="Tìm theo Row ID" oninput="onSampleSearchInput()">
+        <select id="sampleColFilter" onchange="onSampleFilterChange()">
+          <option value="all">Tất cả cột vi phạm</option>
+        </select>
+        <select id="sampleTimeFilter" onchange="onSampleFilterChange()">
+          <option value="7">7 ngày qua</option>
+          <option value="30" selected>30 ngày qua</option>
+          <option value="all">Toàn bộ</option>
+        </select>
+      </div>
       <table>
         <thead><tr><th>Row ID</th><th>Cột vi phạm</th><th>Giá trị hiện tại</th><th>Giá trị mong đợi</th><th>Ghi nhận lúc</th></tr></thead>
         <tbody id="sampleRowsBody"></tbody>
@@ -854,52 +913,22 @@
     </div>
 
     <div class="card panel">
-      <h3>Activity Log</h3>
-      <div class="empty-note" id="activityLog"></div>
+      <div class="panel-header-row">
+        <h3>Activity Log</h3>
+        <select id="activityTypeFilter" onchange="onActivityFilterChange()">
+          <option value="all">Tất cả hành động</option>
+          <option value="system">Hệ thống</option>
+          <option value="user">Người dùng</option>
+          <option value="note">Ghi chú</option>
+        </select>
+      </div>
+      <div id="activityLog"></div>
     </div>
   </div>
 
 </div>
 
 <script>
-/* ===================== DATA ===================== */
-const assets = [
-  {id:"customer", fqn:"postgres.pagila.public.customer", overall:68, completeness:98, uniqueness:100, validity:76, consistency:92, freshness:55, status:"Critical", primaryIssue:"Freshness SLA breach", domain:"Sales", owner:"Data Platform", service:"Pagila", tier:"Tier 1", lastEval:"Aug 14, 2026, 01:42 AM (UTC+7:00)"},
-  {id:"payment", fqn:"postgres.pagila.public.payment", overall:74, completeness:97, uniqueness:100, validity:63, consistency:91, freshness:88, status:"Degraded", primaryIssue:"Validity failures", domain:"Finance", owner:"Analytics", service:"Pagila", tier:"Tier 1", lastEval:"Aug 14, 2026, 01:10 AM (UTC+7:00)"},
-  {id:"rental", fqn:"postgres.pagila.public.rental", overall:65, completeness:58, uniqueness:100, validity:91, consistency:88, freshness:90, status:"Critical", primaryIssue:"Completeness failures", domain:"Operations", owner:"Data Platform", service:"Pagila", tier:"Tier 2", lastEval:"Aug 14, 2026, 01:05 AM (UTC+7:00)"},
-  {id:"inventory", fqn:"postgres.pagila.public.inventory", overall:76, completeness:95, uniqueness:99, validity:92, consistency:64, freshness:91, status:"Degraded", primaryIssue:"Inventory consistency drift", domain:"Operations", owner:"Data Platform", service:"Pagila", tier:"Tier 2", lastEval:"Aug 14, 2026, 12:58 AM (UTC+7:00)"},
-  {id:"film", fqn:"postgres.pagila.public.film", overall:96, completeness:98, uniqueness:100, validity:95, consistency:96, freshness:92, status:"Healthy", primaryIssue:"", domain:"Content", owner:"Content", service:"Pagila", tier:"Tier 3", lastEval:"Aug 14, 2026, 12:50 AM (UTC+7:00)"},
-  {id:"actor", fqn:"postgres.pagila.public.actor", overall:94, completeness:99, uniqueness:100, validity:94, consistency:94, freshness:90, status:"Healthy", primaryIssue:"", domain:"Content", owner:"Content", service:"Pagila", tier:"Tier 3", lastEval:"Aug 14, 2026, 12:45 AM (UTC+7:00)"},
-  {id:"store", fqn:"postgres.pagila.public.store", overall:91, completeness:97, uniqueness:100, validity:90, consistency:93, freshness:86, status:"Healthy", primaryIssue:"", domain:"Operations", owner:"Data Platform", service:"Pagila", tier:"Tier 2", lastEval:"Aug 14, 2026, 12:40 AM (UTC+7:00)"},
-  {id:"staff", fqn:"postgres.pagila.public.staff", overall:84, completeness:96, uniqueness:100, validity:87, consistency:91, freshness:70, status:"Degraded", primaryIssue:"Freshness near SLA", domain:"Operations", owner:"Data Platform", service:"Pagila", tier:"Tier 2", lastEval:"Aug 14, 2026, 12:35 AM (UTC+7:00)"},
-  {id:"address", fqn:"postgres.pagila.public.address", overall:92, completeness:98, uniqueness:100, validity:91, consistency:93, freshness:86, status:"Healthy", primaryIssue:"", domain:"Reference", owner:"Analytics", service:"Pagila", tier:"Tier 3", lastEval:"Aug 14, 2026, 12:30 AM (UTC+7:00)"},
-  {id:"city", fqn:"postgres.pagila.public.city", overall:98, completeness:100, uniqueness:100, validity:98, consistency:96, freshness:96, status:"Healthy", primaryIssue:"", domain:"Reference", owner:"Data Platform", service:"Pagila", tier:"Tier 3", lastEval:"Aug 14, 2026, 12:25 AM (UTC+7:00)"},
-  {id:"stock_adjustment_098", fqn:"postgres.pagila.public.stock_adjustment_098", overall:41, completeness:41, uniqueness:51, validity:38, consistency:41, freshness:35, accuracy:37, status:"Critical", primaryIssue:"Freshness SLA breach", domain:"Risk", owner:"Analytics", service:"Pagila", tier:"Tier 1", lastEval:"Aug 14, 2026, 01:42 AM (UTC+7:00)"},
-  {id:"stock_adjustment_392", fqn:"postgres.pagila.archive.stock_adjustment_392", overall:42, completeness:44, uniqueness:52, validity:40, consistency:43, freshness:33, accuracy:39, status:"Critical", primaryIssue:"Freshness SLA breach", domain:"Compliance", owner:"Analytics", service:"Pagila", tier:"Tier 1", lastEval:"Aug 13, 2026, 06:06 AM (UTC+7:00)"},
-  {id:"account_282", fqn:"postgres.pagila.archive.account_282", overall:43, completeness:45, uniqueness:50, validity:42, consistency:44, freshness:36, accuracy:41, status:"Critical", primaryIssue:"Freshness SLA breach", domain:"Catalog", owner:"Content", service:"Pagila", tier:"Tier 2", lastEval:"Aug 13, 2026, 01:26 PM (UTC+7:00)"},
-  {id:"subscriptions_057", fqn:"redshift.marketing.public.subscriptions_057", overall:44, completeness:46, uniqueness:53, validity:41, consistency:45, freshness:34, accuracy:40, status:"Critical", primaryIssue:"Freshness SLA breach", domain:"Marketing", owner:"Marketing Ops", service:"Redshift", tier:"Tier 2", lastEval:"Aug 14, 2026, 04:26 AM (UTC+7:00)"},
-  {id:"products_105", fqn:"postgres.pagila.archive.products_105", overall:45, completeness:47, uniqueness:54, validity:43, consistency:46, freshness:37, accuracy:42, status:"Critical", primaryIssue:"Freshness SLA breach", domain:"Reference", owner:"Analytics", service:"Pagila", tier:"Tier 3", lastEval:"Aug 14, 2026, 01:14 AM (UTC+7:00)"},
-];
-
-const failedTestsByAsset = {
-  stock_adjustment_098: [
-    {name:"stock_adjustment_098_accuracy", dim:"Accuracy", status:"Critical", rows:1720, rate:"8.3%", last:"Aug 14, 2026, 01:42 AM (UTC+7:00)"},
-    {name:"stock_adjustment_098_completeness", dim:"Completeness", status:"Critical", rows:1811, rate:"5.9%", last:"Aug 14, 2026, 01:42 AM (UTC+7:00)"},
-    {name:"stock_adjustment_098_uniqueness", dim:"Uniqueness", status:"Critical", rows:1338, rate:"4.9%", last:"Aug 14, 2026, 01:42 AM (UTC+7:00)"},
-    {name:"stock_adjustment_098_validity", dim:"Validity", status:"Critical", rows:1893, rate:"8.2%", last:"Aug 14, 2026, 01:42 AM (UTC+7:00)"},
-    {name:"stock_adjustment_098_consistency", dim:"Consistency", status:"Critical", rows:1811, rate:"5.9%", last:"Aug 14, 2026, 01:42 AM (UTC+7:00)"},
-    {name:"stock_adjustment_098_freshness", dim:"Freshness", status:"Critical", rows:1775, rate:"8.5%", last:"Aug 14, 2026, 01:42 AM (UTC+7:00)"},
-  ],
-  customer: [
-    {name:"customer_freshness", dim:"Freshness", status:"Critical", rows:512, rate:"9.1%", last:"Aug 14, 2026, 01:42 AM (UTC+7:00)"},
-  ],
-  payment: [
-    {name:"payment_validity", dim:"Validity", status:"Degraded", rows:964, rate:"6.4%", last:"Aug 14, 2026, 01:10 AM (UTC+7:00)"},
-  ],
-};
-
-const dimColors = {Accuracy:"#e8912b",Completeness:"#e0453f",Uniqueness:"#2f9e5b",Validity:"#e0453f",Consistency:"#e0453f",Freshness:"#e0453f"};
-
 /* ===================== DATA LAYER: mock-assets.json / mock-rules.json (contract, not guideline) =====================
    Field names/types/timestamps giữ nguyên xi theo JSON — không đổi tên, không tự suy ra state ở đây:
    lifecycleState/recurrenceCount/... đã được BE tính sẵn trong file, FE chỉ render.
@@ -1190,7 +1219,6 @@ let healthDomainFilters = [];
 let healthOwnerFilters = [];
 let healthDimFilters = [];
 let healthTierFilters = [];
-let healthNoRuleFilter = false; // shortcut từ KPI "Rule Coverage" ở Overview — không phải dropdown
 let currentAssetId = null;
 let currentTest = null;
 
@@ -1384,8 +1412,8 @@ const HEALTH_STATUS_OPTIONS = [
   {value:'Unhealthy', label:'Unhealthy'},
   {value:'Warning',  label:'Degraded'},
   {value:'Healthy',  label:'Healthy'},
-  {value:'Unknow',  label:'Unknow'},
-  {value:'Notest',  label:'Notest'},
+  {value:'Unknow',  label:'Unknown'},
+  {value:'Notest',  label:'No Tests'},
 ];
 const DOMAIN_OPTIONS = ["Compliance","Finance","Marketing","Operations","Risk","Sales"];
 const OWNER_OPTIONS = ["Analytics","Content","Data Platform","Finance Ops","Marketing Ops"];
@@ -1675,47 +1703,6 @@ function applyDelta(elId, delta, unit, fallbackText, decimals){
   el.textContent = (rounded>0 ? '▲ ' : '▼ ') + Math.abs(rounded).toFixed(decimals) + unit + ' so với hôm qua';
 }
 
-// Ngưỡng màu riêng cho Rule Coverage — KHÔNG dùng chung THRESHOLDS (đó là ngưỡng điểm số
-// healthScore/dimension, dùng cho vùng Target/Amber ở radar Data Quality Score). Rule Coverage đo
-// một đại lượng khác hẳn về bản chất (tỉ lệ % asset có rule, không phải điểm chất lượng dữ liệu),
-// nên cần thang ngưỡng riêng dù tình cờ cùng giá trị 90/70.
-const COVERAGE_THRESHOLDS = { green: 90, amber: 70 };
-
-// Rule Coverage KPI (Overview) — theo tập ĐANG LỌC, giống các KPI khác cùng dải (khác với Data
-// Quality Score radar và Last Full Scan, cả 2 đều cố định toàn hệ thống).
-function renderRuleCoverageKpi(filtered){
-  const y = filtered.length;
-  const x = filtered.filter(a=>(rulesByAssetId[a.id]||[]).length>0).length;
-  const pct = y ? Math.round(x/y*100) : 0;
-  const valueEl = document.getElementById('ovKpiRuleCoverage');
-  const barEl = document.getElementById('ovKpiRuleCoverageBar');
-  const noteEl = document.getElementById('ovKpiRuleCoverageNote');
-
-  valueEl.textContent = pct===100 ? '100%' : `${x}/${y} bảng có rule (${pct}%)`;
-  barEl.style.width = pct + '%';
-  barEl.style.background = pct>=COVERAGE_THRESHOLDS.green ? 'var(--green)' : pct>=COVERAGE_THRESHOLDS.amber ? 'var(--orange)' : 'var(--red)';
-
-  if(pct===100){
-    noteEl.className = 'delta up';
-    noteEl.style.color = '';
-    noteEl.textContent = 'Toàn bộ asset đã được gán rule';
-  } else {
-    const missing = y - x;
-    noteEl.className = 'delta';
-    noteEl.style.color = 'var(--red)';
-    noteEl.textContent = `${missing} bảng chưa có rule nào`;
-  }
-}
-
-// Click Rule Coverage -> tab Health, lọc sẵn asset chưa có rule. Health tab chưa có filter này nên
-// bổ sung state healthNoRuleFilter (không phải dropdown — chỉ là shortcut 1 chiều giống
-// toggleHealthStatusFilter/toggleHealthDimFilter đã có, "Clear" ở tab Health vẫn tắt được).
-function applyRuleCoverageFilter(){
-  switchTab('health');
-  healthNoRuleFilter = true;
-  renderHealthTable();
-}
-
 // Last Full Scan (Overview) — chỉ số vận hành TOÀN HỆ THỐNG, không theo filter bar.
 function renderLastFullScanKpi(){
   const completedFullScans = jobRuns.filter(j=>j.job.startsWith('Full Scan') && j.status==='Success');
@@ -1870,22 +1857,22 @@ function renderOverview(){
   const byStatus = {Healthy:0, Warning:0, Unhealthy:0, Unknow:0, Notest:0};
   filtered.forEach(a=>{ const st = computeAssetStatus(a.id); if(byStatus[st]!==undefined) byStatus[st]++; });
   document.getElementById('ovKpiCritical').textContent = byStatus.Unhealthy;
+  document.getElementById('ovKpiDegraded').textContent = byStatus.Warning;
   document.getElementById('ovKpiUnknow').textContent = byStatus.Unknow;
   document.getElementById('ovKpiNotest').textContent = byStatus.Notest;
 
   const deltas = computeYesterdayDeltas(filtered);
   applyDelta('ovKpiOverallDelta', deltas && deltas.overallDelta, ' điểm', '', 1);
   applyDelta('ovKpiCriticalDelta', deltas && deltas.criticalDelta, ' asset');
-
-  renderRuleCoverageKpi(filtered);
+  applyDelta('ovKpiDegradedDelta', deltas && deltas.degradedDelta, ' asset');
 
   document.getElementById('ovDistTotal').textContent = `${filtered.length} assets total`;
   const segs = [
     ['ovSegCritical','ovLegCritical', byStatus.Unhealthy, 'Unhealthy'],
     ['ovSegDegraded','ovLegDegraded', byStatus.Warning, 'Degraded'],
     ['ovSegHealthy','ovLegHealthy', byStatus.Healthy, 'Healthy'],
-    ['ovSegUnknow','ovLegUnknow', byStatus.Unknow, 'Unknow'],
-    ['ovSegNotest','ovLegNotest', byStatus.Notest, 'Notest'],
+    ['ovSegUnknow','ovLegUnknow', byStatus.Unknow, 'Unknown'],
+    ['ovSegNotest','ovLegNotest', byStatus.Notest, 'No Tests'],
   ];
   segs.forEach(([segId, legId, count, label])=>{
     const pct = filtered.length ? (count/filtered.length*100) : 0;
@@ -1934,8 +1921,12 @@ function dimCell(val){
 }
 
 const assetStatusBadgeClass = {Unhealthy:"critical", Warning:"degraded", Healthy:"healthy", Unknow:"pending", Notest:"unknown"};
+// Nhãn hiển thị cho status — chỉ đổi CHỮ hiển thị (Unknow->Unknown, Notest->No Tests), không đổi
+// giá trị nội bộ 'Unknow'/'Notest' (vẫn dùng nguyên cho so sánh/filter/CSS class ở khắp file).
+const ASSET_STATUS_DISPLAY_LABEL = {Unknow:"Unknown", Notest:"No Tests"};
+function assetStatusLabel(status){ return ASSET_STATUS_DISPLAY_LABEL[status] || status; }
 function assetStatusBadge(status){
-  return `<span class="badge ${assetStatusBadgeClass[status]||'unknown'}">${status}</span>`;
+  return `<span class="badge ${assetStatusBadgeClass[status]||'unknown'}">${assetStatusLabel(status)}</span>`;
 }
 
 const HEALTH_DIMS = ["Completeness","Uniqueness","Validity","Consistency","Freshness","Accuracy"];
@@ -1966,7 +1957,6 @@ function renderHealthTable(){
     if(healthOwnerFilters.length && !healthOwnerFilters.includes(a.owner)) return false;
     if(healthTierFilters.length && !healthTierFilters.includes(a.tier)) return false;
     if(healthDimFilters.length && !healthDimFilters.some(d=>a.failingDimensions.includes(d))) return false;
-    if(healthNoRuleFilter && (rulesByAssetId[a.id]||[]).length>0) return false;
     if(q && !(a.name.toLowerCase().includes(q) || a.fqn.toLowerCase().includes(q))) return false;
     return true;
   });
@@ -2045,7 +2035,7 @@ function applyHealthFilter(status){ switchTab('health'); toggleHealthStatusFilte
 
 function clearHealthFilters(){
   healthStatusFilters = []; healthDomainFilters = []; healthOwnerFilters = [];
-  healthDimFilters = []; healthTierFilters = []; healthNoRuleFilter = false;
+  healthDimFilters = []; healthTierFilters = [];
   [msHealthStatus, msHealthDomain, msHealthOwner, msHealthDimension, msHealthTier].forEach(ms=>ms && ms.refreshLabel());
   document.getElementById('healthSearch').value='';
   healthTablePage = 1;
@@ -2237,7 +2227,7 @@ function renderRuleLifecycle(){
   const topUnstable = topUnstableAll.slice((topUnstablePage-1)*PAGE_SIZE, topUnstablePage*PAGE_SIZE);
   document.getElementById('topUnstableBody').innerHTML = topUnstable.length ? topUnstable.map(r=>`
     <tr>
-      <td><span class="test-name">${r.ruleName}</span>${recurrenceBadgeHtml(r.recurrenceCount)}</td>
+      <td><span class="test-name" onclick="openRuleDetail('${r.id}')">${r.ruleName}</span>${recurrenceBadgeHtml(r.recurrenceCount)}</td>
       <td>${r.table}</td>
       <td class="cellnum">${r.recurrenceCount}</td>
       <td class="cellnum">${r.currentFailStreak}</td>
@@ -2280,7 +2270,7 @@ function renderRuleLifecycle(){
         ? `<span style="color:var(--gray)">—</span> → <span style="color:var(--${r.latestResult==='Fail'?'red':'green'})" title="${fmtRunTs(r.latestRunAt)}">${r.latestResult}</span> <span class="fqn" style="display:inline;margin-left:4px;">first run</span>`
         : `<span style="color:var(--${r.previousResult==='Fail'?'red':'green'})" title="${fmtRunTs(r.previousRunAt)}">${r.previousResult}</span> → <span style="color:var(--${r.latestResult==='Fail'?'red':'green'})" title="${fmtRunTs(r.latestRunAt)}">${r.latestResult}</span>`;
     return `<tr>
-      <td class="sticky-col"><span class="test-name">${r.ruleName}</span>${recurrenceBadgeHtml(r.recurrenceCount)}</td>
+      <td class="sticky-col"><span class="test-name" onclick="openRuleDetail('${r.id}')">${r.ruleName}</span>${recurrenceBadgeHtml(r.recurrenceCount)}</td>
       <td>${r.table}<span class="fqn">${r.column}</span></td>
       <td>${prevCell}</td>
       <td><span class="badge ${SEVERITY_BADGE_CLASS[r.severity]}">${r.severity}</span></td>
@@ -2315,151 +2305,313 @@ function showView(name){
 }
 
 /* ===================== Asset detail view ===================== */
-function openAssetDetail(id, scrollDim){
-  currentAssetId = id;
-  const a = assets.find(x=>x.id===id);
-  document.getElementById('detailBreadcrumbName').textContent = a.id;
-  document.getElementById('detailTitle').textContent = a.id;
-  document.getElementById('detailFqn').textContent = a.fqn;
-  document.getElementById('detailDomain').textContent = a.domain;
-  document.getElementById('detailDomain').onclick = ()=>showToast('Nhảy sang tab Domains, đúng domain: ' + a.domain + ' (demo placeholder).');
-  document.getElementById('detailOwner').textContent = a.owner;
-  document.getElementById('detailOwner').onclick = ()=>showToast('Filter theo Owner: ' + a.owner + ' (demo placeholder).');
-  document.getElementById('detailService').textContent = a.service;
-  document.getElementById('detailTier').textContent = a.tier;
-  document.getElementById('detailScore').textContent = a.overall;
-  document.getElementById('detailStatusBadge').outerHTML = statusBadge(a.status).replace('<span class="badge','<span id="detailStatusBadge" class="badge');
-  document.getElementById('detailDeltaNote').textContent = '▼ 3 vs previous period';
-  document.getElementById('detailLastEval').textContent = a.lastEval;
-
-  const dims = [
-    ["Accuracy", a.accuracy ?? 80],
-    ["Completeness", a.completeness],
-    ["Consistency", a.consistency],
-    ["Freshness", a.freshness],
-    ["Uniqueness", a.uniqueness],
-    ["Validity", a.validity],
-  ];
-  document.getElementById('dimBreakdown').innerHTML = dims.map(([name,val])=>{
-    const color = scoreColor(val);
-    return `<div class="dim-row" onclick="filterFailedTests('${name}')">
-      <div class="top"><span>${name}</span><span>${val}</span></div>
-      <div class="dim-track"><div class="dim-fill" style="width:${val}%;background:${color};"></div></div>
-    </div>`;
-  }).join('');
-
-  // trend line - simple derived from overall score
-  const base = a.overall;
-  const pts = [0,1,2,3,4,5,6,7,8].map(i=>{
-    const x = 20 + i*28.75;
-    const y = 120 - ((base + (i%3===0? -4:2)) / 100 * 110);
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  }).join(' ');
-  document.getElementById('assetTrendLine').setAttribute('points', pts);
-
-  const tests = failedTestsByAsset[id] || [];
-
-  const totalQuarantine = tests.reduce((s,t)=>s+t.rows,0) + 3000;
-  document.getElementById('viewQuarantineLink').textContent = `View Quarantine (${totalQuarantine.toLocaleString()} rows)`;
-  document.getElementById('viewQuarantineLink').onclick = ()=>showToast('Mở Quarantine Viewer cho toàn bộ asset ' + id + ' (demo placeholder).');
-
-  document.getElementById('failedTestsBody').innerHTML = tests.map(t=>`
-    <tr>
-      <td><span class="test-name" onclick="openTestDetail('${id}','${t.name}')">${t.name}</span></td>
-      <td>${t.dim}</td>
-      <td>${statusBadge(t.status)}</td>
-      <td><span class="failed-rows-link" onclick="showToast('Nhảy vào Quarantine Viewer filter theo test: ${t.name} (demo placeholder).')">${t.rows.toLocaleString()}</span></td>
-      <td>${t.rate}</td>
-      <td>${t.last}</td>
-    </tr>`).join('') || `<tr><td colspan="6" class="empty-note">Không có test lỗi nào.</td></tr>`;
-
-  showView('detail');
-
-  if(scrollDim){
-    setTimeout(()=>{
-      document.querySelectorAll('#failedTestsBody tr').forEach(tr=>{
-        if(tr.textContent.includes(scrollDim)) tr.style.background = '#fdeceb';
-      });
-    }, 50);
-  }
-}
-
-function filterFailedTests(dim){
-  document.querySelectorAll('#failedTestsBody tr').forEach(tr=>{
-    tr.style.display = tr.children.length>1 && tr.children[1].textContent===dim ? '' : (tr.children.length>1 ? 'none' : '');
-  });
-  document.querySelector('#failedTestsBody').scrollIntoView({behavior:'smooth', block:'nearest'});
-}
-
-function openTestFromAsset(assetId){
-  const tests = failedTestsByAsset[assetId];
-  if(tests && tests.length){
-    openTestDetail(assetId, tests[0].name);
-  } else {
-    openAssetDetail(assetId);
-  }
-}
-
 /* ===================== Test / Issue detail view (Tầng 4) ===================== */
-const testDefinitions = {
-  stock_adjustment_098_freshness: {
-    logic: "Bảng phải được cập nhật dữ liệu mới trong vòng 4 giờ gần nhất theo cam kết SLA.",
-    threshold: "Max staleness ≤ 4 giờ", frequency: "Mỗi 30 phút",
-    sql: "SELECT MAX(updated_at) FROM stock_adjustment_098\nWHERE now() - MAX(updated_at) > interval '4 hours'"
-  },
-  default: {
-    logic: "Giá trị cột phải khớp định dạng/ràng buộc chuẩn đã cấu hình cho dimension này.",
-    threshold: "Failure rate ≤ 5%", frequency: "Mỗi 1 giờ",
-    sql: "SELECT * FROM {table}\nWHERE NOT ({column} MATCHES expected_rule)"
+// PRNG tất định seed theo id rule — mock ổn định qua các lần đổi filter/time-range (không random
+// lại mỗi lần render), tránh số liệu "nhảy" khi người dùng chỉ đang lọc chứ không đổi rule/test.
+function seededRng(seedStr){
+  let h = 1779033703 ^ seedStr.length;
+  for(let i=0;i<seedStr.length;i++){
+    h = Math.imul(h ^ seedStr.charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
   }
-};
+  return function(){
+    h = Math.imul(h ^ (h >>> 16), 2246822507);
+    h = Math.imul(h ^ (h >>> 13), 3266489909);
+    h ^= h >>> 16;
+    return (h >>> 0) / 4294967296;
+  };
+}
 
-function openTestDetail(assetId, testName){
-  const a = assets.find(x=>x.id===assetId);
-  const tests = failedTestsByAsset[assetId] || [];
-  const t = tests.find(x=>x.name===testName) || tests[0];
-  currentTest = {assetId, testName: t.name};
+function buildTestDefinitionText(r){
+  return {
+    logic: `Giá trị cột "${r.column}" trong bảng "${r.table}" phải khớp ràng buộc chuẩn đã cấu hình cho rule ${r.ruleType} (dimension ${dimLabel(r.healthDimension)}).`,
+    threshold: `Failure rate ≤ 5%`,
+    frequency: `Mỗi 12 giờ`,
+    sql: `SELECT * FROM ${r.table}\nWHERE NOT (${r.column} MATCHES expected_rule) -- ${r.ruleType}`,
+  };
+}
 
-  document.getElementById('testBreadcrumbAsset').textContent = a.id;
+// Sinh 90 ngày lịch sử fail-rate cho 1 rule. Những ngày còn nằm trong history30 THẬT (~15 ngày gần
+// "now" của chính rule đó) dùng ĐÚNG số run Success/Failed thật; chỉ những ngày xa hơn (cần cho cửa
+// sổ 30D/90D mà history30 không phủ tới) mới sinh mock, dao động quanh r.failRatePct thật của rule
+// — Failure Trend, KPI "hiện tại/đỉnh" và Lifecycle History đều đọc CHUNG mảng này (nguyên tắc Check).
+function buildRuleHistoryDays(r, now){
+  const realByDay = {};
+  (r.history30||[]).forEach(h=>{
+    const key = h.timestamp.slice(0,10);
+    const bucket = realByDay[key] || (realByDay[key] = {total:0, failed:0});
+    bucket.total++;
+    if(h.status==='Failed') bucket.failed++;
+  });
+
+  const rng = seededRng(r.id);
+  const baseRate = r.failRatePct != null ? r.failRatePct : 5;
+  const dayStart = new Date(now); dayStart.setHours(0,0,0,0);
+  const days = [];
+  for(let i=89;i>=0;i--){
+    const d = new Date(dayStart.getTime() - i*24*3600*1000);
+    const key = d.toISOString().slice(0,10);
+    const real = realByDay[key];
+    let rate;
+    if(real){
+      rate = Math.round((real.failed/real.total)*1000)/10;
+    } else {
+      const spike = rng() < 0.12;
+      const noise = (rng()-0.5) * baseRate * 0.6;
+      rate = Math.max(0, baseRate + noise + (spike ? baseRate*(1+rng()*2) : 0));
+      rate = Math.round(rate*10)/10;
+    }
+    days.push({date:d, daysAgo:i, rate, fail: rate > Math.max(baseRate*1.3, 1), isReal:!!real});
+  }
+  return days;
+}
+
+// Quét các chuỗi ngày "fail" liên tiếp trong history thành từng chu kỳ tái phát — tính ra từ dữ
+// liệu, không hardcode danh sách chu kỳ riêng (đúng nguyên tắc Check).
+function computeLifecycleCycles(history){
+  const cycles = [];
+  let open = null;
+  history.forEach(day=>{
+    if(day.fail){
+      if(!open) open = {start:day.date, end:null, peak:day.rate, days:1};
+      else { open.peak = Math.max(open.peak, day.rate); open.days++; }
+    } else if(open){
+      open.end = day.date; cycles.push(open); open = null;
+    }
+  });
+  if(open) cycles.push(open); // chu kỳ vẫn đang mở tính đến "hiện tại"
+  return cycles;
+}
+
+// Không có dữ liệu row-level thật trong mock-rules.json (chỉ có run-level history30), nên số dòng
+// quarantine/mẫu record vẫn phải mock — seed theo r.id + r.totalFailedRuns để ổn định, và bằng 0
+// nếu rule chưa từng fail lần nào (không tự bịa ra lỗi cho rule đang Pass tuyệt đối).
+function buildSampleRecords(r, rng){
+  if(!r.totalFailedRuns) return {totalRows:0, rows:[]};
+  const totalRows = Math.round(r.totalFailedRuns * (80 + rng()*400));
+  const violations = [
+    ["NULL","khác NULL"], ["2026-13-40","định dạng YYYY-MM-DD"], ["-1","≥ 0"],
+    ["N/A","giá trị hợp lệ"], ["","không rỗng"], ["9999-99-99","định dạng hợp lệ"],
+  ];
+  const rows = [];
+  const sampleSize = Math.min(24, totalRows);
+  for(let i=0;i<sampleSize;i++){
+    const daysAgo = Math.floor(rng()*60);
+    const d = new Date(Date.now() - daysAgo*24*3600*1000 - Math.floor(rng()*23)*3600*1000);
+    const v = violations[Math.floor(rng()*violations.length)];
+    rows.push({rowId:'#'+(48000+Math.floor(rng()*2000)), col:r.column, current:v[0], expected:v[1], recordedAt:d, daysAgo});
+  }
+  return {totalRows, rows: rows.sort((a,b)=>b.recordedAt - a.recordedAt)};
+}
+
+function buildActivityLog(r, now, rng){
+  const items = [
+    {type:'system', at:now, text:`Rule engine đánh dấu <b>${r.ruleName}</b> là <b>${r.latestResult==='Fail' ? 'Fail' : 'Pass'}</b> (lifecycle: ${r.lifecycleState}).`},
+  ];
+  if(r.firstFailOfCurrentCycleAt && r.latestResult==='Fail'){
+    items.push({type:'system', at:new Date(r.firstFailOfCurrentCycleAt), text:`Phát hiện chuyển trạng thái <b>Pass → Fail</b>, bắt đầu chu kỳ lỗi hiện tại.`});
+  }
+  if(r.lastRecurrenceAt && r.recurrenceCount>0){
+    items.push({type:'system', at:new Date(r.lastRecurrenceAt), text:`Ghi nhận lần tái phát gần nhất (tổng ${r.recurrenceCount} lần tái phát).`});
+  }
+  if(rng() < 0.6){
+    items.push({type:'user', at:new Date(now.getTime()-3*3600*1000), text:`<b>Minh Khuê</b> đã assign issue này cho team ${r.owner}.`});
+    items.push({type:'user', at:new Date(now.getTime()-2*3600*1000), text:`<b>Minh Khuê</b> đổi trạng thái <b>Open → In Progress</b>.`});
+  }
+  if(rng() < 0.5){
+    items.push({type:'note', at:new Date(now.getTime()-1*3600*1000), text:`Đã liên hệ team nguồn (${r.systemOwner || r.owner}), chờ vá lỗi upstream.`});
+  }
+  return items.sort((a,b)=>b.at-a.at);
+}
+
+function fmtDate(d){
+  return d.toLocaleDateString('vi-VN', {day:'2-digit', month:'2-digit', year:'numeric'});
+}
+function fmtDateTime(d){
+  return d.toLocaleString('vi-VN', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'});
+}
+
+let currentTestMock = null;
+let testTimeRange = 30;
+let sampleSearchQuery = '';
+let sampleSearchDebounce = null;
+
+function openRuleDetail(ruleId){
+  const r = rulesMock.find(x=>x.id===ruleId);
+  if(!r) return;
+  const a = getAssetById(r.assetId);
+  currentTest = {ruleId};
+
+  document.getElementById('testBreadcrumbAsset').textContent = a.name;
   document.getElementById('testBreadcrumbAsset').onclick = ()=>openAssetDetail(a.id);
-  document.getElementById('testBreadcrumbTest').textContent = t.dim + ' Test';
-  document.getElementById('testTitle').textContent = t.name;
-  document.getElementById('testDimLine').textContent = a.fqn + ' · ' + t.dim + ' dimension';
-  document.getElementById('testStatusPill').textContent = t.status;
-  document.getElementById('testStatusPill').style.background = t.status==='Critical' ? '#fdeceb' : '#fdf1e2';
-  document.getElementById('testStatusPill').style.color = t.status==='Critical' ? '#e0453f' : '#e8912b';
+  document.getElementById('testBreadcrumbTest').textContent = dimLabel(r.healthDimension) + ' Test';
+  document.getElementById('testTitle').textContent = r.ruleName;
+  document.getElementById('testDimLine').textContent = r.tableFqn + ' · ' + dimLabel(r.healthDimension) + ' dimension';
+  document.getElementById('testStatusPill').textContent = r.latestResult==='Fail' ? r.lifecycleState : 'Pass';
+  const isFail = r.latestResult==='Fail';
+  document.getElementById('testStatusPill').style.background = isFail ? 'var(--red-bg)' : 'var(--green-bg)';
+  document.getElementById('testStatusPill').style.color = isFail ? 'var(--red)' : 'var(--green)';
 
-  const def = testDefinitions[t.name] || testDefinitions.default;
-  document.getElementById('tdName').textContent = t.name;
-  document.getElementById('tdDimension').textContent = t.dim;
+  const def = buildTestDefinitionText(r);
+  document.getElementById('tdName').textContent = r.ruleName;
+  document.getElementById('tdDimension').textContent = dimLabel(r.healthDimension);
   document.getElementById('tdLogic').textContent = def.logic;
   document.getElementById('tdThreshold').textContent = def.threshold;
   document.getElementById('tdFrequency').textContent = def.frequency;
-  document.getElementById('tdSql').textContent = def.sql.replace('{table}', a.id).replace('{column}', t.dim.toLowerCase());
-  document.getElementById('tdOwner').textContent = a.owner;
+  document.getElementById('tdSql').textContent = def.sql;
+  document.getElementById('tdOwner').textContent = r.owner;
 
-  const sampleRows = [
-    ["#48211", t.dim.toLowerCase()+"_value", "NULL", "khác NULL", "Aug 14, 2026, 01:12 AM"],
-    ["#48219", t.dim.toLowerCase()+"_value", "2026-13-40", "định dạng YYYY-MM-DD", "Aug 14, 2026, 01:15 AM"],
-    ["#48233", t.dim.toLowerCase()+"_value", "-1", "≥ 0", "Aug 14, 2026, 01:20 AM"],
-    ["#48250", t.dim.toLowerCase()+"_value", "N/A", "giá trị hợp lệ", "Aug 14, 2026, 01:25 AM"],
-  ];
-  document.getElementById('sampleRowsBody').innerHTML = sampleRows.map(r=>`
-    <tr><td>${r[0]}</td><td>${r[1]}</td><td style="color:#e0453f;font-weight:600;">${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td></tr>
-  `).join('');
-
-  const others = assets.filter(x=>x.id!==a.id && x.domain===a.domain).slice(0,3);
+  const others = assetsMock.filter(x=>x.id!==a.id && x.domain===a.domain).slice(0,3);
   document.getElementById('impactedList').innerHTML = others.length ? others.map(o=>`
     <div class="impacted-item" onclick="openAssetDetail('${o.id}')">
-      <span class="asset-link">${o.id}</span><span style="color:var(--muted);">${o.domain}</span>
+      <span class="asset-link">${o.name}</span><span style="color:var(--muted);">${o.domain}</span>
     </div>`).join('') : `<div class="empty-note">Không có asset liên quan trong lineage.</div>`;
 
-  document.getElementById('activityLog').innerHTML = `
-    <div>• ${t.last} — Rule engine đánh dấu test <b>${t.name}</b> là <b>${t.status}</b>.</div>
-    <div style="margin-top:4px;">• Chưa có ai xem hoặc nhận xử lý issue này.</div>
-  `;
+  // Sinh lại toàn bộ mock (history/records/activity) cho ĐÚNG rule vừa mở, và reset mọi filter về
+  // mặc định — không giữ state filter khi chuyển sang rule/test khác (yêu cầu #4).
+  const now = r.latestRunAt ? new Date(r.latestRunAt) : (a.lastRunAt ? new Date(a.lastRunAt) : new Date());
+  const rng = seededRng(r.id+'_mock');
+  const history = buildRuleHistoryDays(r, now);
+  currentTestMock = {
+    rule: r,
+    now,
+    history,
+    cycles: computeLifecycleCycles(history),
+    sample: buildSampleRecords(r, rng),
+    activity: buildActivityLog(r, now, rng),
+  };
+
+  testTimeRange = 30;
+  document.querySelectorAll('#testTrendRangePills .time-pill').forEach(p=>{
+    p.classList.toggle('active', parseInt(p.dataset.range,10)===30);
+  });
+
+  sampleSearchQuery = '';
+  document.getElementById('sampleSearchInput').value = '';
+  document.getElementById('sampleTimeFilter').value = '30';
+  populateSampleColOptions(currentTestMock.sample.rows); // options sinh động từ dữ liệu, không hardcode
+  document.getElementById('sampleColFilter').value = 'all';
+
+  document.getElementById('activityTypeFilter').value = 'all';
+
+  renderFailureTrend();
+  renderLifecycleHistory();
+  renderSampleRecords();
+  renderActivityLog();
 
   showView('test');
+}
+
+function setTestTimeRange(days){
+  testTimeRange = days;
+  document.querySelectorAll('#testTrendRangePills .time-pill').forEach(p=>{
+    p.classList.toggle('active', parseInt(p.dataset.range,10)===days);
+  });
+  renderFailureTrend();
+  renderLifecycleHistory(); // Lifecycle History dùng CHUNG time range với Failure Trend (yêu cầu #1)
+}
+
+function renderFailureTrend(){
+  if(!currentTestMock) return;
+  const series = currentTestMock.history.filter(d=>d.daysAgo < testTimeRange);
+  const rates = series.map(d=>d.rate);
+  const peak = Math.max(...rates);
+  const current = series[series.length-1].rate;
+  const niceMax = Math.max(10, Math.ceil((peak*1.15)/5)*5);
+
+  const x0=20, x1=250, yTop=10, yBottom=120, n=series.length;
+  const pts = series.map((d,i)=>{
+    const x = n<=1 ? x0 : x0 + (i/(n-1))*(x1-x0);
+    const y = yBottom - (d.rate/niceMax)*(yBottom-yTop);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+
+  document.getElementById('testTrendLine').setAttribute('points', pts);
+  document.getElementById('testTrendAxisTop').textContent = niceMax+'%';
+  document.getElementById('testTrendAxisLabel').textContent = testTimeRange+' ngày gần nhất';
+  document.getElementById('testTrendCurrentRate').textContent = current.toFixed(1)+'%';
+  document.getElementById('testTrendPeakRate').textContent = peak.toFixed(1)+'%';
+}
+
+function renderLifecycleHistory(){
+  if(!currentTestMock) return;
+  document.getElementById('lifecycleRangeNote').textContent = `Đang xem trong ${testTimeRange} ngày`;
+
+  const rangeStart = new Date(currentTestMock.now.getTime() - testTimeRange*24*3600*1000);
+  const cycles = currentTestMock.cycles.filter(c=>(c.end || currentTestMock.now) >= rangeStart);
+  const body = document.getElementById('lifecycleCyclesBody');
+
+  if(!cycles.length){
+    body.innerHTML = `<div class="empty-note">Không có chu kỳ tái phát nào trong ${testTimeRange} ngày qua.</div>`;
+    return;
+  }
+  body.innerHTML = cycles.slice().reverse().map(c=>`
+    <div class="cycle-row">
+      <div>${fmtDate(c.start)}</div>
+      <div>${c.end ? fmtDate(c.end) : '<span class="open-tag">Đang mở</span>'}</div>
+      <div>${c.days}</div>
+      <div>${c.peak.toFixed(1)}%</div>
+    </div>`).join('');
+}
+
+function populateSampleColOptions(records){
+  const cols = [...new Set(records.map(r=>r.col))];
+  document.getElementById('sampleColFilter').innerHTML =
+    '<option value="all">Tất cả cột vi phạm</option>' + cols.map(c=>`<option value="${c}">${c}</option>`).join('');
+}
+
+function onSampleSearchInput(){
+  clearTimeout(sampleSearchDebounce);
+  sampleSearchDebounce = setTimeout(()=>{
+    sampleSearchQuery = document.getElementById('sampleSearchInput').value.trim().toLowerCase();
+    renderSampleRecords();
+  }, 300);
+}
+function onSampleFilterChange(){ renderSampleRecords(); }
+
+function renderSampleRecords(){
+  if(!currentTestMock) return;
+  // Số đếm ở header luôn bằng tổng số THỰC (totalRows) — không đổi theo kết quả filter, tránh hiểu
+  // nhầm là tổng số lỗi giảm khi người dùng chỉ đang thu hẹp bảng xem (yêu cầu #2).
+  document.getElementById('sampleRowsCount').textContent = `${currentTestMock.sample.totalRows.toLocaleString()} dòng bị quarantine`;
+
+  const col = document.getElementById('sampleColFilter').value;
+  const timeSel = document.getElementById('sampleTimeFilter').value;
+  const q = sampleSearchQuery;
+
+  const filtered = currentTestMock.sample.rows.filter(r=>{
+    if(q && !r.rowId.toLowerCase().includes(q)) return false;
+    if(col!=='all' && r.col!==col) return false;
+    if(timeSel!=='all' && r.daysAgo > parseInt(timeSel,10)) return false;
+    return true;
+  });
+
+  const body = document.getElementById('sampleRowsBody');
+  if(!filtered.length){
+    body.innerHTML = `<tr><td colspan="5" class="empty-note">Không tìm thấy dòng nào khớp điều kiện lọc.</td></tr>`;
+    return;
+  }
+  body.innerHTML = filtered.map(r=>`
+    <tr><td>${r.rowId}</td><td>${r.col}</td><td style="color:#e0453f;font-weight:600;">${r.current || '(rỗng)'}</td><td>${r.expected}</td><td>${fmtDateTime(r.recordedAt)}</td></tr>
+  `).join('');
+}
+
+function onActivityFilterChange(){ renderActivityLog(); }
+
+function renderActivityLog(){
+  if(!currentTestMock) return;
+  const filterVal = document.getElementById('activityTypeFilter').value;
+  const items = currentTestMock.activity.filter(it=>filterVal==='all' || it.type===filterVal);
+  const el = document.getElementById('activityLog');
+
+  if(!items.length){
+    el.innerHTML = `<div class="empty-note">Không có hoạt động nào khớp bộ lọc.</div>`;
+    return;
+  }
+  const tagLabel = {system:'Hệ thống', user:'Người dùng', note:'Ghi chú'};
+  el.innerHTML = items.map(it=>`
+    <div class="activity-item"><span class="act-type-tag ${it.type}">${tagLabel[it.type]}</span>${fmtDateTime(it.at)} — ${it.text}</div>
+  `).join('');
 }
 
 /* ===================== Trend chart — MỘT nguồn sự thật (trendX/trendY) ===================== */
@@ -2962,7 +3114,7 @@ function buildRuleRowsHtml(rules){
         ? `<span style="color:var(--gray)">—</span> → <span title="${fmtRunTs(r.latestRunAt)}">${r.latestResult ?? '—'}</span>`
         : `<span title="${fmtRunTs(r.previousRunAt)}">${r.previousResult ?? '—'}</span> → <span title="${fmtRunTs(r.latestRunAt)}">${r.latestResult ?? '—'}</span>`;
     return `<tr>
-      <td><span class="test-name">${r.ruleName}</span>${recurrenceBadgeHtml(r.recurrenceCount)}</td>
+      <td><span class="test-name" onclick="openRuleDetail('${r.id}')">${r.ruleName}</span>${recurrenceBadgeHtml(r.recurrenceCount)}</td>
       <td>${r.column}</td>
       <td>${dimLabel(r.healthDimension)}</td>
       <td>${prevCell}</td>
