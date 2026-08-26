@@ -694,19 +694,6 @@
 
       <div id="rlSayLine" style="font-size:12.5px;color:var(--muted);margin:-4px 0 16px;"></div>
 
-      <div class="card panel" style="margin-bottom:16px;">
-        <h3>Top Rule Bất Ổn — Ưu Tiên Xử Lý Tuần Này</h3>
-        <table>
-          <thead>
-            <tr><th>Rule / Test</th><th>Table</th>
-              <th id="thTopUnstableRecurrence" onclick="toggleTopUnstableSort()" style="cursor:pointer;white-space:nowrap;" title="Bấm để sort theo Số lần tái phát">Số lần tái phát</th>
-              <th>Chu kỳ lỗi hiện tại</th><th>Fail / Total</th><th>Trạng thái</th></tr>
-          </thead>
-          <tbody id="topUnstableBody"></tbody>
-        </table>
-        <div class="pagination" id="topUnstablePagination"></div>
-      </div>
-
       <div class="card panel">
         <h3>Test Result — Chi tiết theo Rule</h3>
         <div style="overflow-x:auto;">
@@ -714,7 +701,7 @@
           <thead>
             <tr>
               <th class="sticky-col" id="thRuleName" onclick="setRuleLifecycleSort('ruleName')" style="cursor:pointer;white-space:nowrap;" title="Bấm để sort theo Rule / Test">Rule / Test</th>
-              <th>Table / Column</th><th>Previous Run → Current Run</th>
+              <th id="thRuleTable" onclick="setRuleLifecycleSort('table')" style="cursor:pointer;white-space:nowrap;" title="Bấm để sort theo Table / Column">Table / Column</th><th>Previous Run → Current Run</th>
               <th id="thRuleSeverity" onclick="setRuleLifecycleSort('severity')" style="cursor:pointer;white-space:nowrap;" title="Bấm để sort theo Severity">Severity</th>
               <th>Trạng thái</th>
               <th>Lịch sử gần đây</th>
@@ -2083,14 +2070,15 @@ let ruleTierFilters = [];
 let ruleRecurFilters = []; // subset of '0' | '1-2' | '3+'
 let ruleFailOnlyMode = false;
 // Sort chung cho bảng "Rule Lifecycle — Chi tiết theo Rule" — chỉ 1 cột active tại 1 thời điểm.
-// Mặc định recurrenceCount/desc để giữ đúng hành vi gốc của bảng (top rule bất ổn lên đầu).
-let ruleLifecycleSort = {key:'recurrenceCount', dir:'desc'};
+// Mặc định severity/desc để rule Critical luôn lên đầu bảng.
+let ruleLifecycleSort = {key:'severity', dir:'desc'};
 const RULE_LIFECYCLE_SORT_HEADERS = {
-  ruleName: 'thRuleName', severity: 'thRuleSeverity',
+  ruleName: 'thRuleName', table: 'thRuleTable', severity: 'thRuleSeverity',
   recurrenceCount: 'thRuleRecurrence', currentFailStreak: 'thRuleFailStreak',
 };
 const RULE_LIFECYCLE_SORT_COMPARATORS = {
   ruleName: (a,b)=>a.ruleName.localeCompare(b.ruleName),
+  table: (a,b)=>a.table.localeCompare(b.table) || a.column.localeCompare(b.column),
   severity: (a,b)=>SEVERITY_ORDER[a.severity]-SEVERITY_ORDER[b.severity],
   recurrenceCount: (a,b)=>a.recurrenceCount-b.recurrenceCount,
   currentFailStreak: (a,b)=>a.currentFailStreak-b.currentFailStreak,
@@ -2171,14 +2159,7 @@ function computeRuleLifecycleSayLine(rows){
 }
 
 const PAGE_SIZE = 10;
-let topUnstablePage = 1;
 let ruleLifecyclePage = 1;
-let topUnstableSortDir = 'desc'; // mặc định desc (rule bất ổn nhất lên đầu, đúng mục đích của bảng)
-function toggleTopUnstableSort(){
-  topUnstableSortDir = topUnstableSortDir==='desc' ? 'asc' : 'desc';
-  topUnstablePage = 1; // đổi sort thì quay về trang 1, tránh đứng ở trang lẻ không còn khớp thứ tự mới
-  renderRuleLifecycle();
-}
 
 // Generic pager: reuses the existing .pagination/.pg/.arrow classes. Clamps page to valid range
 // so a filter that shrinks the result set never leaves the view stuck on an empty page.
@@ -2201,7 +2182,6 @@ function renderPagination(containerId, totalItems, page, goToFn){
   el.innerHTML = `<span class="arrow" onclick="${goToFn}(${Math.max(1,clamped-1)})">&#8249;</span>${pageBtns}<span class="arrow" onclick="${goToFn}(${Math.min(totalPages,clamped+1)})">&#8250;</span>`;
   return clamped;
 }
-function goToTopUnstablePage(p){ topUnstablePage = p; renderRuleLifecycle(); }
 function goToRuleLifecyclePage(p){ ruleLifecyclePage = p; renderRuleLifecycle(); }
 
 function renderRuleLifecycle(){
@@ -2216,24 +2196,6 @@ function renderRuleLifecycle(){
   document.getElementById('rlKpiReopened').textContent = counts.Reopened;
   document.getElementById('rlKpiOngoing').textContent = counts.Ongoing;
   document.getElementById('rlKpiRecovered').textContent = counts.Recovered;
-
-  // Top rule bất ổn: toàn bộ rule có recurrenceCount>0, sort theo topUnstableSortDir (mặc định giảm
-  // dần, bấm header "Số lần tái phát" để đảo chiều) — phân trang 10 dòng/trang.
-  const topUnstableDirMul = topUnstableSortDir==='desc' ? -1 : 1;
-  const topUnstableAll = rows.filter(r=>r.recurrenceCount>0).sort((a,b)=>topUnstableDirMul*(a.recurrenceCount-b.recurrenceCount));
-  const thTopUnstableRecurrence = document.getElementById('thTopUnstableRecurrence');
-  if(thTopUnstableRecurrence) thTopUnstableRecurrence.textContent = 'Số lần tái phát ' + (topUnstableSortDir==='desc' ? '▾' : '▴');
-  topUnstablePage = renderPagination('topUnstablePagination', topUnstableAll.length, topUnstablePage, 'goToTopUnstablePage');
-  const topUnstable = topUnstableAll.slice((topUnstablePage-1)*PAGE_SIZE, topUnstablePage*PAGE_SIZE);
-  document.getElementById('topUnstableBody').innerHTML = topUnstable.length ? topUnstable.map(r=>`
-    <tr>
-      <td><span class="test-name" onclick="openRuleDetail('${r.id}')">${r.ruleName}</span>${recurrenceBadgeHtml(r.recurrenceCount)}</td>
-      <td>${r.table}</td>
-      <td class="cellnum">${r.recurrenceCount}</td>
-      <td class="cellnum">${r.currentFailStreak}</td>
-      <td class="cellnum">${r.totalFailedRuns} / ${r.totalRuns} (${r.failRatePct}%)</td>
-      <td><span class="badge ${lifecycleBadgeClass[r.lifecycleState]}">${r.lifecycleState}</span></td>
-    </tr>`).join('') : `<tr><td colspan="6" class="empty-note">Không có rule nào từng tái phát trong lịch sử hiện có.</td></tr>`;
 
   const recurBucket = r => r.recurrenceCount===0 ? '0' : r.recurrenceCount<=2 ? '1-2' : '3+';
   let filtered = rows.filter(r=>{
