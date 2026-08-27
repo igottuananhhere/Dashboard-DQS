@@ -657,42 +657,17 @@
     <!-- ---------- RULE LIFECYCLE TAB ---------- -->
     <div id="tab-rulelifecycle" style="display:none;">
       <div class="filterbar" style="margin-top:16px;">
+        <input class="search" id="ruleSearch" placeholder="Tìm theo rule hoặc table" oninput="renderRuleLifecycle()" style="flex:1 1 260px;min-width:220px;">
         <div class="ddown" id="ddRuleState">Trạng thái</div>
         <div class="ddown" id="ddRuleDomain">Domain</div>
         <div class="ddown" id="ddRuleOwner">Owner</div>
-        <div class="ddown" id="ddRuleType">Loại rule</div>
-        <div class="ddown" id="ddRuleBizOwner">Business Rule Owner</div>
-        <div class="ddown" id="ddRuleTier">Tier</div>
-        <div class="ddown" id="ddRuleRecur">Số lần tái phát</div>
-        <div class="ddown" id="failOnlyToggle" onclick="toggleFailOnly()">☐ Chỉ hiện rule đang Fail</div>
+        <div class="ddown" id="ddRuleType">Dimension</div>
+        <button id="failOnlyToggle" onclick="toggleFailOnly()" style="padding:4px 12px;border:1px solid var(--border);border-radius:4px;background:#fff;cursor:pointer;font-size:12px;color:var(--text);">Test Fail</button>
+        <button id="quickFilterCritical" onclick="applyRuleSeverityFilter('Critical')" style="padding:4px 12px;border:1px solid var(--border);border-radius:4px;background:#fff;cursor:pointer;font-size:12px;color:var(--text);">Critical</button>
         <button onclick="clearRuleLifecycleFilters()" style="padding:4px 12px;border:1px solid var(--border);border-radius:4px;background:0;cursor:pointer;font-size:12px;color:var(--muted);">Clear</button>
         <div class="spacer"></div>
-        <input class="search" id="ruleSearch" placeholder="Tìm theo rule hoặc table" oninput="renderRuleLifecycle()" style="max-width:220px;flex:none;">
-        <div class="range-pill">30 lần chạy</div>
       </div>
 
-      <div class="grid-kpi cols-4">
-        <div class="card kpi clickable" onclick="applyRuleStateFilter('New')">
-          <div class="label">New — lỗi phát sinh lần đầu</div>
-          <div class="value" id="rlKpiNew">–</div>
-          <div class="delta up">▲ +1 vs kỳ trước</div>
-        </div>
-        <div class="card kpi clickable" style="border:1.5px solid var(--red-dark);" onclick="applyRuleStateFilter('Reopened')">
-          <div class="label">Reopened — đã sửa nhưng lỗi lại</div>
-          <div class="value" id="rlKpiReopened">–</div>
-          <div class="delta up">▲ +1 vs kỳ trước</div>
-        </div>
-        <div class="card kpi clickable" onclick="applyRuleStateFilter('Ongoing')">
-          <div class="label">Ongoing — đang fail liên tục</div>
-          <div class="value" id="rlKpiOngoing">–</div>
-          <div class="delta down">▼ -1 vs kỳ trước</div>
-        </div>
-        <div class="card kpi clickable" onclick="applyRuleStateFilter('Recovered')">
-          <div class="label">Recovered — vừa hết lỗi</div>
-          <div class="value" id="rlKpiRecovered">–</div>
-          <div class="delta up">▲ +2 vs kỳ trước</div>
-        </div>
-      </div>
 
       <div id="rlSayLine" style="font-size:12.5px;color:var(--muted);margin:-4px 0 16px;"></div>
 
@@ -703,7 +678,7 @@
           <thead>
             <tr>
               <th class="sticky-col" id="thRuleName" onclick="setRuleLifecycleSort('ruleName')" style="cursor:pointer;white-space:nowrap;" title="Bấm để sort theo Rule / Test">Rule / Test</th>
-              <th id="thRuleTable" onclick="setRuleLifecycleSort('table')" style="cursor:pointer;white-space:nowrap;" title="Bấm để sort theo Table / Column">Table / Column</th><th>Previous Run → Current Run</th>
+              <th id="thRuleTable" onclick="setRuleLifecycleSort('table')" style="cursor:pointer;white-space:nowrap;" title="Bấm để sort theo Table / Column">Table / Column</th><th>Dimension</th><th>Previous Run → Current Run</th>
               <th id="thRuleSeverity" onclick="setRuleLifecycleSort('severity')" style="cursor:pointer;white-space:nowrap;" title="Bấm để sort theo Severity">Severity</th>
               <th>Trạng thái</th>
               <th>Lịch sử gần đây</th>
@@ -796,13 +771,6 @@
       <div style="margin-top:12px;">
         <button class="btn-outline" id="detailRuleLifecycleBtn">Xem trong Test Result</button>
       </div>
-    </div>
-
-    <div class="card panel">
-      <h3>Metadata &amp; quyền sở hữu</h3>
-      <div class="kv"><b>System owner</b><span id="detailSystemOwner"></span></div>
-      <div class="kv"><b>Business rule owner</b><span id="detailBizOwner"></span></div>
-      <div class="kv"><b>Rule creator</b><span id="detailRuleCreator"></span></div>
     </div>
   </div>
 
@@ -1272,8 +1240,10 @@ function renderNeedsAttention(list){
       </td>
       <td><span class="primary-issue">${(()=>{
         const scoredDims = HEALTH_DIMS.map(d=>({dim:d, val:dimensionScore(a.id, d)})).filter(x=>x.val!=null);
-        const worst = scoredDims.length ? scoredDims.reduce((m,x)=>x.val<m.val?x:m) : null;
-        return worst ? `${dimLabel(worst.dim)} (${worst.val})` : a.failingDimensions.map(dimLabel).join(', ') + ' failing';
+        if(!scoredDims.length) return a.failingDimensions.map(dimLabel).join(', ') + ' failing';
+        const minVal = scoredDims.reduce((m,x)=>x.val<m?x.val:m, scoredDims[0].val);
+        const worstDims = scoredDims.filter(x=>x.val===minVal).map(x=>dimLabel(x.dim));
+        return worstDims.map(d=>`${d} (${minVal})`).join(', ');
       })()}</span></td>
       <td>${a.domain}</td>
       <td><span class="owner-link">${a.owner}</span></td>
@@ -2081,9 +2051,7 @@ let ruleStateFilters = [];
 let ruleDomainFilters = [];
 let ruleOwnerFilters = [];
 let ruleTypeFilters = [];
-let ruleBizOwnerFilters = [];
-let ruleTierFilters = [];
-let ruleRecurFilters = []; // subset of '0' | '1-2' | '3+'
+let ruleSeverityFilters = []; // subset of SEVERITY_LEVELS
 let ruleFailOnlyMode = false;
 // Sort chung cho bảng "Rule Lifecycle — Chi tiết theo Rule" — chỉ 1 cột active tại 1 thời điểm.
 // Mặc định severity/desc để rule Critical luôn lên đầu bảng.
@@ -2106,7 +2074,12 @@ function setRuleLifecycleSort(key){
 
 function sparklineHtml(history30){
   if(!history30 || history30.length===0) return '<span class="primary-issue none">—</span>';
-  return '<div class="spark">' + history30.map(h=>{
+  const ts = history30.map(h=>new Date(h.timestamp).getTime()).filter(t=>!isNaN(t));
+  const latest = ts.length ? Math.max(...ts) : Date.now();
+  const cutoff = latest - 7*24*3600*1000;
+  const recent = history30.filter(h=>{ const t=new Date(h.timestamp).getTime(); return !isNaN(t) && t>=cutoff; });
+  const data = recent.length ? recent : history30;
+  return '<div class="spark">' + data.map(h=>{
     const color = h.status==='Failed' ? 'var(--red)' : h.status==='Success' ? 'var(--green)' : 'var(--gray)';
     return `<span class="spark-cell" style="background:${color};" title="${fmtRunTs(h.timestamp)} · ${h.status}"></span>`;
   }).join('') + '</div>';
@@ -2119,8 +2092,16 @@ function recurrenceBadgeHtml(count){
 
 function toggleFailOnly(){
   ruleFailOnlyMode = !ruleFailOnlyMode;
-  document.getElementById('failOnlyToggle').textContent = (ruleFailOnlyMode?'☑':'☐') + ' Chỉ hiện rule đang Fail';
+  updateFailOnlyToggle();
   renderRuleLifecycle();
+}
+function updateFailOnlyToggle(){
+  const btn = document.getElementById('failOnlyToggle');
+  if(!btn) return;
+  btn.textContent = 'Test Fail';
+  btn.style.background = ruleFailOnlyMode ? '#e0453f' : '#fff';
+  btn.style.color = ruleFailOnlyMode ? '#fff' : '';
+  btn.style.borderColor = ruleFailOnlyMode ? '#e0453f' : '';
 }
 // Click KPI card = shortcut chọn đúng 1 state (thay toàn bộ selection).
 function applyRuleStateFilter(state){
@@ -2130,15 +2111,30 @@ function applyRuleStateFilter(state){
 }
 function clearRuleLifecycleFilters(){
   ruleStateFilters=[]; ruleDomainFilters=[]; ruleOwnerFilters=[];
-  ruleTypeFilters=[]; ruleBizOwnerFilters=[]; ruleTierFilters=[]; ruleRecurFilters=[]; ruleFailOnlyMode=false;
-  [msRuleState, msRuleDomain, msRuleOwner, msRuleType, msRuleBizOwner, msRuleTier, msRuleRecur]
+  ruleTypeFilters=[]; ruleSeverityFilters=[]; ruleFailOnlyMode=false;
+  [msRuleState, msRuleDomain, msRuleOwner, msRuleType]
     .forEach(ms=>ms && ms.refreshLabel());
-  document.getElementById('failOnlyToggle').textContent = '☐ Chỉ hiện rule đang Fail';
+  document.getElementById('failOnlyToggle').textContent = 'Test Fail';
+  updateFailOnlyToggle();
   document.getElementById('ruleSearch').value = '';
+  updateQuickFilterCritical();
   renderRuleLifecycle();
 }
+function applyRuleSeverityFilter(sev){
+  ruleSeverityFilters = (ruleSeverityFilters.length===1 && ruleSeverityFilters[0]===sev) ? [] : [sev];
+  updateQuickFilterCritical();
+  renderRuleLifecycle();
+}
+function updateQuickFilterCritical(){
+  const btn = document.getElementById('quickFilterCritical');
+  if(!btn) return;
+  const active = ruleSeverityFilters.includes('Critical');
+  btn.style.background = active ? '#e0453f' : '#fff';
+  btn.style.color = active ? '#fff' : '';
+  btn.style.borderColor = active ? '#e0453f' : '';
+}
 
-let msRuleState, msRuleDomain, msRuleOwner, msRuleType, msRuleBizOwner, msRuleTier, msRuleRecur;
+let msRuleState, msRuleDomain, msRuleOwner, msRuleType;
 function initRuleFilterDropdowns(){
   const uniq = key => Array.from(new Set(rulesMock.map(r=>r[key]))).sort();
   msRuleState = createMultiSelectDropdown(document.getElementById('ddRuleState'), {
@@ -2151,17 +2147,8 @@ function initRuleFilterDropdowns(){
     label:'Owner', options:()=>OWNER_OPTIONS, getSelected:()=>ruleOwnerFilters,
     onChange:v=>{ ruleOwnerFilters=v; renderRuleLifecycle(); }});
   msRuleType = createMultiSelectDropdown(document.getElementById('ddRuleType'), {
-    label:'Loại rule', options:()=>uniq('ruleType').map(v=>({value:v, label:dimLabel(v)})), getSelected:()=>ruleTypeFilters,
+    label:'Dimension', options:()=>uniq('ruleType').map(v=>({value:v, label:dimLabel(v)})), getSelected:()=>ruleTypeFilters,
     onChange:v=>{ ruleTypeFilters=v; renderRuleLifecycle(); }});
-  msRuleBizOwner = createMultiSelectDropdown(document.getElementById('ddRuleBizOwner'), {
-    label:'Business Rule Owner', options:()=>uniq('businessRuleOwner'), getSelected:()=>ruleBizOwnerFilters,
-    onChange:v=>{ ruleBizOwnerFilters=v; renderRuleLifecycle(); }});
-  msRuleTier = createMultiSelectDropdown(document.getElementById('ddRuleTier'), {
-    label:'Tier', options:()=>uniq('tier'), getSelected:()=>ruleTierFilters,
-    onChange:v=>{ ruleTierFilters=v; renderRuleLifecycle(); }});
-  msRuleRecur = createMultiSelectDropdown(document.getElementById('ddRuleRecur'), {
-    label:'Số lần tái phát', options:()=>['0','1-2','3+'], getSelected:()=>ruleRecurFilters,
-    onChange:v=>{ ruleRecurFilters=v; renderRuleLifecycle(); }});
 }
 
 // Pareto insight tính trên toàn bộ tập rule (không phụ thuộc filter đang áp dụng trên bảng).
@@ -2206,23 +2193,13 @@ function renderRuleLifecycle(){
 
   document.getElementById('rlSayLine').textContent = computeRuleLifecycleSayLine(rows);
 
-  const counts = {New:0, Reopened:0, Ongoing:0, Recovered:0};
-  rows.forEach(r=>{ if(counts[r.lifecycleState]!==undefined) counts[r.lifecycleState]++; });
-  document.getElementById('rlKpiNew').textContent = counts.New;
-  document.getElementById('rlKpiReopened').textContent = counts.Reopened;
-  document.getElementById('rlKpiOngoing').textContent = counts.Ongoing;
-  document.getElementById('rlKpiRecovered').textContent = counts.Recovered;
-
-  const recurBucket = r => r.recurrenceCount===0 ? '0' : r.recurrenceCount<=2 ? '1-2' : '3+';
   let filtered = rows.filter(r=>{
     if(ruleStateFilters.length && !ruleStateFilters.includes(r.lifecycleState)) return false;
     if(ruleDomainFilters.length && !ruleDomainFilters.includes(r.domain)) return false;
     if(ruleOwnerFilters.length && !ruleOwnerFilters.includes(r.owner)) return false;
     if(ruleTypeFilters.length && !ruleTypeFilters.includes(r.ruleType)) return false;
-    if(ruleBizOwnerFilters.length && !ruleBizOwnerFilters.includes(r.businessRuleOwner)) return false;
-    if(ruleTierFilters.length && !ruleTierFilters.includes(r.tier)) return false;
+    if(ruleSeverityFilters.length && !ruleSeverityFilters.includes(r.severity)) return false;
     if(ruleFailOnlyMode && r.latestResult !== 'Fail') return false;
-    if(ruleRecurFilters.length && !ruleRecurFilters.includes(recurBucket(r))) return false;
     if(q && !(r.ruleName.toLowerCase().includes(q) || r.table.toLowerCase().includes(q))) return false;
     return true;
   });
@@ -2250,6 +2227,7 @@ function renderRuleLifecycle(){
     return `<tr>
       <td class="sticky-col"><span class="test-name" onclick="openRuleDetail('${r.id}')">${r.ruleName}</span>${recurrenceBadgeHtml(r.recurrenceCount)}</td>
       <td>${r.table}<span class="fqn">${r.column}</span></td>
+      <td>${dimLabel(r.healthDimension)}</td>
       <td>${prevCell}</td>
       <td><span class="badge ${SEVERITY_BADGE_CLASS[r.severity]}">${r.severity}</span></td>
       <td><span class="badge ${lifecycleBadgeClass[r.lifecycleState]}">${r.lifecycleState}</span></td>
@@ -2260,7 +2238,7 @@ function renderRuleLifecycle(){
       <td>${r.avgDaysBetweenRecurrence!=null ? r.avgDaysBetweenRecurrence.toFixed(1)+' ngày' : '<span class="primary-issue none">—</span>'}</td>
       <td>${r.totalRuns ? `${r.totalFailedRuns} / ${r.totalRuns} (${r.failRatePct}%)` : '<span class="primary-issue none">—</span>'}</td>
     </tr>`;
-  }).join('') : `<tr><td colspan="11" class="empty-note">Không có rule nào khớp bộ lọc hiện tại.</td></tr>`;
+  }).join('') : `<tr><td colspan="12" class="empty-note">Không có rule nào khớp bộ lọc hiện tại.</td></tr>`;
 }
 
 /* ===================== Tabs & Views ===================== */
@@ -3226,10 +3204,6 @@ function renderAssetDetailPage(){
   document.getElementById('detailRuleCount').textContent = rules.length;
   renderDetailRuleTable();
   document.getElementById('detailRuleLifecycleBtn').onclick = ()=>jumpToRuleLifecycleForAsset(asset.id);
-
-  document.getElementById('detailSystemOwner').textContent = uniq(rules.map(r=>r.systemOwner));
-  document.getElementById('detailBizOwner').textContent = uniq(rules.map(r=>r.businessRuleOwner));
-  document.getElementById('detailRuleCreator').textContent = uniq(rules.map(r=>r.ruleCreator));
 
   document.getElementById('detailCopyFqnBtn').onclick = ()=>{
     copyToClipboard(asset.fqn)
