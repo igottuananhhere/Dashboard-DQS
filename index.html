@@ -423,7 +423,7 @@
 
   <div class="tabs">
     <button class="tab active" data-tab="overview" onclick="switchTab('overview')">Overview</button>
-    <button class="tab" data-tab="health" onclick="switchTab('health')">Health</button>
+    <button class="tab" data-tab="health" onclick="switchTab('health')">Asset Health</button>
     <button class="tab" data-tab="rulelifecycle" onclick="switchTab('rulelifecycle')">Test Result</button>
   </div>
 
@@ -723,7 +723,7 @@
   <!-- ======================= ASSET DETAIL VIEW ======================= -->
   <div id="view-detail" class="view">
     <div class="breadcrumb">
-      <a onclick="closeAssetDetailPage()">Data Health</a> / <a onclick="closeAssetDetailPage()">Health</a> / <span id="detailBreadcrumbName"></span>
+      <a onclick="closeAssetDetailPage()">Data Health</a> / <a onclick="closeAssetDetailPage()">Asset Health</a> / <span id="detailBreadcrumbName"></span>
     </div>
 
     <div class="detail-header">
@@ -799,7 +799,7 @@
   <!-- ======================= TEST / ISSUE DETAIL VIEW (Tầng 4) ======================= -->
   <div id="view-test" class="view">
     <div class="breadcrumb">
-      <a onclick="showView('main')">Data Health</a> / <a onclick="switchTab('health'); showView('main')">Health</a> /
+      <a onclick="showView('main')">Data Health</a> / <a onclick="switchTab('health'); showView('main')">Asset Health</a> /
       <a id="testBreadcrumbAsset" onclick=""></a> / <span id="testBreadcrumbTest"></span>
     </div>
 
