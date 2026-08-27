@@ -226,6 +226,8 @@
     text-transform:none;padding:8px 10px;border-bottom:1px solid var(--border);
     white-space:nowrap;
   }
+  #detailRuleTable thead th{position:sticky;top:0;background:var(--card);z-index:2;}
+  #detailRuleTable thead th.sticky-col{left:0;z-index:3;}
   tbody td{padding:10px 10px;border-bottom:1px solid #eef0f3;vertical-align:middle;}
   tbody tr:last-child td{border-bottom:none;}
   tbody tr.rowlink:hover{background:#f7f9fc;cursor:pointer;}
@@ -772,12 +774,20 @@
 
     <div class="card panel">
       <h3 style="display:inline-block;">Danh sách rule (<span id="detailRuleCount"></span>)</h3>
-      <div style="overflow-x:auto;">
+      <div style="float:right;display:inline-flex;gap:6px;align-items:center;">
+        <button id="detailRuleTopBtn" onclick="setDetailRuleLimit(10)" style="padding:4px 12px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;font-size:12px;">Top 10</button>
+        <button id="detailRuleAllBtn" onclick="setDetailRuleLimit(0)" style="padding:4px 12px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;font-size:12px;">All</button>
+      </div>
+      <div id="detailRuleScroll" style="overflow:auto;max-height:420px;margin-top:10px;">
       <table id="detailRuleTable">
         <thead>
           <tr>
-            <th>Rule</th><th>Column</th><th>Dimension</th><th>Trước → Mới nhất</th><th>Trạng thái</th>
-            <th>Tái phát</th><th>Fail/Runs</th><th>MTTR</th><th>Lịch sử</th>
+            <th>Rule</th><th>Column</th><th>Dimension</th>
+            <th id="thDetailRuleSeverity" onclick="setDetailRuleSort('severity')" style="cursor:pointer;white-space:nowrap;" title="Bấm để sort theo Severity">Severity</th>
+            <th>Trước → Mới nhất</th>
+            <th id="thDetailRuleStatus" onclick="setDetailRuleSort('status')" style="cursor:pointer;white-space:nowrap;" title="Bấm để sort theo Trạng thái">Trạng thái</th>
+            <th id="thDetailRuleRecurrence" onclick="setDetailRuleSort('recurrence')" style="cursor:pointer;white-space:nowrap;" title="Bấm để sort theo Số lần tái phát">Tái phát</th>
+            <th>Fail/Runs</th><th>Lịch sử</th>
           </tr>
         </thead>
         <tbody id="detailRuleBody"></tbody>
@@ -1260,7 +1270,11 @@ function renderNeedsAttention(list){
         ${score==null ? '<span class="primary-issue none">—</span>' : `<span class="health-num" style="color:${color}">${score}</span>
         <div class="mini-track"><div class="mini-fill" style="width:${score}%;background:${color};"></div></div>`}
       </td>
-      <td><span class="primary-issue">${a.failingDimensions.map(dimLabel).join(', ')} failing</span></td>
+      <td><span class="primary-issue">${(()=>{
+        const scoredDims = HEALTH_DIMS.map(d=>({dim:d, val:dimensionScore(a.id, d)})).filter(x=>x.val!=null);
+        const worst = scoredDims.length ? scoredDims.reduce((m,x)=>x.val<m.val?x:m) : null;
+        return worst ? `${dimLabel(worst.dim)} (${worst.val})` : a.failingDimensions.map(dimLabel).join(', ') + ' failing';
+      })()}</span></td>
       <td>${a.domain}</td>
       <td><span class="owner-link">${a.owner}</span></td>
       <td>${fmtRunTs(a.lastRunAt)}</td>
@@ -1985,9 +1999,11 @@ function renderHealthTable(){
     // Notest (chưa có rule nào) và Unknow (có rule nhưng engine chưa quét lần nào) đều phải nói rõ
     // lý do, không được để "—" như 1 ô dữ liệu trống bình thường — khác nghĩa nhau và khác nghĩa với
     // "có đo, không lỗi dimension nào" (chuỗi rỗng).
+    const scoredDims = HEALTH_DIMS.map(d=>({dim:d, val:dimensionScore(a.id, d)})).filter(x=>x.val!=null);
+    const worstDim = scoredDims.length ? scoredDims.reduce((m,x)=>x.val<m.val?x:m) : null;
     const primaryIssue = status==='Notest' ? 'Chưa có rule kiểm tra'
       : status==='Unknow' ? 'Đã có rule, engine chưa quét lần nào'
-      : a.failingDimensions.length ? a.failingDimensions.map(dimLabel).join(', ') + ' failing' : '';
+      : worstDim ? `${dimLabel(worstDim.dim)} (${worstDim.val})` : '';
     // "Độ tin cậy thấp": asset CÓ 1 số rule nhưng đo được chưa tới nửa số dimension — khác Notest
     // (không có rule nào) và Unknow (có rule nhưng chưa quét lần nào, đã có message riêng ở trên).
     const lowConfidence = status!=='Notest' && status!=='Unknow' && hs.measuredDims/hs.totalDims < 0.5;
@@ -3068,22 +3084,65 @@ function wireDimensionRadarTooltip(container, asset){
   });
 }
 
+const LIFECYCLE_ORDER = {Ongoing:5, Reopened:4, New:3, Recovered:2, Stable:1, 'No data':0};
+let detailRuleSort = {key:'severity', dir:'desc'};
+let detailRuleLimit = 10; // 10 = Top 10, 0 = All (cuộn dọc)
+const DETAIL_RULE_SORT_FNS = {
+  severity: (a,b)=>SEVERITY_ORDER[a.severity]-SEVERITY_ORDER[b.severity],
+  status: (a,b)=>LIFECYCLE_ORDER[a.lifecycleState]-LIFECYCLE_ORDER[b.lifecycleState],
+  recurrence: (a,b)=>a.recurrenceCount-b.recurrenceCount,
+};
+function setDetailRuleLimit(n){
+  detailRuleLimit = n;
+  renderDetailRuleTable();
+}
+function updateDetailRuleLimitButtons(){
+  const top = document.getElementById('detailRuleTopBtn');
+  const all = document.getElementById('detailRuleAllBtn');
+  const active = {background:'#3762d6', color:'#fff', borderColor:'#3762d6'};
+  const idle = {background:'#fff', color:'', borderColor:''};
+  if(top) Object.assign(top.style, detailRuleLimit===10 ? active : idle);
+  if(all) Object.assign(all.style, detailRuleLimit===0 ? active : idle);
+}
+function setDetailRuleSort(key){
+  if(detailRuleSort.key===key){ detailRuleSort.dir = detailRuleSort.dir==='desc'?'asc':'desc'; }
+  else { detailRuleSort.key = key; detailRuleSort.dir = (key==='recurrence'||key==='severity')?'desc':'asc'; }
+  renderDetailRuleTable();
+}
+function renderDetailRuleTable(){
+  const asset = getAssetById(currentAssetDetailId);
+  if(!asset) return;
+  const rules = (rulesByAssetId[asset.id] || []).slice();
+  const fn = DETAIL_RULE_SORT_FNS[detailRuleSort.key];
+  if(fn){ const mul = detailRuleSort.dir==='desc' ? -1 : 1; rules.sort((a,b)=>mul*fn(a,b)); }
+  if(detailRuleLimit>0) rules.splice(detailRuleLimit);
+  document.getElementById('detailRuleBody').innerHTML = buildRuleRowsHtml(rules);
+  [['severity','thDetailRuleSeverity'],['status','thDetailRuleStatus'],['recurrence','thDetailRuleRecurrence']].forEach(([key,thId])=>{
+    const th=document.getElementById(thId); if(!th) return;
+    const label=th.textContent.replace(/ [▾▴⇅]$/,'');
+    const icon=detailRuleSort.key!==key?'⇅':detailRuleSort.dir==='desc'?'▾':'▴';
+    th.textContent=label+' '+icon;
+  });
+  updateDetailRuleLimitButtons();
+}
+
 function buildRuleRowsHtml(rules){
   if(!rules.length) return `<tr><td colspan="9" class="empty-note">Asset này chưa có rule nào.</td></tr>`;
   return rules.map(r=>{
+    const runColor = res => res==='Fail' ? 'var(--red)' : res==='Pass' ? 'var(--green)' : 'var(--gray)';
     const prevCell = !r.latestRunAt ? '<span class="primary-issue none">—</span>'
       : !r.previousRunAt
-        ? `<span style="color:var(--gray)">—</span> → <span title="${fmtRunTs(r.latestRunAt)}">${r.latestResult ?? '—'}</span>`
-        : `<span title="${fmtRunTs(r.previousRunAt)}">${r.previousResult ?? '—'}</span> → <span title="${fmtRunTs(r.latestRunAt)}">${r.latestResult ?? '—'}</span>`;
+        ? `<span style="color:var(--gray)">—</span> → <span style="color:${runColor(r.latestResult)}" title="${fmtRunTs(r.latestRunAt)}">${r.latestResult ?? '—'}</span>`
+        : `<span style="color:${runColor(r.previousResult)}" title="${fmtRunTs(r.previousRunAt)}">${r.previousResult ?? '—'}</span> → <span style="color:${runColor(r.latestResult)}" title="${fmtRunTs(r.latestRunAt)}">${r.latestResult ?? '—'}</span>`;
     return `<tr>
       <td><span class="test-name" onclick="openRuleDetail('${r.id}')">${r.ruleName}</span>${recurrenceBadgeHtml(r.recurrenceCount)}</td>
       <td>${r.column}</td>
       <td>${dimLabel(r.healthDimension)}</td>
+      <td><span class="badge ${SEVERITY_BADGE_CLASS[r.severity]}">${r.severity}</span></td>
       <td>${prevCell}</td>
       <td><span class="badge ${lifecycleBadgeClass[r.lifecycleState]}">${r.lifecycleState}</span></td>
       <td class="cellnum">${r.recurrenceCount}</td>
       <td>${r.totalRuns ? `${r.totalFailedRuns} / ${r.totalRuns} (${r.failRatePct}%)` : '<span class="primary-issue none">—</span>'}</td>
-      <td>${r.avgRecoveryHours!=null ? r.avgRecoveryHours.toFixed(1)+'h' : '<span class="primary-issue none">—</span>'}</td>
       <td>${sparklineHtml(r.history30)}</td>
     </tr>`;
   }).join('');
@@ -3092,7 +3151,7 @@ function buildRuleRowsHtml(rules){
 function renderAssetDetailPage(){
   const asset = getAssetById(currentAssetDetailId);
   if(!asset) return;
-  const rules = (rulesByAssetId[asset.id] || []).slice().sort((a,b)=>b.recurrenceCount - a.recurrenceCount);
+  const rules = (rulesByAssetId[asset.id] || []).slice();
   const ruleFailCount = rules.filter(r=>r.latestResult==='Fail').length;
   const chronicCount = rules.filter(r=>r.recurrenceCount>=3).length;
   const totalRecurrence = rules.reduce((s,r)=>s+r.recurrenceCount, 0);
@@ -3165,7 +3224,7 @@ function renderAssetDetailPage(){
     : buildTrendSvgHtml(asset);
 
   document.getElementById('detailRuleCount').textContent = rules.length;
-  document.getElementById('detailRuleBody').innerHTML = buildRuleRowsHtml(rules);
+  renderDetailRuleTable();
   document.getElementById('detailRuleLifecycleBtn').onclick = ()=>jumpToRuleLifecycleForAsset(asset.id);
 
   document.getElementById('detailSystemOwner').textContent = uniq(rules.map(r=>r.systemOwner));
