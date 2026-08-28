@@ -129,7 +129,6 @@
   .grid-kpi.cols-4{grid-template-columns:repeat(4,1fr);}
   @media (max-width:900px){.grid-kpi{grid-template-columns:repeat(2,1fr);}}
   .kpi{padding:16px 18px;cursor:default;position:relative;}
-  .kpi-icon{position:absolute;top:12px;right:14px;font-size:19px;opacity:1;line-height:1;}
   .kpi.clickable{cursor:pointer;transition:box-shadow .15s, transform .05s;}
   .kpi.clickable:hover{box-shadow:0 2px 8px rgba(16,24,40,0.10);transform:translateY(-1px);}
   .kpi .label{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:8px;padding-right:20px;}
@@ -180,9 +179,13 @@
   .barrow .num{font-size:12px;color:var(--muted);text-align:right;}
 
   /* trend chart (svg) */
-  .trend-legend{display:flex;gap:16px;font-size:11.5px;color:var(--muted);margin-bottom:6px;justify-content:flex-end;}
-  .trend-legend span{display:flex;align-items:center;gap:5px;cursor:pointer;}
+  .trend-legend{display:flex;gap:14px;font-size:11.5px;color:var(--muted);margin-bottom:8px;justify-content:flex-end;flex-wrap:wrap;}
+  .trend-legend span{display:flex;align-items:center;gap:5px;cursor:pointer;user-select:none;transition:opacity .15s;}
+  .trend-legend span.hidden-series{opacity:0.32;text-decoration:line-through;}
   .trend-legend .dot{width:7px;height:7px;border-radius:50%;}
+  .btn-trend-mode{padding:4px 12px;font-size:12px;font-weight:600;border:1px solid var(--border);border-radius:6px;background:#fff;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s ease;}
+  .btn-trend-mode:hover{color:var(--text);border-color:var(--muted);}
+  .btn-trend-mode.active{background:var(--link);color:#fff;border-color:var(--link);}
 
   /* radar mini */
   .radar-wrap{display:flex;align-items:center;justify-content:space-between;gap:24px;}
@@ -280,10 +283,10 @@
 
   /* ---------- Asset detail page ---------- */
   .detail-header{
-    display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;
+    display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:12px;
   }
-  .detail-title{font-size:19px;font-weight:700;margin:2px 0 2px;}
-  .detail-fqn{color:var(--muted);font-size:12px;margin-bottom:10px;}
+  .detail-title{font-size:20px;font-weight:700;margin:0;}
+  .detail-fqn{color:var(--muted);font-size:12.5px;margin:0;}
   .meta-row{display:flex;gap:26px;font-size:12.5px;color:var(--muted);margin-bottom:18px;flex-wrap:wrap;}
   .meta-row b{color:var(--text);font-weight:600;margin-right:4px;}
   .meta-row a{color:var(--link);cursor:pointer;text-decoration:none;}
@@ -407,6 +410,199 @@
   .radar-tooltip b{font-weight:700;}
   .radar-tooltip .warn{color:#ff8a80;font-weight:600;margin-top:2px;}
   .radar-tooltip.show{opacity:1;transform:translateY(0);}
+
+  /* ---------- Rule Detail / Test Result (Wireframe Refactor) ---------- */
+  .rd-container{max-width:980px;margin:0 auto;padding-bottom:40px;}
+  .rd-back-btn{display:inline-flex;align-items:center;gap:6px;color:var(--muted);cursor:pointer;font-size:13px;margin-bottom:12px;user-select:none;}
+  .rd-back-btn:hover{color:var(--link);}
+  .rd-title{font-size:22px;font-weight:700;margin:0 0 4px 0;font-family:monospace;letter-spacing:-0.2px;color:var(--text);}
+  .rd-desc{font-size:13.5px;color:var(--muted);margin-bottom:12px;line-height:1.45;}
+  .rd-badges{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+  .rd-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;background:var(--track);color:var(--text);font-family:monospace;}
+  .rd-badge.critical{background:var(--red-bg);color:var(--red);font-weight:700;}
+  .rd-badge.warning{background:var(--orange-bg);color:var(--orange);font-weight:700;}
+  .rd-badge.dimension{background:#eef2ff;color:#3762d6;}
+  .rd-badge.source{background:#f3f4f6;color:#4b5563;}
+  .rd-asset-bar{display:flex;justify-content:space-between;align-items:center;padding:10px 0;margin-bottom:20px;border-bottom:1px solid var(--border);font-size:13px;}
+  
+  .rd-kpi-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px;}
+  .rd-kpi-card{border:1px solid var(--border);border-radius:8px;background:var(--card);padding:14px 16px;display:flex;flex-direction:column;justify-content:center;}
+  .rd-kpi-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;}
+  .rd-kpi-val{font-size:18px;font-weight:700;display:flex;align-items:center;gap:6px;}
+  .rd-kpi-sub{font-size:12px;color:var(--muted);margin-top:4px;}
+
+  .rd-section{margin-bottom:28px;}
+  .rd-section-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:14px;}
+  .rd-section-title{font-size:15px;font-weight:700;color:var(--text);margin:0;}
+  .rd-action-link{font-size:12.5px;color:var(--link);cursor:pointer;font-weight:500;text-decoration:none;}
+  .rd-action-link:hover{text-decoration:underline;}
+
+  .rd-kv-list{display:flex;flex-direction:column;gap:6px;font-size:13px;}
+  .rd-kv-row{display:flex;padding:5px 0;}
+  .rd-kv-key{width:220px;font-weight:500;color:var(--muted);flex-shrink:0;}
+  .rd-kv-val{flex:1;color:var(--text);font-weight:500;}
+
+  .rd-table-card{border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--card);}
+  .rd-table-card table{width:100%;border-collapse:collapse;font-size:12.5px;font-family:monospace;}
+  .rd-table-card th{text-align:left;background:#f8f9fa;color:var(--muted);font-weight:600;padding:10px 16px;border-bottom:1px solid var(--border);white-space:nowrap;}
+  .rd-table-card td{padding:11px 16px;border-bottom:1px solid #f0f2f5;color:var(--text);vertical-align:middle;}
+  .rd-table-card tr:last-child td{border-bottom:none;}
+  .rd-table-card tr:hover td{background:#fafbfc;}
+
+  .rd-history-item{border:1px solid var(--border);border-radius:6px;padding:10px 14px;background:var(--card);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-family:monospace;}
+  .rd-history-main{display:flex;align-items:center;gap:12px;}
+  .rd-history-date{color:var(--text);font-weight:600;min-width:90px;}
+  .rd-history-status{font-weight:700;}
+  .rd-history-status.pass{color:var(--green);}
+  .rd-history-status.fail{color:var(--red);}
+  .rd-history-rows{color:var(--muted);min-width:70px;}
+  .rd-history-type{color:var(--muted);min-width:70px;}
+  .rd-history-def{color:var(--muted);}
+  .rd-badge-current{background:#eef2ff;color:#3762d6;border:1px solid #c7d2fe;font-size:10px;padding:1px 6px;border-radius:3px;font-weight:700;margin-left:6px;}
+  .rd-history-batch{font-size:11px;color:var(--muted);margin-top:3px;}
+
+  /* ================= Failed Rows Sample Modal ================= */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(3px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+  }
+  .modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+  .modal-card {
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 920px;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    animation: modalSlideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes modalSlideDown {
+    from { transform: translateY(-16px) scale(0.98); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: #f8fafc;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-title {
+    font-size: 15px;
+    font-weight: 700;
+    font-family: monospace;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .modal-close-btn {
+    background: transparent;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s ease;
+  }
+  .modal-close-btn:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+    border-color: #94a3b8;
+  }
+  .modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .modal-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .modal-summary-item.primary {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--red);
+  }
+  .modal-summary-item {
+    color: var(--muted);
+    font-family: inherit;
+  }
+  .modal-table-container {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow-x: auto;
+    background: #ffffff;
+    max-height: 380px;
+  }
+  .modal-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    font-family: monospace;
+  }
+  .modal-table th {
+    position: sticky;
+    top: 0;
+    background: #f1f5f9;
+    color: #334155;
+    font-weight: 600;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    white-space: nowrap;
+    z-index: 2;
+  }
+  .modal-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid #f1f5f9;
+    color: var(--text);
+    white-space: nowrap;
+  }
+  .modal-table tr:hover td {
+    background: #f8fafc;
+  }
+  .modal-footer {
+    padding: 12px 20px;
+    background: #f8fafc;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+    font-family: monospace;
+  }
 </style>
 <!-- Mock data đóng gói dạng JS global (không dùng fetch) — mở trực tiếp file:// vẫn chạy được,
      không bị Chrome chặn CORS như khi fetch() 1 file JSON cục bộ. -->
@@ -445,7 +641,6 @@
 
       <div class="grid-kpi">
         <div class="card kpi">
-          <span class="kpi-icon">📊</span>
           <div class="label" style="display:flex;align-items:center;gap:6px;">
             AVG Asset Score
             <span id="ovOverallInfoIcon" tabindex="0" style="cursor:default;color:var(--muted);font-size:11px;border:1px solid var(--border);border-radius:50%;width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">ⓘ</span>
@@ -455,95 +650,55 @@
           <div class="delta" id="ovKpiOverallVsSystem" style="color:var(--muted);margin-top:4px;">Điểm trung bình Health Score của các bảng đang được tính trong Overview.</div>
         </div>
         <div class="card kpi clickable" onclick="switchTab('health'); applyHealthFilter('Unhealthy')">
-          <span class="kpi-icon">⚠️</span>
           <div class="label">Unhealthy Assets</div>
           <div class="value" id="ovKpiCritical">–</div>
           <div class="delta" id="ovKpiCriticalDelta"></div>
         </div>
         <div class="card kpi clickable" onclick="switchTab('health'); applyHealthFilter('Warning')">
-          <span class="kpi-icon">📉</span>
           <div class="label">Degraded Assets</div>
           <div class="value" id="ovKpiDegraded">–</div>
           <div class="delta" id="ovKpiDegradedDelta"></div>
         </div>
         <div class="card kpi clickable" onclick="switchTab('health'); applyHealthFilter('Unknow')">
-          <span class="kpi-icon">❓</span>
           <div class="label">Unknown Assets <span class="kpi-tag">Engine Status</span></div>
           <div class="value" id="ovKpiUnknow" style="font-size:17px;">–</div>
           <div class="delta" id="ovKpiUnknowDelta" style="color:var(--muted);" title="Số minh hoạ, chưa có lịch sử theo ngày thật cho chỉ số này">Không đổi so với lần chạy trước</div>
         </div>
         <div class="card kpi clickable" onclick="switchTab('health'); applyHealthFilter('Notest')">
-          <span class="kpi-icon">📋</span>
           <div class="label">No Tests <span class="kpi-tag">Governance</span></div>
           <div class="value" id="ovKpiNotest" style="font-size:17px;">–</div>
           <div class="delta" id="ovKpiNotestDelta" style="color:var(--muted);" title="Số minh hoạ, chưa có lịch sử theo ngày thật cho chỉ số này">Không đổi so với lần chạy trước</div>
         </div>
       </div>
 
-      <div class="grid-2">
-        <div class="card panel">
-          <h3>Data Health Trend</h3>
-          <div class="trend-legend">
-            <span onclick="toggleLine('overall')"><span class="dot" style="background:#3762d6"></span>Overall</span>
-            <span onclick="toggleLine('completeness')"><span class="dot" style="background:#2f9e5b"></span>completeness</span>
-            <span onclick="toggleLine('freshness')"><span class="dot" style="background:#e8912b"></span>timeliness</span>
+      <div class="grid-2" style="grid-template-columns:1.8fr 1fr;">
+        <div class="card panel" style="display:flex;flex-direction:column;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+            <h3 style="margin:0;">Data Health Trend</h3>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="font-size:12px;color:var(--muted);font-weight:600;">Xem theo:</span>
+              <div style="display:inline-flex;gap:6px;">
+                <button id="trendBtnDim" class="btn-trend-mode active" onclick="setTrendMode('dim')">Xem theo 6 chiều</button>
+                <button id="trendBtnStatus" class="btn-trend-mode" onclick="setTrendMode('status')">Xem theo Status</button>
+              </div>
+            </div>
           </div>
-          <svg id="trendSvg" viewBox="0 0 620 190" width="100%" height="190" style="overflow:visible;">
+          <div class="trend-legend" id="trendLegend"></div>
+          <svg id="trendSvg" viewBox="0 0 620 190" preserveAspectRatio="none" width="100%" style="display:block;flex:1 1 auto;width:100%;min-height:220px;overflow:visible;">
             <line x1="30" y1="10" x2="30" y2="160" stroke="#e4e6eb"/>
             <line x1="30" y1="160" x2="610" y2="160" stroke="#e4e6eb"/>
             <text x="4" y="14" font-size="9" fill="#9aa1ab">100</text>
             <text x="10" y="90" font-size="9" fill="#9aa1ab">50</text>
             <text x="14" y="164" font-size="9" fill="#9aa1ab">0</text>
             <g id="trendThresholds"></g>
-            <polyline id="line-overall" fill="none" stroke="#3762d6" stroke-width="1.6" points=""/>
-            <polyline id="line-completeness" fill="none" stroke="#2f9e5b" stroke-width="1.6" points=""/>
-            <polyline id="line-freshness" fill="none" stroke="#e8912b" stroke-width="1.6" points=""/>
-            <g id="labels-overall"></g>
-            <g id="labels-completeness"></g>
-            <g id="labels-freshness"></g>
+            <g id="trendLines"></g>
             <g id="hoverdots"></g>
             <g id="trendXLabels"></g>
           </svg>
           <div id="trendTooltip" style="font-size:11.5px;color:var(--muted);margin-top:4px;">Di chuột qua đường biểu đồ để xem điểm số từng dimension tại ngày đó.</div>
-          <div style="font-size:10.5px;color:var(--gray);margin-top:2px;">Biểu đồ xu hướng dùng dữ liệu tổng toàn hệ thống (mock không có lịch sử theo ngày cho từng subset filter) — không đổi theo filter bar phía trên.</div>
+          <div id="trendSubNote" style="font-size:10.5px;color:var(--gray);margin-top:2px;">Biểu đồ xu hướng tính theo lịch sử 30 ngày toàn hệ thống — chuyển đổi linh hoạt giữa 6 Dimension và các nhóm Status.</div>
         </div>
 
-        <div class="card panel">
-          <h3>Health Distribution</h3>
-          <div class="donut-total" id="ovDistTotal">30 assets total</div>
-          <div class="stackbar-row">
-            <div>
-              <div class="stackbar-track">
-                <div class="stackbar-seg" id="ovSegCritical" style="width:0%;background:#e0453f;" onclick="switchTab('health'); applyHealthFilter('Unhealthy')" title="Unhealthy · 0 assets">
-                  <span class="seg-label"></span>
-                </div>
-                <div class="stackbar-seg" id="ovSegDegraded" style="width:0%;background:#e8912b;" onclick="switchTab('health'); applyHealthFilter('Warning')" title="Degraded · 0 assets">
-                  <span class="seg-label"></span>
-                </div>
-                <div class="stackbar-seg" id="ovSegHealthy" style="width:0%;background:#2f9e5b;" onclick="switchTab('health'); applyHealthFilter('Healthy')" title="Healthy · 0 assets">
-                  <span class="seg-label"></span>
-                </div>
-                <div class="stackbar-seg" id="ovSegUnknow" style="width:0%;background:#6b7280;" onclick="switchTab('health'); applyHealthFilter('Unknow')" title="Unknown · 0 assets">
-                  <span class="seg-label"></span>
-                </div>
-                <div class="stackbar-seg" id="ovSegNotest" style="width:0%;background:#9aa1ab;" onclick="switchTab('health'); applyHealthFilter('Notest')" title="No Tests · 0 assets">
-                  <span class="seg-label"></span>
-                </div>
-              </div>
-              <div class="stackbar-scale"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>
-            </div>
-            <div class="legend-row">
-              <div class="item" onclick="switchTab('health'); applyHealthFilter('Unhealthy')"><span class="dot" style="background:#e0453f"></span>Unhealthy &nbsp;<span id="ovLegCritical">0</span></div>
-              <div class="item" onclick="switchTab('health'); applyHealthFilter('Warning')"><span class="dot" style="background:#e8912b"></span>Degraded &nbsp;<span id="ovLegDegraded">0</span></div>
-              <div class="item" onclick="switchTab('health'); applyHealthFilter('Healthy')"><span class="dot" style="background:#2f9e5b"></span>Healthy &nbsp;<span id="ovLegHealthy">0</span></div>
-              <div class="item" onclick="switchTab('health'); applyHealthFilter('Unknow')"><span class="dot" style="background:#6b7280"></span>Unknown &nbsp;<span id="ovLegUnknow">0</span></div>
-              <div class="item" onclick="switchTab('health'); applyHealthFilter('Notest')"><span class="dot" style="background:#9aa1ab"></span>No Tests &nbsp;<span id="ovLegNotest">0</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid-2" style="grid-template-columns:1fr 1.4fr;">
         <div class="card panel">
           <h3 style="display:flex;align-items:center;gap:6px;">
             Data Quality Score — Toàn hệ thống
@@ -556,49 +711,8 @@
             <span class="item"><svg width="16" height="10" style="flex-shrink:0;"><line x1="0" y1="5" x2="16" y2="5" stroke="#9aa1ab" stroke-width="2" stroke-dasharray="3,2"/></svg>Mục tiêu</span>
           </div>
           <div id="dqWeightWarning"></div>
-          <div style="text-align:left;margin-top:18px;">
-            <button class="btn-outline" id="dqDrilldownToggleBtn" onclick="toggleDQDrilldown()" style="font-size:11.5px;padding:5px 12px;">Xem chi tiết theo asset →</button>
-          </div>
-          <div id="dqDrilldownPanel" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:10px;flex-wrap:wrap;">
-              <span style="font-size:12.5px;font-weight:700;color:var(--text);" id="dqRadarSpotlightTitle">Dimension Spotlight — Lowest-Scoring Assets</span>
-              <div style="display:flex;align-items:center;gap:8px;">
-                <div class="ddown" id="ddRadarAssetFilter">Chọn asset</div>
-                <button class="btn-outline" id="dqDrilldownCloseBtn" onclick="toggleDQDrilldown()" style="font-size:11px;padding:3px 9px;">← Ẩn</button>
-              </div>
-            </div>
-            <div id="dqRadarFilterWarning" style="display:none;font-size:11px;color:var(--muted);margin-bottom:8px;"></div>
-            <div class="radar-wrap">
-              <svg width="320" height="246" viewBox="-20 0 260 200" style="overflow:visible;flex-shrink:0;">
-                <polygon points="110,20 175,60 175,140 110,180 45,140 45,60" fill="none" stroke="#eceef2"/>
-                <polygon points="110,50 152,72 152,128 110,150 68,128 68,72" fill="none" stroke="#eceef2"/>
-                <polygon points="110,80 129,86 129,114 110,120 91,114 91,86" fill="none" stroke="#eceef2"/>
-                <g id="ovRadarPolyGroup"></g>
-                <text x="105" y="14" font-size="9" fill="#6b7280">Accuracy</text>
-                <text x="180" y="63" font-size="9" fill="#6b7280">Completeness</text>
-                <text x="180" y="145" font-size="9" fill="#6b7280">Uniqueness</text>
-                <text x="98" y="196" font-size="9" fill="#6b7280">Validity</text>
-                <text x="-18" y="145" font-size="9" fill="#6b7280">Consistency</text>
-                <text x="-18" y="63" font-size="9" fill="#6b7280">Timeliness</text>
-              </svg>
-              <div class="radar-legend" id="ovRadarLegend"></div>
-            </div>
-          </div>
         </div>
 
-        <div class="card panel dq-heatmap-card">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;">
-            <h3 style="margin:0;">Chất lượng theo Asset × Dimension</h3>
-            <select id="dqHeatmapRangeSelect" onchange="setDQHeatmapRange(this.value)" style="padding:4px 10px;font-size:11px;border:1px solid var(--border);border-radius:6px;background:#fff;color:var(--text);cursor:pointer;">
-              <option value="5">Top 5</option>
-              <option value="10">Top 10</option>
-              <option value="20" selected>Top 20</option>
-            </select>
-          </div>
-          <div id="dqHeatmapWrap" class="heatmap-scroll"></div>
-          <div class="legend-row" id="dqHeatmapLegend" style="margin-top:10px;font-size:11px;color:var(--muted);flex-shrink:0;"></div>
-          <div id="dqHeatmapFooter" style="margin-top:8px;font-size:11.5px;color:var(--muted);flex-shrink:0;"></div>
-        </div>
       </div>
 
       <div class="card panel">
@@ -616,6 +730,18 @@
           </thead>
           <tbody id="needsAttentionBody"></tbody>
         </table>
+      </div>
+
+      <div class="card panel">
+        <h3 style="margin:0;">Unmonitored Assets (Unknown / No Tests)</h3>
+        <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr><th>Asset</th><th>Owner</th><th>Domain</th><th>Status</th><th>Last Evaluated</th></tr>
+          </thead>
+          <tbody id="unmonitoredBody"></tbody>
+        </table>
+        </div>
       </div>
     </div>
 
@@ -640,11 +766,12 @@
           <thead>
             <tr>
               <th>Asset</th>
+              <th>Owner</th>
+              <th>Domain</th>
               <th id="thHealthScore" onclick="setHealthTableSort('healthScore')" style="cursor:pointer;white-space:nowrap;" title="Bấm để sort theo Health Score">Health Score</th>
-              <th>Completeness</th><th>Uniqueness</th><th>Validity</th>
-              <th>Consistency</th><th>Timeliness</th><th>Accuracy</th>
               <th id="thHealthStatus" onclick="setHealthTableSort('status')" style="cursor:pointer;white-space:nowrap;" title="Bấm để sort theo Status">Status</th>
-              <th>Primary Issue</th><th>Owner</th>
+              <th>Worst Dimension</th>
+              <th>Delta</th>
             </tr>
           </thead>
           <tbody id="healthTableBody"></tbody>
@@ -704,15 +831,11 @@
     </div>
 
     <div class="detail-header">
-      <div>
-        <div class="detail-title" style="display:flex;align-items:center;gap:10px;">
-          <span id="detailTitle"></span>
-          <span class="badge" id="detailStatusBadge"></span>
-        </div>
-        <div class="detail-fqn" style="display:flex;align-items:center;gap:8px;">
-          <span id="detailFqn"></span>
-          <button class="btn-outline" id="detailCopyFqnBtn" style="padding:2px 9px;font-size:10.5px;">⧉ copy</button>
-        </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span class="detail-title" id="detailTitle"></span>
+        <span class="badge" id="detailStatusBadge"></span>
+        <span class="detail-fqn" id="detailFqn" style="margin-left:4px;"></span>
+        <button class="btn-outline" id="detailCopyFqnBtn" style="padding:2px 8px;font-size:11px;line-height:1.2;">⧉ copy</button>
       </div>
       <div style="display:flex;align-items:center;gap:8px;flex:none;">
         <button class="btn-outline" id="detailPrevBtn" onclick="navigateAssetDetail(-1)">‹ Trước</button>
@@ -726,24 +849,20 @@
       <div><b>Domain:</b> <span id="detailDomain"></span></div>
       <div><b>Owner:</b> <span id="detailOwner"></span></div>
       <div><b>Service:</b> <span id="detailService"></span></div>
-      <div><b>Tier:</b> <span id="detailTier"></span></div>
       <div><b>Cập nhật lần cuối:</b> <span id="detailLastEval"></span></div>
     </div>
 
-    <div class="grid-kpi" id="detailKpiGrid" style="margin-top:16px;"></div>
+    <div class="grid-kpi cols-4" id="detailKpiGrid" style="margin-top:16px;"></div>
 
-    <div class="grid-2" style="grid-template-columns:1fr 1.4fr;">
-      <div class="card panel">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
-          <h3 style="margin:0;">Dimension Breakdown</h3>
-          <div class="ddown" id="ddDimBreakdownFilter">Dimension</div>
-        </div>
-        <div id="dimBreakdown"></div>
+    <div class="grid-2" style="grid-template-columns:1fr 1.4fr;gap:16px;margin-top:16px;">
+      <div class="card panel" style="padding:14px 16px;display:flex;flex-direction:column;">
+        <h3 style="margin:0 0 6px 0;">Dimension Breakdown</h3>
+        <div id="dimBreakdown" style="flex:1;display:flex;align-items:center;justify-content:center;"></div>
       </div>
 
-      <div class="card panel">
-        <h3>Xu hướng 30 ngày</h3>
-        <div id="detailTrendChart"></div>
+      <div class="card panel" style="padding:14px 16px;display:flex;flex-direction:column;">
+        <h3 style="margin:0 0 6px 0;">Xu hướng 30 ngày</h3>
+        <div id="detailTrendChart" style="flex:1;display:flex;flex-direction:column;"></div>
       </div>
     </div>
 
@@ -774,120 +893,132 @@
     </div>
   </div>
 
-  <!-- ======================= TEST / ISSUE DETAIL VIEW (Tầng 4) ======================= -->
+  <!-- ======================= TEST RESULT / RULE DETAIL VIEW (Wireframe Refactor) ======================= -->
   <div id="view-test" class="view">
-    <div class="breadcrumb">
-      <a onclick="showView('main')">Data Health</a> / <a onclick="switchTab('health'); showView('main')">Asset Health</a> /
-      <a id="testBreadcrumbAsset" onclick=""></a> / <span id="testBreadcrumbTest"></span>
-    </div>
-
-    <div class="detail-header">
-      <div>
-        <div class="detail-title" id="testTitle"></div>
-        <div class="detail-fqn" id="testDimLine"></div>
+    <div class="rd-container">
+      <div class="rd-back-btn" onclick="closeRuleDetail()">‹ All Test Results</div>
+      
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:12px;">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <h2 class="rd-title" id="rdTitle" style="margin:0;"></h2>
+          <span id="rdStatusBadge"></span>
+          <span style="font-size:13px;color:var(--muted);margin-left:4px;">Asset: <b id="rdAssetName" style="color:var(--text);cursor:pointer;"></b></span>
+          <a id="rdViewAssetBtn" class="btn-outline" style="padding:2px 8px;font-size:11px;line-height:1.2;cursor:pointer;">View Asset →</a>
+        </div>
       </div>
-      <span class="status-pill" id="testStatusPill">Critical</span>
-    </div>
-
-    <div class="detail-grid3" style="grid-template-columns:1fr 1fr;">
-      <div class="card panel">
-        <h3>Test Definition</h3>
-        <div class="kv"><b>Rule name</b><span id="tdName"></span></div>
-        <div class="kv"><b>Dimension</b><span id="tdDimension"></span></div>
-        <div class="kv"><b>Logic</b><span id="tdLogic"></span></div>
-        <div class="kv"><b>Threshold</b><span id="tdThreshold"></span></div>
-        <div class="kv"><b>Frequency</b><span id="tdFrequency"></span></div>
-        <div class="code-box" id="tdSql"></div>
+      
+      <div class="rd-desc" id="rdDesc"></div>
+      
+      <!-- Horizontal Definition Meta Row -->
+      <div class="meta-row" id="rdMetaRow" style="margin-bottom:20px;gap:14px 24px;align-items:center;">
+        <div style="display:inline-flex;align-items:center;gap:6px;">
+          <b>Definition ID:</b>
+          <span id="rdMetaDefId" style="font-family:monospace;"></span>
+          <button class="btn-outline" id="rdCopyDefIdBtn" style="padding:1px 7px;font-size:10.5px;line-height:1.2;cursor:pointer;">⧉ copy</button>
+        </div>
+        <div><b>Dimension:</b> <span id="rdMetaDim"></span></div>
+        <div><b>Severity:</b> <span id="rdMetaSev"></span></div>
+        <div><b>Weight:</b> <span id="rdMetaWeight"></span></div>
+        <div><b>Engine:</b> <span id="rdMetaEngine"></span></div>
+        <div><b>Capture Failed Rows:</b> <span id="rdMetaCapture"></span></div>
       </div>
-      <div class="card panel">
-        <div class="panel-header-row">
-          <h3>Failure Trend (test này)</h3>
-          <div class="time-pill-group" id="testTrendRangePills">
-            <span class="time-pill" data-range="7" onclick="setTestTimeRange(7)">7D</span>
-            <span class="time-pill" data-range="30" onclick="setTestTimeRange(30)">30D</span>
-            <span class="time-pill" data-range="90" onclick="setTestTimeRange(90)">90D</span>
+
+      <!-- 3 KPI Cards -->
+      <div class="rd-kpi-grid">
+        <div class="rd-kpi-card">
+          <div class="rd-kpi-label">CURRENT RESULT</div>
+          <div class="rd-kpi-val" id="rdKpiResult"></div>
+        </div>
+        <div class="rd-kpi-card">
+          <div class="rd-kpi-label">FAILED RECORDS</div>
+          <div class="rd-kpi-val" id="rdKpiFailures"></div>
+          <div class="rd-kpi-sub" id="rdKpiSample"></div>
+        </div>
+        <div class="rd-kpi-card">
+          <div class="rd-kpi-label">CURRENT OBSERVED</div>
+          <div class="rd-kpi-val" id="rdKpiObservedTime"></div>
+          <div class="rd-kpi-sub" id="rdKpiObservedDate"></div>
+        </div>
+      </div>
+
+      <!-- Result History -->
+      <div class="rd-section">
+        <div class="rd-section-header">
+          <h3 class="rd-section-title">Result History</h3>
+          <select id="rdHistoryRangeSelect" onchange="onRdHistoryRangeChange()" style="font-size:12px;padding:3px 8px;border:1px solid var(--border);border-radius:6px;background:var(--card);color:var(--text);cursor:pointer;">
+            <option value="30" selected>Last 30 days</option>
+            <option value="7">Last 7 days</option>
+            <option value="90">Last 90 days</option>
+          </select>
+        </div>
+        <div class="rd-table-card">
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Thời gian</th>
+                  <th>Trạng thái</th>
+                  <th>Dòng lỗi</th>
+                  <th>Run Type</th>
+                  <th>Definition</th>
+                  <th>Batch ID</th>
+                </tr>
+              </thead>
+              <tbody id="rdHistoryTbody"></tbody>
+            </table>
           </div>
         </div>
-        <svg viewBox="0 0 260 150" width="100%" height="150">
-          <line x1="20" y1="10" x2="20" y2="120" stroke="#e4e6eb"/>
-          <line x1="20" y1="120" x2="250" y2="120" stroke="#e4e6eb"/>
-          <text x="0" y="14" font-size="8" fill="#9aa1ab" id="testTrendAxisTop">20%</text>
-          <text x="8" y="122" font-size="8" fill="#9aa1ab">0%</text>
-          <polyline id="testTrendLine" fill="none" stroke="#e0453f" stroke-width="1.6" points=""/>
-          <text x="20" y="136" font-size="8" fill="#9aa1ab" id="testTrendAxisLabel"></text>
-        </svg>
-        <div class="trend-kpi-line">
-          <span>Tỉ lệ fail hiện tại: <b id="testTrendCurrentRate"></b></span>
-          <span>Đỉnh trong kỳ: <b id="testTrendPeakRate"></b></span>
+      </div>
+
+      <!-- Failed Row Sample -->
+      <div class="rd-section">
+        <div class="rd-section-header">
+          <h3 class="rd-section-title">Failed Row Sample</h3>
+          <a class="rd-action-link" onclick="openFailedRowsModal()">View captured sample →</a>
+        </div>
+        <div class="rd-table-card">
+          <div style="overflow-x:auto;">
+            <table>
+              <thead id="rdSampleThead"></thead>
+              <tbody id="rdSampleTbody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="card panel" style="margin-bottom:16px;">
-      <h3 style="margin:0 0 4px;">Lifecycle History</h3>
-      <div class="lifecycle-note" id="lifecycleRangeNote"></div>
-      <div class="cycle-row head">
-        <div>Bắt đầu</div><div>Kết thúc</div><div>Số ngày</div><div>Đỉnh fail</div>
-      </div>
-      <div id="lifecycleCyclesBody"></div>
-    </div>
-
-    <div class="card panel" style="margin-bottom:16px;">
-      <div class="panel-header-row">
-        <h3>Failed Records Sample</h3>
-        <span class="sample-count" id="sampleRowsCount"></span>
-      </div>
-      <div class="test-filter-row">
-        <input class="search" id="sampleSearchInput" placeholder="Tìm theo Row ID" oninput="onSampleSearchInput()">
-        <select id="sampleColFilter" onchange="onSampleFilterChange()">
-          <option value="all">Tất cả cột vi phạm</option>
-        </select>
-        <select id="sampleTimeFilter" onchange="onSampleFilterChange()">
-          <option value="7">7 ngày qua</option>
-          <option value="30" selected>30 ngày qua</option>
-          <option value="all">Toàn bộ</option>
-        </select>
-      </div>
-      <table>
-        <thead><tr><th>Row ID</th><th>Cột vi phạm</th><th>Giá trị hiện tại</th><th>Giá trị mong đợi</th><th>Ghi nhận lúc</th></tr></thead>
-        <tbody id="sampleRowsBody"></tbody>
-      </table>
-      <div style="text-align:right;margin-top:8px;">
-        <span class="failed-rows-link" onclick="showToast('Mở Quarantine Viewer đã filter theo test này (demo placeholder).')">Xem toàn bộ trong Quarantine →</span>
+      <!-- Technical Provenance -->
+      <div class="rd-section">
+        <div class="rd-section-header">
+          <h3 class="rd-section-title">Technical Provenance</h3>
+        </div>
+        <div class="rd-kv-list" id="rdProvenanceList"></div>
       </div>
     </div>
+  </div>
 
-    <div class="detail-grid3" style="grid-template-columns:1fr 1fr;">
-      <div class="card panel">
-        <h3>Ownership & Assignment</h3>
-        <div class="kv"><b>Owner mặc định</b><span id="tdOwner"></span></div>
-        <div class="kv"><b>Người xử lý</b><span>Chưa gán</span></div>
-        <div class="kv"><b>Trạng thái</b><span>Open</span></div>
-        <div class="kv"><b>SLA / Due date</b><span>Còn 4 giờ</span></div>
-        <div class="actions-row">
-          <button class="btn-outline" onclick="showToast('Mở dropdown chọn người/team để assign (demo placeholder).')">Assign</button>
-          <button class="btn-outline" onclick="showToast('Mở dropdown đổi trạng thái Open → Acknowledged/In Progress/Resolved/Won\'t Fix (demo placeholder).')">Change Status</button>
-          <button class="btn-outline" onclick="showToast('Mở form snooze cảnh báo (demo placeholder).')">Snooze</button>
-          <button class="btn-outline" onclick="showToast('Kích hoạt chạy lại rule ngay (demo placeholder).')">Re-run Test</button>
+  <!-- ================= Failed Rows Sample Modal ================= -->
+  <div id="failedRowsModal" class="modal-overlay" onclick="handleModalBackdropClick(event)">
+    <div class="modal-card" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <div class="modal-title" id="modalFailedRowsTitle">Failed Rows – <span id="modalRuleName"></span></div>
+        <button class="modal-close-btn" onclick="closeFailedRowsModal()">✕ Close</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-summary">
+          <div class="modal-summary-item primary" id="modalTotalFailedRecords">487 total failed records</div>
+          <div class="modal-summary-item" id="modalCapturedTime">Captured: 21 Aug 2026 • 10:31</div>
+          <div class="modal-summary-item" id="modalSnapshotInfo">Captured snapshot: 100 rows • Truncated: Yes</div>
+        </div>
+        <div class="modal-table-container">
+          <table class="modal-table">
+            <thead id="modalSampleThead"></thead>
+            <tbody id="modalSampleTbody"></tbody>
+          </table>
         </div>
       </div>
-      <div class="card panel">
-        <h3>Related / Impacted Assets</h3>
-        <div id="impactedList"></div>
+      <div class="modal-footer" id="modalFooterText">
+        Showing 1–100 of 100 captured rows • Total failed records: 487
       </div>
-    </div>
-
-    <div class="card panel">
-      <div class="panel-header-row">
-        <h3>Activity Log</h3>
-        <select id="activityTypeFilter" onchange="onActivityFilterChange()">
-          <option value="all">Tất cả hành động</option>
-          <option value="system">Hệ thống</option>
-          <option value="user">Người dùng</option>
-          <option value="note">Ghi chú</option>
-        </select>
-      </div>
-      <div id="activityLog"></div>
     </div>
   </div>
 
@@ -930,15 +1061,33 @@ function fmtRunTs(iso){
 
 const lifecycleBadgeClass = {New:"degraded", Reopened:"reopened", Ongoing:"critical", Recovered:"healthy", Stable:"unknown", "No data":"unknown"};
 
-// Severity của bảng "Rule Lifecycle — Chi tiết theo Rule" — mock ngẫu nhiên theo yêu cầu, không gắn
-// điều kiện gì với dữ liệu thật của rule. Gán 1 LẦN DUY NHẤT ngay sau khi rulesMock load xong
-// (assignRuleSeverities(), gọi trong bootstrap) rồi lưu vào r.severity — không random lại mỗi lần
-// renderRuleLifecycle(), nếu không bảng sẽ đổi giá trị liên tục mỗi khi sort/filter/phân trang.
+// PRNG tất định seed theo chuỗi — mock ổn định qua các lần render/reload
+function seededRng(seedStr){
+  let h = 1779033703 ^ seedStr.length;
+  for(let i=0;i<seedStr.length;i++){
+    h = Math.imul(h ^ seedStr.charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
+  }
+  return function(){
+    h = Math.imul(h ^ (h >>> 16), 2246822507);
+    h = Math.imul(h ^ (h >>> 13), 3266489909);
+    h ^= h >>> 16;
+    return (h >>> 0) / 4294967296;
+  };
+}
+
+// Severity của bảng "Rule Lifecycle — Chi tiết theo Rule" — gán tất định theo id rule
 const SEVERITY_LEVELS = ['Critical','High','Medium','Low'];
 const SEVERITY_ORDER = {Critical:4, High:3, Medium:2, Low:1};
 const SEVERITY_BADGE_CLASS = {Critical:'critical', High:'degraded', Medium:'pending', Low:'healthy'};
 function assignRuleSeverities(){
-  rulesMock.forEach(r=>{ if(!r.severity) r.severity = SEVERITY_LEVELS[Math.floor(Math.random()*SEVERITY_LEVELS.length)]; });
+  rulesMock.forEach(r=>{
+    if(!r.severity){
+      const rng = seededRng(r.id + '_sev');
+      const idx = Math.floor(rng() * SEVERITY_LEVELS.length);
+      r.severity = SEVERITY_LEVELS[idx];
+    }
+  });
 }
 
 // Test tự động tối thiểu: đối chiếu số liệu load được với từng assertion trong Docs/COVERAGE.md.
@@ -1026,12 +1175,6 @@ function runCoverageChecks(assets, rules){
   expect('assetsCoRule + assetsKhongRule === assets.length', assetsCoRule + assetsKhongRule, assets.length);
   console.groupEnd();
 
-  console.group('COVERAGE.md checks — DQ Heatmap (Asset x Dimension, Overview)');
-  const hmRows = document.querySelectorAll('#dqHeatmapWrap .hm-name').length;
-  const hmExpected = dqHeatmapRange === 'all' ? filterOverviewAssets(assets).length : Math.min(dqHeatmapRange, filterOverviewAssets(assets).length);
-  expect('so dong heatmap === min(dqHeatmapRange, filtered.length)', hmRows, hmExpected);
-  console.groupEnd();
-
   console.group('COVERAGE.md checks — Needs Attention (Top N)');
   const naRows = document.querySelectorAll('#needsAttentionBody tr[data-asset-id]').length;
   const naEligible = filterOverviewAssets(assets).filter(a=>a.failingDimensions && a.failingDimensions.length>0).length;
@@ -1041,10 +1184,11 @@ function runCoverageChecks(assets, rules){
   console.groupEnd();
 
   console.group('COVERAGE.md checks — Trend chart geometry (1 nguon du lieu duy nhat)');
-  ['line-overall','line-completeness','line-freshness'].forEach(id=>{
-    const el = document.getElementById(id);
-    const pts = el ? el.getAttribute('points').trim().split(/\s+/).filter(Boolean) : [];
-    expect('trend polyline ' + id + ' so diem', pts.length, trendData.length);
+  const trendPolylines = document.querySelectorAll('#trendLines polyline');
+  expect('trend polylines render duoc trong SVG', trendPolylines.length > 0, true);
+  trendPolylines.forEach(el=>{
+    const pts = el.getAttribute('points').trim().split(/\s+/).filter(Boolean);
+    expect('trend polyline ' + el.id + ' so diem', pts.length, trendData.length);
   });
   console.groupEnd();
 
@@ -1252,6 +1396,24 @@ function renderNeedsAttention(list){
   }).join('') : `<tr><td colspan="6" class="empty-note">Không có asset khớp filter cần chú ý.</td></tr>`;
 }
 
+// Bảng chi tiết các asset Unknow (engine chưa quét) / No Tests (chưa có rule) — nằm trong tập
+// đang lọc theo filter bar Overview.
+function renderUnmonitoredTable(filtered){
+  const body = document.getElementById('unmonitoredBody');
+  if(!body) return;
+  const list = filtered.filter(a=>{ const st = computeAssetStatus(a.id); return st==='Unknow' || st==='Notest'; });
+  body.innerHTML = list.length ? list.map(a=>{
+    const status = computeAssetStatus(a.id);
+    return `<tr>
+      <td><span class="asset-link">${a.name}</span><span class="fqn">${a.fqn}</span></td>
+      <td>${a.owner}</td>
+      <td>${a.domain}</td>
+      <td>${assetStatusBadge(status)}</td>
+      <td>${fmtRunTs(a.lastRunAt)}</td>
+    </tr>`;
+  }).join('') : `<tr><td colspan="5" class="empty-note">Không có asset Unknown / No Tests trong tập đang lọc.</td></tr>`;
+}
+
 /* ===================== RENDER: Overview (data-driven, filter cộng dồn) ===================== */
 let ovStatusFilters = [];
 let ovDomainFilters = [];
@@ -1284,8 +1446,7 @@ function initOverviewFilterDropdowns(){
     onChange:v=>{ ovOwnerFilters=v; renderOverview(); }});
   msOvDimension = createMultiSelectDropdown(document.getElementById('ddOvDimension'), {
     label:'Health dimension', options:()=>DIMENSION_OPTIONS, getSelected:()=>ovDimFilters,
-    onChange:v=>{ ovDimFilters=v; renderOverview(); }});
-  initRadarAssetFilterDropdown();
+    onChange:v=>{ ovDimFilters=v; renderOverview(); }  });
 }
 function clearOverviewFilters(){
   ovStatusFilters=[]; ovDomainFilters=[]; ovOwnerFilters=[]; ovDimFilters=[];
@@ -1374,6 +1535,12 @@ function computeAssetStatus(assetId){
   if(!(rulesByAssetId[assetId] || []).length) return 'Notest';
   const score = healthScore(assetId).score;
   if(score==null) return 'Unknow';
+  
+  // Logic nghiệp vụ: khi 1 bảng có ít nhất 1 rule Critical đang Fail thì mặc định là Unhealthy
+  const rules = rulesByAssetId[assetId] || [];
+  const hasCriticalFail = rules.some(r => r.severity === 'Critical' && r.latestResult === 'Fail');
+  if(hasCriticalFail) return 'Unhealthy';
+
   if(score>=THRESHOLDS.green) return 'Healthy';
   if(score>=THRESHOLDS.amber) return 'Warning';
   return 'Unhealthy';
@@ -1590,13 +1757,6 @@ function renderSystemDQCard(){
   wireDQInfoTooltip();
 }
 
-function toggleDQDrilldown(){
-  const panel = document.getElementById('dqDrilldownPanel');
-  const open = panel.style.display !== 'none';
-  panel.style.display = open ? 'none' : 'block';
-  document.getElementById('dqDrilldownToggleBtn').style.display = open ? '' : 'none';
-}
-
 // Ngưỡng RIÊNG, KHÁC HẲN THRESHOLDS — không được gộp. THRESHOLDS là thang màu 2 mức (green/amber)
 // dùng để tô màu 1 điểm số. Ở đây cần tái tạo lại đúng 3 giá trị của field categorical
 // `healthStatus` (Critical/Warning/Healthy) từ 1 điểm liên tục trong history30d (vốn không lưu
@@ -1707,103 +1867,6 @@ function wireOverallInfoTooltip(){
   icon.addEventListener('blur', hide);
 }
 
-/* ===================== Heatmap Chất lượng theo Asset × Dimension (Overview) =====================
-   Thay cho card "Health by Dimension" (bar list) đã gỡ — heatmap vẫn theo filter bar (khác radar
-   DQ Score bên cạnh, luôn tính toàn hệ thống có trọng số), nên KHÔNG mất khả năng "xem theo tập
-   đang lọc" mà bar list cũ cung cấp; chỉ đổi từ 6 số trung bình sang chi tiết theo từng asset —
-   nhiều thông tin hơn (lộ ra pattern theo domain/asset), không phải thu hẹp thông tin.
-   Số dòng hiển thị do dqHeatmapRange quyết định (10/20/'all'), ĐỘC LẬP với filter bar: filter bar
-   thu hẹp tập dữ liệu trước, dqHeatmapRange chỉ quyết định hiển thị bao nhiêu dòng trong tập đó —
-   luôn hiện hết nếu tập sau lọc ít hơn số dòng chọn (không báo lỗi, không cắt bớt âm thầm). */
-let dqHeatmapRange = 20; // 10 | 20 | 'all' — mặc định Top 20
-const DQ_HEATMAP_ROW_MIN = 22, DQ_HEATMAP_ROW_MAX = 34;
-const DQ_HEATMAP_SHORT = {Accuracy:'Accur.', Completeness:'Compl.', Uniqueness:'Uniq.', Validity:'Valid.', Consistency:'Consist.', Freshness:'Timel.'};
-
-function setDQHeatmapRange(range){
-  dqHeatmapRange = range === 'all' ? 'all' : Number(range);
-  const select = document.getElementById('dqHeatmapRangeSelect');
-  if(select) select.value = String(dqHeatmapRange);
-  renderDQHeatmap(filterOverviewAssets(assetsMock));
-}
-
-// Chiều cao dòng co giãn để lấp khung khi ít dòng (Top 10), nhưng chặn trên/dưới để không giãn
-// giả tạo hoặc bẹp dí — chỉ đo SAU khi grid đã render xong layout (clientHeight lúc DOM vừa gắn
-// vào có thể vẫn bằng 0 nếu đo ngay, nên gọi qua requestAnimationFrame).
-function computeDQHeatmapRowHeight(container, rowCount){
-  if(rowCount === 0) return DQ_HEATMAP_ROW_MAX;
-  const available = container.clientHeight;
-  const ideal = available / rowCount;
-  return Math.max(DQ_HEATMAP_ROW_MIN, Math.min(DQ_HEATMAP_ROW_MAX, ideal));
-}
-
-function renderDQHeatmap(filtered){
-  const wrap = document.getElementById('dqHeatmapWrap');
-  const footer = document.getElementById('dqHeatmapFooter');
-  document.getElementById('dqHeatmapLegend').innerHTML = `
-    <span class="item" style="cursor:default;"><span class="dot" style="background:var(--green);"></span>&ge; ${THRESHOLDS.green} Tốt</span>
-    <span class="item" style="cursor:default;"><span class="dot" style="background:var(--orange);"></span>${THRESHOLDS.amber}–${THRESHOLDS.green-1} Cảnh báo</span>
-    <span class="item" style="cursor:default;"><span class="dot" style="background:var(--red);"></span>&lt; ${THRESHOLDS.amber} Nghiêm trọng</span>
-    <span class="item" style="cursor:default;"><span class="dot" style="background:var(--gray);"></span>Không có dữ liệu</span>`;
-
-  if(!filtered.length){
-    wrap.innerHTML = `<div class="empty-note">Không có asset khớp filter hiện tại.</div>`;
-    footer.textContent = '';
-    return;
-  }
-
-  const withScore = filtered.map(a=>({a, hs: healthScore(a.id)}));
-  const scored = withScore.filter(x=>x.hs.score!=null).sort((x,y)=>x.hs.score-y.hs.score);
-  const unscored = withScore.filter(x=>x.hs.score==null);
-  const ordered = scored.concat(unscored).map(x=>x.a);
-  const shown = dqHeatmapRange === 'all' ? ordered : ordered.slice(0, dqHeatmapRange);
-
-  const headHtml = `<div class="hm-head hm-corner">Asset</div>` +
-    RADAR_DIMS.map(dim=>`<div class="hm-head" title="${dimLabel(dim)}">${DQ_HEATMAP_SHORT[dim]}</div>`).join('');
-
-  const rowsHtml = shown.map(a=>{
-    const nameCell = `<div class="hm-name" data-asset-id="${a.id}" data-list-source="dqHeatmap" title="${a.name}">${a.name}</div>`;
-    const cells = RADAR_DIMS.map(dim=>{
-      const v = dimensionScore(a.id, dim);
-      const color = v==null ? 'var(--gray)' : scoreColor(v);
-      return `<div class="hm-cell" style="background:${color};" data-asset-id="${a.id}" data-list-source="dqHeatmap" data-scroll-dim="${dim}"
-        title="${a.name} · ${dim}: ${v==null?'không có dữ liệu':v+'/100'}">${v==null?'—':v}</div>`;
-    }).join('');
-    return nameCell + cells;
-  }).join('');
-
-  wrap.innerHTML = `<div class="heatmap-grid" id="dqHeatmapGrid">${headHtml}${rowsHtml}</div>`;
-
-  footer.innerHTML = dqHeatmapRange === 'all'
-    ? `Hiển thị toàn bộ ${filtered.length} asset · <span class="primary-issue" onclick="switchTab('health')">Xem tất cả →</span>`
-    : `Hiển thị ${shown.length}/${filtered.length} asset điểm thấp nhất · <span class="primary-issue" onclick="switchTab('health')">Xem tất cả →</span>`;
-
-  // Đo container SAU khi grid vừa được gắn vào DOM (innerHTML ở trên) để layout đã ổn định —
-  // đo ngay trong cùng tick có thể vẫn ra clientHeight=0 ở 1 số trình duyệt/thời điểm.
-  requestAnimationFrame(()=>{
-    const grid = document.getElementById('dqHeatmapGrid');
-    if(!grid) return; // đã re-render lần khác (đổi filter/range liên tiếp) trước khi frame này chạy
-    applyDQHeatmapRowHeight(grid, wrap, shown.length);
-  });
-}
-
-// Hàng tiêu đề (sticky) chiếm 1 phần clientHeight của vùng cuộn nhưng không phải chỗ dành cho dữ
-// liệu — trừ đi chiều cao thật của nó trước khi tính "available" cho computeDQHeatmapRowHeight,
-// đúng yêu cầu "hàng tiêu đề không tính vào available".
-function applyDQHeatmapRowHeight(grid, wrap, rowCount){
-  const headEl = grid.querySelector('.hm-head');
-  const headH = headEl ? headEl.offsetHeight : 0;
-  const availableForRows = { clientHeight: Math.max(0, wrap.clientHeight - headH) };
-  const rowH = computeDQHeatmapRowHeight(availableForRows, rowCount);
-  grid.style.setProperty('--hm-row-h', rowH.toFixed(1) + 'px');
-}
-
-window.addEventListener('resize', ()=>{
-  const grid = document.getElementById('dqHeatmapGrid');
-  if(!grid) return;
-  const wrap = document.getElementById('dqHeatmapWrap');
-  applyDQHeatmapRowHeight(grid, wrap, grid.querySelectorAll('.hm-name').length);
-});
-
 function renderOverview(){
   const filtered = filterOverviewAssets(assetsMock);
   const total = assetsMock.length;
@@ -1819,7 +1882,9 @@ function renderOverview(){
   const scored = withScore.filter(x=>x.score!=null);
   const unmonitoredCount = filtered.length - scored.length;
   const avgScore = scored.length ? Math.round(scored.reduce((s,x)=>s+x.score,0)/scored.length) : null;
-  document.getElementById('ovKpiOverall').textContent = avgScore==null ? '— / 100' : `${avgScore} / 100`;
+  const overallEl = document.getElementById('ovKpiOverall');
+  overallEl.textContent = avgScore==null ? '— / 100' : `${avgScore} / 100`;
+  overallEl.style.color = avgScore==null ? '' : avgScore<70 ? 'var(--red)' : avgScore<90 ? 'var(--orange)' : 'var(--green)';
   document.getElementById('ovKpiOverallVsSystem').textContent = avgScore==null
     ? `Chưa có asset nào được giám sát trong tập đang lọc.`
     : `Overall ${avgScore}/100 — tính trên ${scored.length}/${filtered.length} asset. ${unmonitoredCount} asset chưa được giám sát.`;
@@ -1827,8 +1892,12 @@ function renderOverview(){
 
   const byStatus = {Healthy:0, Warning:0, Unhealthy:0, Unknow:0, Notest:0};
   filtered.forEach(a=>{ const st = computeAssetStatus(a.id); if(byStatus[st]!==undefined) byStatus[st]++; });
-  document.getElementById('ovKpiCritical').textContent = byStatus.Unhealthy;
-  document.getElementById('ovKpiDegraded').textContent = byStatus.Warning;
+  const critEl = document.getElementById('ovKpiCritical');
+  critEl.textContent = byStatus.Unhealthy;
+  critEl.style.color = 'var(--red)';
+  const degEl = document.getElementById('ovKpiDegraded');
+  degEl.textContent = byStatus.Warning;
+  degEl.style.color = 'var(--orange)';
   document.getElementById('ovKpiUnknow').textContent = byStatus.Unknow;
   document.getElementById('ovKpiNotest').textContent = byStatus.Notest;
 
@@ -1837,53 +1906,8 @@ function renderOverview(){
   applyDelta('ovKpiCriticalDelta', deltas && deltas.criticalDelta, ' asset');
   applyDelta('ovKpiDegradedDelta', deltas && deltas.degradedDelta, ' asset');
 
-  document.getElementById('ovDistTotal').textContent = `${filtered.length} assets total`;
-  const segs = [
-    ['ovSegCritical','ovLegCritical', byStatus.Unhealthy, 'Unhealthy'],
-    ['ovSegDegraded','ovLegDegraded', byStatus.Warning, 'Degraded'],
-    ['ovSegHealthy','ovLegHealthy', byStatus.Healthy, 'Healthy'],
-    ['ovSegUnknow','ovLegUnknow', byStatus.Unknow, 'Unknown'],
-    ['ovSegNotest','ovLegNotest', byStatus.Notest, 'No Tests'],
-  ];
-  segs.forEach(([segId, legId, count, label])=>{
-    const pct = filtered.length ? (count/filtered.length*100) : 0;
-    const seg = document.getElementById(segId);
-    seg.style.width = pct + '%';
-    seg.title = `${label} · ${count} assets`;
-    seg.querySelector('.seg-label').textContent = pct>=6 ? count : '';
-    document.getElementById(legId).textContent = count;
-  });
-
-  renderDQHeatmap(filtered);
-
-  // Mặc định: 3 asset điểm thấp nhất trong tập đang lọc (auto). Nếu user tự chọn asset qua
-  // ddRadarAssetFilter thì dùng đúng danh sách đã chọn (giữ nguyên thứ tự chọn), không auto nữa —
-  // filter luôn lấy trên assetsMock (không phụ thuộc filter bar Overview) để chọn được cả asset đang
-  // bị filter bar ẩn đi.
-  const spotlight = radarAssetFilter.length
-    ? radarAssetFilter.map(id=>assetsMock.find(a=>a.id===id)).filter(Boolean)
-    : withScore.filter(x=>x.score!=null).sort((x,y)=>x.score-y.score).slice(0,3).map(x=>x.a);
-  radarListIds = spotlight.map(a=>a.id);
-  document.getElementById('dqRadarSpotlightTitle').textContent = radarAssetFilter.length
-    ? `Dimension Spotlight — Asset đã chọn (${spotlight.length})`
-    : 'Dimension Spotlight — Lowest-Scoring Assets';
-  const warnEl = document.getElementById('dqRadarFilterWarning');
-  if(spotlight.length > RADAR_MAX_RECOMMENDED){
-    warnEl.style.display = 'block';
-    warnEl.textContent = `Đang so sánh ${spotlight.length} asset — chọn ít hơn ${RADAR_MAX_RECOMMENDED} để biểu đồ dễ đọc hơn.`;
-  } else {
-    warnEl.style.display = 'none';
-  }
-  document.getElementById('ovRadarPolyGroup').innerHTML = spotlight.map((a,i)=>{
-    const color = RADAR_COLORS[i % RADAR_COLORS.length];
-    const pts = RADAR_DIMS.map(dim=>radarPoint(dim, dimensionScore(a.id, dim)).join(',')).join(' ');
-    return `<polygon points="${pts}" fill="${color}" fill-opacity="0.15" stroke="${color}" stroke-width="1.4"/>`;
-  }).join('');
-  document.getElementById('ovRadarLegend').innerHTML = spotlight.length ? spotlight.map((a,i)=>
-    `<div class="item" data-asset-id="${a.id}" data-list-source="radar" style="cursor:pointer;"><span class="dot" style="background:${RADAR_COLORS[i % RADAR_COLORS.length]};border-radius:50%;width:8px;height:8px;"></span>${a.name}</div>`
-  ).join('') : `<div class="empty-note">Không có asset nào được chọn / có healthScore trong tập đang lọc.</div>`;
-
   renderNeedsAttention(filtered);
+  renderUnmonitoredTable(filtered);
 }
 
 /* ===================== RENDER: Health table ===================== */
@@ -1979,17 +2003,27 @@ function renderHealthTable(){
     const lowConfidence = status!=='Notest' && status!=='Unknow' && hs.measuredDims/hs.totalDims < 0.5;
     return `<tr class="rowlink" data-asset-id="${a.id}" data-list-source="healthTable">
       <td><span class="asset-link">${a.name}</span><span class="fqn">${a.fqn}</span></td>
+      <td><span class="owner-link" onclick="event.stopPropagation(); showToast('Filter theo Owner: ${a.owner} (demo placeholder).')">${a.owner}</span></td>
+      <td>${a.domain}</td>
       <td>
         ${score==null ? '<span class="primary-issue none">—</span>' : `<span class="health-num" style="color:${barColor}">${score}</span>
         <div class="mini-track"><div class="mini-fill" style="width:${score}%;background:${barColor};"></div></div>`}
         ${lowConfidence ? `<span class="badge unknown" title="Chỉ ${hs.measuredDims}/${hs.totalDims} dimension có rule đo">Độ tin cậy thấp</span>` : ''}
       </td>
-      ${HEALTH_DIMS.map(d=>`<td onclick="event.stopPropagation(); toggleHealthDimFilter('${d}')">${dimCell(dimensionScore(a.id, d))}</td>`).join('')}
       <td onclick="event.stopPropagation(); toggleHealthStatusFilter('${status}')">${assetStatusBadge(status)}</td>
       <td>${primaryIssue ? `<span class="primary-issue">${primaryIssue}</span>` : '<span class="primary-issue none">—</span>'}</td>
-      <td><span class="owner-link" onclick="event.stopPropagation(); showToast('Filter theo Owner: ${a.owner} (demo placeholder).')">${a.owner}</span></td>
+      <td>${(()=>{
+        const h = a.history30d;
+        if(!h || h.length<2) return '<span class="primary-issue none">—</span>';
+        const cur = h[h.length-1].healthScore, prev = h[h.length-2].healthScore;
+        if(cur==null || prev==null) return '<span class="primary-issue none">—</span>';
+        const d = cur - prev;
+        if(d>0) return `<span style="color:var(--green)">▲ ${d}</span>`;
+        if(d<0) return `<span style="color:var(--red)">▼ ${Math.abs(d)}</span>`;
+        return `<span style="color:var(--muted)">– 0</span>`;
+      })()}</td>
     </tr>`;
-  }).join('') || `<tr><td colspan="11" class="empty-note">Không có dữ liệu khớp filter. <span class="failed-rows-link" onclick="clearHealthFilters()">Clear</span></td></tr>`;
+  }).join('') || `<tr><td colspan="7" class="empty-note">Không có dữ liệu khớp filter. <span class="failed-rows-link" onclick="clearHealthFilters()">Clear</span></td></tr>`;
 }
 
 // Click trực tiếp trên KPI/ô status/ô dimension = shortcut chọn đúng 1 giá trị (thay toàn bộ selection).
@@ -2033,17 +2067,6 @@ function initHealthFilterDropdowns(){
   msHealthTier = createMultiSelectDropdown(document.getElementById('ddHealthTier'), {
     label:'Tier', options:()=>uniq('tier'), getSelected:()=>healthTierFilters,
     onChange:v=>{ healthTierFilters=v; renderHealthTable(); }});
-}
-
-function initRadarAssetFilterDropdown(){
-  msRadarAssetFilter = createMultiSelectDropdown(document.getElementById('ddRadarAssetFilter'), {
-    label:'Chọn asset',
-    options:()=>assetsMock
-      .filter(a=>healthScore(a.id).score!=null)
-      .map(a=>({value:a.id, label:a.name}))
-      .sort((a,b)=>a.label.localeCompare(b.label)),
-    getSelected:()=>radarAssetFilter,
-    onChange:v=>{ radarAssetFilter=v; renderOverview(); }});
 }
 
 /* ===================== RENDER: Rule Lifecycle ===================== */
@@ -2387,219 +2410,367 @@ function fmtDateTime(d){
   return d.toLocaleString('vi-VN', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'});
 }
 
-let currentTestMock = null;
-let testTimeRange = 30;
-let sampleSearchQuery = '';
-let sampleSearchDebounce = null;
+/* ===================== TEST RESULT / RULE DETAIL VIEW (Wireframe Refactor) ===================== */
+let currentRuleDetailId = null;
+let currentRuleDetailPreviousView = 'main';
+let rdHistoryRangeDays = 30;
+
+function generateRuleDefHash(ruleId){
+  let h = 0x811c9dc5;
+  for(let i=0; i<ruleId.length; i++){
+    h ^= ruleId.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return (h >>> 0).toString(16).padStart(8, '0').slice(0, 7);
+}
 
 function openRuleDetail(ruleId){
   const r = rulesMock.find(x=>x.id===ruleId);
   if(!r) return;
-  const a = getAssetById(r.assetId);
-  currentTest = {ruleId};
+  const a = getAssetById(r.assetId) || {name: r.table, fqn: r.tableFqn || r.table, id: r.assetId};
+  
+  if(document.getElementById('view-detail').classList.contains('active')){
+    currentRuleDetailPreviousView = 'detail';
+  } else {
+    currentRuleDetailPreviousView = 'main';
+  }
+  
+  currentRuleDetailId = ruleId;
+  const isFail = r.latestResult === 'Fail';
+  const defHash = 'a31f7c2' + generateRuleDefHash(r.id).slice(0, 1);
+  const now = r.latestRunAt ? new Date(r.latestRunAt) : new Date();
 
-  document.getElementById('testBreadcrumbAsset').textContent = a.name;
-  document.getElementById('testBreadcrumbAsset').onclick = ()=>openAssetDetail(a.id);
-  document.getElementById('testBreadcrumbTest').textContent = dimLabel(r.healthDimension) + ' Test';
-  document.getElementById('testTitle').textContent = r.ruleName;
-  document.getElementById('testDimLine').textContent = r.tableFqn + ' · ' + dimLabel(r.healthDimension) + ' dimension';
-  document.getElementById('testStatusPill').textContent = r.latestResult==='Fail' ? r.lifecycleState : 'Pass';
-  const isFail = r.latestResult==='Fail';
-  document.getElementById('testStatusPill').style.background = isFail ? 'var(--red-bg)' : 'var(--green-bg)';
-  document.getElementById('testStatusPill').style.color = isFail ? 'var(--red)' : 'var(--green)';
+  // 1. Header
+  document.getElementById('rdTitle').textContent = r.ruleName;
+  const colName = r.column || 'id';
+  const descText = r.ruleType === 'consistency' || r.healthDimension === 'Consistency'
+    ? `Ensures ${r.table}.${colName} references valid related entity`
+    : `Kiểm tra ràng buộc tiêu chuẩn ${r.ruleType} trên cột ${r.table}.${colName} (Dimension: ${dimLabel(r.healthDimension)})`;
+  document.getElementById('rdDesc').textContent = descText;
 
-  const def = buildTestDefinitionText(r);
-  document.getElementById('tdName').textContent = r.ruleName;
-  document.getElementById('tdDimension').textContent = dimLabel(r.healthDimension);
-  document.getElementById('tdLogic').textContent = def.logic;
-  document.getElementById('tdThreshold').textContent = def.threshold;
-  document.getElementById('tdFrequency').textContent = def.frequency;
-  document.getElementById('tdSql').textContent = def.sql;
-  document.getElementById('tdOwner').textContent = r.owner;
+  const sevBadgeClass = r.severity === 'Critical' ? 'critical' : (r.severity === 'Warning' ? 'warning' : 'healthy');
+  document.getElementById('rdStatusBadge').innerHTML = `<span class="badge ${sevBadgeClass}">[${r.severity.toUpperCase()}]</span>`;
 
-  const others = assetsMock.filter(x=>x.id!==a.id && x.domain===a.domain).slice(0,3);
-  document.getElementById('impactedList').innerHTML = others.length ? others.map(o=>`
-    <div class="impacted-item" onclick="openAssetDetail('${o.id}')">
-      <span class="asset-link">${o.name}</span><span style="color:var(--muted);">${o.domain}</span>
-    </div>`).join('') : `<div class="empty-note">Không có asset liên quan trong lineage.</div>`;
+  document.getElementById('rdAssetName').textContent = a.name;
+  document.getElementById('rdAssetName').onclick = () => openAssetDetail(a.id);
+  document.getElementById('rdViewAssetBtn').onclick = () => openAssetDetail(a.id);
 
-  // Sinh lại toàn bộ mock (history/records/activity) cho ĐÚNG rule vừa mở, và reset mọi filter về
-  // mặc định — không giữ state filter khi chuyển sang rule/test khác (yêu cầu #4).
-  const now = r.latestRunAt ? new Date(r.latestRunAt) : (a.lastRunAt ? new Date(a.lastRunAt) : new Date());
-  const rng = seededRng(r.id+'_mock');
-  const history = buildRuleHistoryDays(r, now);
-  currentTestMock = {
-    rule: r,
-    now,
-    history,
-    cycles: computeLifecycleCycles(history),
-    sample: buildSampleRecords(r, rng),
-    activity: buildActivityLog(r, now, rng),
+  // Horizontal Definition Meta Row
+  const fullDefId = `${defHash}_${r.id}`;
+  const weightVal = r.severity === 'Critical' ? '2' : (r.severity === 'Warning' ? '1' : '1');
+  document.getElementById('rdMetaDefId').textContent = `${defHash}...`;
+  document.getElementById('rdCopyDefIdBtn').onclick = () => {
+    copyToClipboard(fullDefId)
+      .then(() => showToast('Đã copy Definition ID: ' + fullDefId))
+      .catch(() => showToast('Không copy được (trình duyệt chặn clipboard).'));
   };
+  document.getElementById('rdMetaDim').textContent = dimLabel(r.healthDimension);
+  document.getElementById('rdMetaSev').textContent = r.severity;
+  document.getElementById('rdMetaWeight').textContent = weightVal;
+  document.getElementById('rdMetaEngine').textContent = 'dbt';
+  document.getElementById('rdMetaCapture').textContent = isFail ? 'Enabled' : 'Disabled';
 
-  testTimeRange = 30;
-  document.querySelectorAll('#testTrendRangePills .time-pill').forEach(p=>{
-    p.classList.toggle('active', parseInt(p.dataset.range,10)===30);
-  });
+  // 2. 3 KPI Cards
+  document.getElementById('rdKpiResult').innerHTML = isFail
+    ? `<span style="color:var(--red);display:inline-flex;align-items:center;gap:6px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--red);"></span>FAIL</span>`
+    : `<span style="color:var(--green);display:inline-flex;align-items:center;gap:6px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--green);"></span>PASS</span>`;
+  
+  const failCount = isFail ? (r.totalFailedRows || Math.floor(100 + seededRng(r.id + '_cnt')() * 800)) : 0;
+  const sampleCount = isFail ? Math.min(failCount, 100) : 0;
+  document.getElementById('rdKpiFailures').textContent = `${failCount} failures`;
+  document.getElementById('rdKpiSample').textContent = `Sample: ${sampleCount} rows`;
 
-  sampleSearchQuery = '';
-  document.getElementById('sampleSearchInput').value = '';
-  document.getElementById('sampleTimeFilter').value = '30';
-  populateSampleColOptions(currentTestMock.sample.rows); // options sinh động từ dữ liệu, không hardcode
-  document.getElementById('sampleColFilter').value = 'all';
+  const timeStr = now.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
+  const dateStr = now.toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
+  document.getElementById('rdKpiObservedTime').textContent = timeStr;
+  document.getElementById('rdKpiObservedDate').textContent = dateStr;
 
-  document.getElementById('activityTypeFilter').value = 'all';
+  // 4. Failed Row Sample
+  renderRuleFailedRowSample(r, isFail);
 
-  renderFailureTrend();
-  renderLifecycleHistory();
-  renderSampleRecords();
-  renderActivityLog();
+  // 5. Result History
+  rdHistoryRangeDays = 30;
+  document.getElementById('rdHistoryRangeSelect').value = '30';
+  renderRuleResultHistory(r, now, defHash);
+
+  // 6. Technical Provenance
+  const batchId = `batch_${now.toISOString().slice(0,10).replace(/-/g,'')}_${timeStr.replace(':','')}`;
+  document.getElementById('rdProvenanceList').innerHTML = `
+    <div class="rd-kv-row"><div class="rd-kv-key">Current canonical batch</div><div class="rd-kv-val" style="font-family:monospace;">${batchId}</div></div>
+    <div class="rd-kv-row"><div class="rd-kv-key">Run type</div><div class="rd-kv-val">canonical</div></div>
+    <div class="rd-kv-row"><div class="rd-kv-key">Evidence available</div><div class="rd-kv-val">${isFail ? 'Yes' : 'No'}</div></div>
+    <div class="rd-kv-row"><div class="rd-kv-key">Definition ID</div><div class="rd-kv-val" style="font-family:monospace;">${defHash}...</div></div>
+  `;
 
   showView('test');
 }
 
-function setTestTimeRange(days){
-  testTimeRange = days;
-  document.querySelectorAll('#testTrendRangePills .time-pill').forEach(p=>{
-    p.classList.toggle('active', parseInt(p.dataset.range,10)===days);
-  });
-  renderFailureTrend();
-  renderLifecycleHistory(); // Lifecycle History dùng CHUNG time range với Failure Trend (yêu cầu #1)
+function closeRuleDetail(){
+  if(currentRuleDetailPreviousView === 'detail' && currentAssetDetailId){
+    showView('detail');
+  } else {
+    switchTab('rulelifecycle');
+    showView('main');
+  }
 }
 
-function renderFailureTrend(){
-  if(!currentTestMock) return;
-  const series = currentTestMock.history.filter(d=>d.daysAgo < testTimeRange);
-  const rates = series.map(d=>d.rate);
-  const peak = Math.max(...rates);
-  const current = series[series.length-1].rate;
-  const niceMax = Math.max(10, Math.ceil((peak*1.15)/5)*5);
-
-  const x0=20, x1=250, yTop=10, yBottom=120, n=series.length;
-  const pts = series.map((d,i)=>{
-    const x = n<=1 ? x0 : x0 + (i/(n-1))*(x1-x0);
-    const y = yBottom - (d.rate/niceMax)*(yBottom-yTop);
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  }).join(' ');
-
-  document.getElementById('testTrendLine').setAttribute('points', pts);
-  document.getElementById('testTrendAxisTop').textContent = niceMax+'%';
-  document.getElementById('testTrendAxisLabel').textContent = testTimeRange+' ngày gần nhất';
-  document.getElementById('testTrendCurrentRate').textContent = current.toFixed(1)+'%';
-  document.getElementById('testTrendPeakRate').textContent = peak.toFixed(1)+'%';
-}
-
-function renderLifecycleHistory(){
-  if(!currentTestMock) return;
-  document.getElementById('lifecycleRangeNote').textContent = `Đang xem trong ${testTimeRange} ngày`;
-
-  const rangeStart = new Date(currentTestMock.now.getTime() - testTimeRange*24*3600*1000);
-  const cycles = currentTestMock.cycles.filter(c=>(c.end || currentTestMock.now) >= rangeStart);
-  const body = document.getElementById('lifecycleCyclesBody');
-
-  if(!cycles.length){
-    body.innerHTML = `<div class="empty-note">Không có chu kỳ tái phát nào trong ${testTimeRange} ngày qua.</div>`;
+function renderRuleFailedRowSample(r, isFail){
+  const thead = document.getElementById('rdSampleThead');
+  const tbody = document.getElementById('rdSampleTbody');
+  
+  if(!isFail){
+    thead.innerHTML = `<tr><th>Status</th><th>Message</th></tr>`;
+    tbody.innerHTML = `<tr><td style="color:var(--green);font-weight:600;">PASS</td><td>Không có bản ghi vi phạm trong lần quét gần nhất.</td></tr>`;
     return;
   }
-  body.innerHTML = cycles.slice().reverse().map(c=>`
-    <div class="cycle-row">
-      <div>${fmtDate(c.start)}</div>
-      <div>${c.end ? fmtDate(c.end) : '<span class="open-tag">Đang mở</span>'}</div>
-      <div>${c.days}</div>
-      <div>${c.peak.toFixed(1)}%</div>
-    </div>`).join('');
-}
 
-function populateSampleColOptions(records){
-  const cols = [...new Set(records.map(r=>r.col))];
-  document.getElementById('sampleColFilter').innerHTML =
-    '<option value="all">Tất cả cột vi phạm</option>' + cols.map(c=>`<option value="${c}">${c}</option>`).join('');
-}
-
-function onSampleSearchInput(){
-  clearTimeout(sampleSearchDebounce);
-  sampleSearchDebounce = setTimeout(()=>{
-    sampleSearchQuery = document.getElementById('sampleSearchInput').value.trim().toLowerCase();
-    renderSampleRecords();
-  }, 300);
-}
-function onSampleFilterChange(){ renderSampleRecords(); }
-
-function renderSampleRecords(){
-  if(!currentTestMock) return;
-  // Số đếm ở header luôn bằng tổng số THỰC (totalRows) — không đổi theo kết quả filter, tránh hiểu
-  // nhầm là tổng số lỗi giảm khi người dùng chỉ đang thu hẹp bảng xem (yêu cầu #2).
-  document.getElementById('sampleRowsCount').textContent = `${currentTestMock.sample.totalRows.toLocaleString()} dòng bị quarantine`;
-
-  const col = document.getElementById('sampleColFilter').value;
-  const timeSel = document.getElementById('sampleTimeFilter').value;
-  const q = sampleSearchQuery;
-
-  const filtered = currentTestMock.sample.rows.filter(r=>{
-    if(q && !r.rowId.toLowerCase().includes(q)) return false;
-    if(col!=='all' && r.col!==col) return false;
-    if(timeSel!=='all' && r.daysAgo > parseInt(timeSel,10)) return false;
-    return true;
-  });
-
-  const body = document.getElementById('sampleRowsBody');
-  if(!filtered.length){
-    body.innerHTML = `<tr><td colspan="5" class="empty-note">Không tìm thấy dòng nào khớp điều kiện lọc.</td></tr>`;
-    return;
+  // Schema appropriate columns based on rule/table
+  const col = r.column || 'customer_id';
+  let headers = [col, 'payment_id', 'payment_date', 'amount'];
+  if(r.table.includes('order')){
+    headers = [col, 'order_id', 'order_date', 'status'];
+  } else if(r.table.includes('user') || r.table.includes('customer')){
+    headers = [col, 'email', 'created_at', 'status'];
   }
-  body.innerHTML = filtered.map(r=>`
-    <tr><td>${r.rowId}</td><td>${r.col}</td><td style="color:#e0453f;font-weight:600;">${r.current || '(rỗng)'}</td><td>${r.expected}</td><td>${fmtDateTime(r.recordedAt)}</td></tr>
+
+  thead.innerHTML = `<tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr>`;
+
+  const rng = seededRng(r.id + '_sample');
+  const sampleRows = [];
+  for(let i=0; i<3; i++){
+    const id1 = Math.floor(998000 + rng() * 1000);
+    const id2 = Math.floor(108000 + rng() * 1000);
+    const dateStr = `2026-08-21 10:${20+i}`;
+    const val = (Math.floor(50 + rng() * 200) + rng()*0.9).toFixed(2);
+    sampleRows.push([id1, id2, dateStr, val]);
+  }
+
+  tbody.innerHTML = sampleRows.map(row=>`
+    <tr>${row.map(c=>`<td>${c}</td>`).join('')}</tr>
   `).join('');
 }
 
-function onActivityFilterChange(){ renderActivityLog(); }
+function onRdHistoryRangeChange(){
+  const r = rulesMock.find(x=>x.id===currentRuleDetailId);
+  if(!r) return;
+  const sel = document.getElementById('rdHistoryRangeSelect');
+  rdHistoryRangeDays = parseInt(sel.value, 10) || 30;
+  const now = r.latestRunAt ? new Date(r.latestRunAt) : new Date();
+  const defHash = 'a31f7c2' + generateRuleDefHash(r.id).slice(0, 1);
+  renderRuleResultHistory(r, now, defHash);
+}
 
-function renderActivityLog(){
-  if(!currentTestMock) return;
-  const filterVal = document.getElementById('activityTypeFilter').value;
-  const items = currentTestMock.activity.filter(it=>filterVal==='all' || it.type===filterVal);
-  const el = document.getElementById('activityLog');
+function renderRuleResultHistory(r, now, defHash){
+  const tbody = document.getElementById('rdHistoryTbody');
+  if(!tbody) return;
+  
+  const runs = [
+    {time: '21 Aug 10:45', status: 'PASS', rows: 0, type: 'ad_hoc', def: defHash, isCurrent: false, batch: 'batch_20260821_1045'},
+    {time: '21 Aug 10:31', status: r.latestResult === 'Fail' ? 'FAIL' : 'PASS', rows: r.latestResult === 'Fail' ? 487 : 0, type: 'canonical', def: defHash, isCurrent: true, batch: 'batch_20260821_1030'},
+    {time: '21 Aug 09:30', status: 'PASS', rows: 0, type: 'canonical', def: defHash, isCurrent: false, batch: 'batch_20260821_0930'},
+    {time: '21 Aug 08:30', status: 'PASS', rows: 0, type: 'canonical', def: '9bd2e11', isCurrent: false, batch: 'batch_20260821_0830'},
+  ];
 
-  if(!items.length){
-    el.innerHTML = `<div class="empty-note">Không có hoạt động nào khớp bộ lọc.</div>`;
-    return;
+  if(rdHistoryRangeDays >= 30){
+    runs.push(
+      {time: '20 Aug 18:00', status: 'PASS', rows: 0, type: 'canonical', def: '9bd2e11', isCurrent: false, batch: 'batch_20260820_1800'},
+      {time: '20 Aug 12:00', status: 'PASS', rows: 0, type: 'canonical', def: '9bd2e11', isCurrent: false, batch: 'batch_20260820_1200'}
+    );
   }
-  const tagLabel = {system:'Hệ thống', user:'Người dùng', note:'Ghi chú'};
-  el.innerHTML = items.map(it=>`
-    <div class="activity-item"><span class="act-type-tag ${it.type}">${tagLabel[it.type]}</span>${fmtDateTime(it.at)} — ${it.text}</div>
+
+  tbody.innerHTML = runs.map(run=>`
+    <tr>
+      <td style="font-weight:600;">${run.time}</td>
+      <td><span class="rd-history-status ${run.status.toLowerCase()}">${run.status}</span></td>
+      <td>${run.rows} rows</td>
+      <td>${run.type}</td>
+      <td style="color:var(--muted);">def ${run.def}...</td>
+      <td>
+        <span>${run.batch}</span>
+        ${run.isCurrent ? `<span class="rd-badge-current">CURRENT</span>` : ''}
+      </td>
+    </tr>
   `).join('');
 }
+
+function openFailedRowsModal(){
+  const r = rulesMock.find(x => x.id === currentRuleDetailId);
+  if(!r) return;
+  
+  const isFail = r.latestResult === 'Fail';
+  const now = r.latestRunAt ? new Date(r.latestRunAt) : new Date();
+  const timeStr = now.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
+  const dateStr = now.toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
+  
+  const failCount = isFail ? (r.totalFailedRows || Math.floor(100 + seededRng(r.id + '_cnt')() * 800)) : 0;
+  const snapshotCount = isFail ? Math.min(failCount, 100) : 0;
+  const isTruncated = failCount > snapshotCount;
+
+  document.getElementById('modalRuleName').textContent = r.ruleName;
+  document.getElementById('modalTotalFailedRecords').textContent = `${failCount} total failed records`;
+  document.getElementById('modalTotalFailedRecords').style.color = isFail ? 'var(--red)' : 'var(--green)';
+  document.getElementById('modalCapturedTime').textContent = `Captured: ${dateStr} • ${timeStr}`;
+  document.getElementById('modalSnapshotInfo').textContent = `Captured snapshot: ${snapshotCount} rows • Truncated: ${isTruncated ? 'Yes' : 'No'}`;
+  
+  const thead = document.getElementById('modalSampleThead');
+  const tbody = document.getElementById('modalSampleTbody');
+  
+  if(!isFail){
+    thead.innerHTML = `<tr><th>Status</th><th>Message</th></tr>`;
+    tbody.innerHTML = `<tr><td style="color:var(--green);font-weight:600;">PASS</td><td>Không có bản ghi vi phạm nào trong lần quét gần nhất.</td></tr>`;
+    document.getElementById('modalFooterText').textContent = `Showing 0 of 0 captured rows • Total failed records: 0`;
+  } else {
+    const col = r.column || 'customer_id';
+    let headers = [col, 'payment_id', 'payment_date', 'amount'];
+    if(r.table.includes('order')){
+      headers = [col, 'order_id', 'order_date', 'status'];
+    } else if(r.table.includes('user') || r.table.includes('customer')){
+      headers = [col, 'email', 'created_at', 'status'];
+    }
+
+    thead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+
+    const rng = seededRng(r.id + '_modal_sample');
+    const rowsToRender = Math.min(snapshotCount, 20);
+    const rows = [];
+    for(let i=0; i < rowsToRender; i++){
+      const id1 = Math.floor(998000 + rng() * 1000);
+      const id2 = Math.floor(108000 + rng() * 1000);
+      const dateVal = `2026-08-21 10:${String(10 + (i % 50)).padStart(2, '0')}`;
+      const val = (Math.floor(50 + rng() * 200) + rng() * 0.9).toFixed(2);
+      rows.push([id1, id2, dateVal, val]);
+    }
+
+    tbody.innerHTML = rows.map(row => `
+      <tr>${row.map(c => `<td>${c}</td>`).join('')}</tr>
+    `).join('');
+
+    document.getElementById('modalFooterText').textContent = `Showing 1–${snapshotCount} of ${snapshotCount} captured rows • Total failed records: ${failCount}`;
+  }
+
+  const modal = document.getElementById('failedRowsModal');
+  modal.style.display = 'flex';
+  setTimeout(() => modal.classList.add('active'), 10);
+  document.body.style.overflow = 'hidden';
+}
+
+function closeFailedRowsModal(){
+  const modal = document.getElementById('failedRowsModal');
+  if(!modal) return;
+  modal.classList.remove('active');
+  setTimeout(() => {
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+  }, 200);
+}
+
+function handleModalBackdropClick(e){
+  if(e.target && e.target.id === 'failedRowsModal'){
+    closeFailedRowsModal();
+  }
+}
+
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape'){
+    const modal = document.getElementById('failedRowsModal');
+    if(modal && modal.classList.contains('active')){
+      closeFailedRowsModal();
+    }
+  }
+});
 
 /* ===================== Trend chart — MỘT nguồn sự thật (trendX/trendY) ===================== */
-// Trước đây Overview có bug: toạ độ polyline bị gõ tay cố định trong HTML, còn nhãn số + tooltip
-// lại đọc từ mảng trendData — hai nguồn lệch nhau nên hình vẽ sai so với số liệu thật (vd
-// trendData[0].overall=75 phải vẽ ở y=47.5, nhưng HTML hardcode y=60). Từ giờ CHỈ có 2 hàm toạ độ
-// (trendX/trendY) và KHÔNG nơi nào khác trong biểu đồ này được tự tính toạ độ theo công thức riêng.
-const trendData = [
-  {date:'2026-07-20', overall:75, completeness:88, freshness:60},
-  {date:'2026-07-23', overall:77, completeness:90, freshness:52},
-  {date:'2026-07-27', overall:80, completeness:92, freshness:63},
-  {date:'2026-07-30', overall:78, completeness:86, freshness:57},
-  {date:'2026-08-03', overall:85, completeness:94, freshness:69},
-  {date:'2026-08-06', overall:80, completeness:90, freshness:59},
-  {date:'2026-08-10', overall:82, completeness:92, freshness:65},
-  {date:'2026-08-14', overall:81, completeness:91, freshness:61},
-  {date:'2026-08-18', overall:85, completeness:93, freshness:70},
+// Hỗ trợ chuyển đổi giữa 6 Dimension và các nhóm Status (Healthy, Degraded, Unhealthy).
+// Dữ liệu xu hướng được tính toán trực tiếp từ history30d của toàn bộ asset đã giám sát.
+const TREND_MILESTONE_DATES = [
+  '2026-07-20', '2026-07-23', '2026-07-27', '2026-07-30',
+  '2026-08-03', '2026-08-06', '2026-08-10', '2026-08-14', '2026-08-18'
 ];
+
+let trendData = [
+  {date:'2026-07-20', overall:67, Accuracy:66, Completeness:61, Consistency:76, Freshness:57, Uniqueness:72, Validity:70, Healthy:94, healthyCount:10, Warning:88, degradedCount:2, Unhealthy:47, unhealthyCount:15},
+  {date:'2026-07-23', overall:67, Accuracy:66, Completeness:62, Consistency:76, Freshness:58, Uniqueness:73, Validity:71, Healthy:94, healthyCount:10, Warning:87, degradedCount:2, Unhealthy:48, unhealthyCount:15},
+  {date:'2026-07-27', overall:67, Accuracy:66, Completeness:62, Consistency:76, Freshness:57, Uniqueness:72, Validity:71, Healthy:94, healthyCount:11, Warning:89, degradedCount:1, Unhealthy:46, unhealthyCount:15},
+  {date:'2026-07-30', overall:68, Accuracy:66, Completeness:63, Consistency:76, Freshness:58, Uniqueness:73, Validity:71, Healthy:94, healthyCount:11, Warning:88, degradedCount:1, Unhealthy:47, unhealthyCount:15},
+  {date:'2026-08-03', overall:69, Accuracy:67, Completeness:63, Consistency:77, Freshness:59, Uniqueness:74, Validity:72, Healthy:94, healthyCount:10, Warning:77, degradedCount:5, Unhealthy:45, unhealthyCount:12},
+  {date:'2026-08-06', overall:68, Accuracy:67, Completeness:62, Consistency:77, Freshness:58, Uniqueness:73, Validity:71, Healthy:93, healthyCount:7, Warning:87, degradedCount:5, Unhealthy:50, unhealthyCount:15},
+  {date:'2026-08-10', overall:69, Accuracy:67, Completeness:63, Consistency:77, Freshness:59, Uniqueness:73, Validity:72, Healthy:94, healthyCount:10, Warning:87, degradedCount:2, Unhealthy:49, unhealthyCount:15},
+  {date:'2026-08-14', overall:69, Accuracy:68, Completeness:64, Consistency:78, Freshness:59, Uniqueness:75, Validity:73, Healthy:93, healthyCount:10, Warning:78, degradedCount:5, Unhealthy:46, unhealthyCount:12},
+  {date:'2026-08-18', overall:70, Accuracy:68, Completeness:64, Consistency:79, Freshness:59, Uniqueness:75, Validity:73, Healthy:93, healthyCount:7, Warning:79, degradedCount:10, Unhealthy:44, unhealthyCount:10},
+];
+
+function updateTrendDataFromAssets(){
+  if(!assetsMock || !assetsMock.length) return;
+  const historied = assetsMock.filter(a=>a.history30d && a.history30d.length > 0);
+  if(!historied.length) return;
+  
+  trendData = TREND_MILESTONE_DATES.map(date=>{
+    const dayAssets = historied.map(a=>a.history30d.find(h=>h.date===date)).filter(Boolean);
+    const item = { date };
+    
+    // Overall
+    const scores = dayAssets.map(h=>h.healthScore).filter(v=>v!=null);
+    item.overall = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : null;
+    
+    // 6 Dimensions
+    ['Completeness','Freshness','Uniqueness','Validity','Accuracy','Consistency'].forEach(dim=>{
+      const vals = dayAssets.map(h=>h.dimensions?h.dimensions[dim]:null).filter(v=>v!=null);
+      item[dim] = vals.length ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length) : null;
+    });
+    
+    // Status groups
+    const healthy = dayAssets.filter(h=>h.healthScore>=THRESHOLDS.green).map(h=>h.healthScore);
+    const degraded = dayAssets.filter(h=>h.healthScore>=THRESHOLDS.amber && h.healthScore<THRESHOLDS.green).map(h=>h.healthScore);
+    const unhealthy = dayAssets.filter(h=>h.healthScore<THRESHOLDS.amber).map(h=>h.healthScore);
+    
+    const avg = arr => arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : null;
+    item.Healthy = avg(healthy);
+    item.healthyCount = healthy.length;
+    item.Warning = avg(degraded);
+    item.degradedCount = degraded.length;
+    item.Unhealthy = avg(unhealthy);
+    item.unhealthyCount = unhealthy.length;
+    
+    return item;
+  });
+}
 
 const TREND_GEO = { x0:30, x1:610, yTop:10, yBottom:160, min:0, max:100 };
 const trendX = i => TREND_GEO.x0 + (TREND_GEO.x1 - TREND_GEO.x0) * (i / (trendData.length - 1));
 const trendY = v => TREND_GEO.yBottom
   - ((v - TREND_GEO.min) / (TREND_GEO.max - TREND_GEO.min)) * (TREND_GEO.yBottom - TREND_GEO.yTop);
 
-// THRESHOLDS dùng chung đã khai báo 1 lần duy nhất ở phần "Data Quality Score" phía trên — Trend
-// chart tái dùng đúng nó cho 2 đường ngưỡng ngang (Target/Amber), không khai lại.
-const TREND_SERIES = [
-  {key:'overall', color:'#3762d6', label:'Overall'},
-  {key:'completeness', color:'#2f9e5b', label:'Completeness'},
-  {key:'freshness', color:'#e8912b', label:'Timeliness'},
+const TREND_DIM_SERIES = [
+  {key:'Accuracy', color:'#3762d6', label:'Accuracy'},
+  {key:'Completeness', color:'#2f9e5b', label:'Completeness'},
+  {key:'Consistency', color:'#17a2b8', label:'Consistency'},
+  {key:'Freshness', color:'#e8912b', label:'Timeliness'},
+  {key:'Uniqueness', color:'#9b59b6', label:'Uniqueness'},
+  {key:'Validity', color:'#e0453f', label:'Validity'},
 ];
-const TREND_DEFAULT_TOOLTIP = 'Di chuột qua đường biểu đồ để xem điểm số từng dimension tại ngày đó.';
+
+const TREND_STATUS_SERIES = [
+  {key:'Healthy', color:'#2f9e5b', label:'Healthy (≥90)'},
+  {key:'Warning', color:'#e8912b', label:'Degraded (70–89)'},
+  {key:'Unhealthy', color:'#e0453f', label:'Unhealthy (<70)'},
+];
+
+let currentTrendMode = 'dim'; // 'dim' | 'status'
+let hiddenTrendSeries = new Set();
+
+function setTrendMode(mode){
+  currentTrendMode = mode;
+  const btnDim = document.getElementById('trendBtnDim');
+  const btnStatus = document.getElementById('trendBtnStatus');
+  if(btnDim) btnDim.classList.toggle('active', mode==='dim');
+  if(btnStatus) btnStatus.classList.toggle('active', mode==='status');
+  hiddenTrendSeries.clear();
+  renderTrendChart();
+}
+
+function getActiveTrendSeries(){
+  return currentTrendMode === 'status' ? TREND_STATUS_SERIES : TREND_DIM_SERIES;
+}
 
 function fmtTrendDate(iso){
   const [y,m,d] = iso.split('-').map(Number);
@@ -2607,10 +2778,10 @@ function fmtTrendDate(iso){
   return `${months[m-1]} ${d}, ${y}`;
 }
 
-// Vẽ 2 đường ngưỡng ngang nét đứt (Target/Ngưỡng) tại THRESHOLDS.green/amber — đọc từ hằng số
-// dùng chung, không hardcode toạ độ hay giá trị trong SVG.
+// Vẽ 2 đường ngưỡng ngang nét đứt (Target/Ngưỡng) tại THRESHOLDS.green/amber
 function renderTrendThresholds(){
   const group = document.getElementById('trendThresholds');
+  if(!group) return;
   group.innerHTML = '';
   [
     {value:THRESHOLDS.green, color:'#2f9e5b', label:'Target ' + THRESHOLDS.green},
@@ -2634,11 +2805,11 @@ function renderTrendThresholds(){
   });
 }
 
-// Trục X sinh từ trendData[i].date, đặt đúng tại trendX(i) — 4-5 nhãn, luôn có điểm đầu/cuối,
-// text-anchor start/end ở 2 đầu để không tràn khung, middle ở giữa.
+// Trục X sinh từ trendData[i].date
 function renderTrendXAxis(){
   const n = trendData.length;
   const group = document.getElementById('trendXLabels');
+  if(!group) return;
   group.innerHTML = '';
   const idxs = Array.from(new Set([
     0,
@@ -2660,31 +2831,69 @@ function renderTrendXAxis(){
   });
 }
 
-// Không hiện nhãn số cạnh đường nữa — thay bằng dấu chấm nhỏ tại mỗi điểm dữ liệu của cả 3 series.
-// Trỏ chuột vào chấm nào cũng hiện đủ thông tin ngày đó (cả 3 giá trị) ở dòng #trendTooltip bên
-// dưới biểu đồ — nhóm labels-* vẫn giữ trong HTML (rỗng) để toggleLine() không lỗi khi ẩn/hiện.
+function renderTrendLegend(){
+  const legend = document.getElementById('trendLegend');
+  if(!legend) return;
+  const activeSeries = getActiveTrendSeries();
+  legend.innerHTML = activeSeries.map(s=>{
+    const isHidden = hiddenTrendSeries.has(s.key);
+    return `<span class="${isHidden?'hidden-series':''}" onclick="toggleLine('${s.key}')" title="Bấm để ẩn/hiện đường ${s.label}">
+      <span class="dot" style="background:${s.color}"></span>${s.label}
+    </span>`;
+  }).join('');
+}
+
 function renderTrendHoverdots(){
   const hoverdots = document.getElementById('hoverdots');
+  if(!hoverdots) return;
   hoverdots.innerHTML = '';
-  const showTooltip = pt => document.getElementById('trendTooltip').textContent =
-    `${fmtTrendDate(pt.date)} — Overall: ${pt.overall} · Completeness: ${pt.completeness} · Timeliness: ${pt.freshness}`;
-  const resetTooltip = () => document.getElementById('trendTooltip').textContent = TREND_DEFAULT_TOOLTIP;
+  const activeSeries = getActiveTrendSeries();
+  const isStatusMode = currentTrendMode === 'status';
+
+  const showTooltip = (pt, activeKey) => {
+    const ttEl = document.getElementById('trendTooltip');
+    if(!ttEl) return;
+    if(isStatusMode){
+      const parts = [];
+      if(pt.Healthy!=null) parts.push(`Healthy: ${pt.Healthy} (${pt.healthyCount} assets)`);
+      if(pt.Warning!=null) parts.push(`Degraded: ${pt.Warning} (${pt.degradedCount} assets)`);
+      if(pt.Unhealthy!=null) parts.push(`Unhealthy: ${pt.Unhealthy} (${pt.unhealthyCount} assets)`);
+      ttEl.textContent = `${fmtTrendDate(pt.date)} — ${parts.join(' · ')}`;
+    } else {
+      const parts = activeSeries.filter(s=>!hiddenTrendSeries.has(s.key)).map(s=>{
+        return `${s.label}: ${pt[s.key]!=null ? pt[s.key] : '—'}`;
+      });
+      ttEl.textContent = `${fmtTrendDate(pt.date)} — ${parts.join(' · ')}${activeSeries.length>1 && pt.overall!=null ? ` (Overall: ${pt.overall})` : ''}`;
+    }
+  };
+  const resetTooltip = () => {
+    const ttEl = document.getElementById('trendTooltip');
+    if(!ttEl) return;
+    ttEl.textContent = isStatusMode
+      ? 'Di chuột qua đường biểu đồ để xem điểm số và số lượng asset theo từng status tại ngày đó.'
+      : 'Di chuột qua đường biểu đồ để xem điểm số từng dimension tại ngày đó.';
+  };
 
   trendData.forEach((pt,i)=>{
-    TREND_SERIES.forEach(s=>{
-      const cx = trendX(i).toFixed(1), cy = trendY(pt[s.key]).toFixed(1);
-      // Chấm nhỏ hiển thị thật (thay cho nhãn số)
+    activeSeries.forEach(s=>{
+      const v = pt[s.key];
+      if(v==null) return;
+      const isHidden = hiddenTrendSeries.has(s.key);
+      const cx = trendX(i).toFixed(1), cy = trendY(v).toFixed(1);
+      
       const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
       dot.setAttribute('cx', cx); dot.setAttribute('cy', cy); dot.setAttribute('r', 3);
       dot.setAttribute('fill', s.color);
       dot.setAttribute('data-series-dot', s.key);
+      if(isHidden) dot.style.display = 'none';
       hoverdots.appendChild(dot);
-      // Vùng bắt hover lớn hơn (vô hình) đặt đè lên trên, vì chấm 3px quá nhỏ để rê chuột chính xác
+
       const hit = document.createElementNS('http://www.w3.org/2000/svg','circle');
-      hit.setAttribute('cx', cx); hit.setAttribute('cy', cy); hit.setAttribute('r', 7);
+      hit.setAttribute('cx', cx); hit.setAttribute('cy', cy); hit.setAttribute('r', 8);
       hit.setAttribute('fill', 'transparent'); hit.style.cursor = 'pointer';
       hit.setAttribute('data-series-hit', s.key);
-      hit.addEventListener('mouseenter', ()=>showTooltip(pt));
+      if(isHidden) hit.style.display = 'none';
+      hit.addEventListener('mouseenter', ()=>showTooltip(pt, s.key));
       hit.addEventListener('mouseleave', resetTooltip);
       hoverdots.appendChild(hit);
     });
@@ -2692,10 +2901,19 @@ function renderTrendHoverdots(){
 }
 
 function renderTrendChart(){
-  TREND_SERIES.forEach(s=>{
-    const points = trendData.map((pt,i)=>`${trendX(i).toFixed(1)},${trendY(pt[s.key]).toFixed(1)}`).join(' ');
-    document.getElementById('line-'+s.key).setAttribute('points', points);
-  });
+  const activeSeries = getActiveTrendSeries();
+  const linesGroup = document.getElementById('trendLines');
+  if(linesGroup){
+    linesGroup.innerHTML = activeSeries.map(s=>{
+      const isHidden = hiddenTrendSeries.has(s.key);
+      const points = trendData.map((pt,i)=>{
+        const v = pt[s.key];
+        return v!=null ? `${trendX(i).toFixed(1)},${trendY(v).toFixed(1)}` : null;
+      }).filter(Boolean).join(' ');
+      return `<polyline id="line-${s.key}" data-series-line="${s.key}" points="${points}" fill="none" stroke="${s.color}" stroke-width="1.8" style="${isHidden?'display:none;':''}"/>`;
+    }).join('');
+  }
+  renderTrendLegend();
   renderTrendThresholds();
   renderTrendXAxis();
   renderTrendHoverdots();
@@ -2703,12 +2921,12 @@ function renderTrendChart(){
 renderTrendChart();
 
 function toggleLine(name){
-  const line = document.getElementById('line-'+name);
-  const hidden = line.style.display==='none';
-  line.style.display = hidden ? '' : 'none';
-  // Ẩn/hiện luôn các chấm điểm của đúng series đó (không đụng chấm/hit-area của 2 series còn lại).
-  document.querySelectorAll(`[data-series-dot="${name}"], [data-series-hit="${name}"]`)
-    .forEach(el=> el.style.display = hidden ? '' : 'none');
+  if(hiddenTrendSeries.has(name)){
+    hiddenTrendSeries.delete(name);
+  } else {
+    hiddenTrendSeries.add(name);
+  }
+  renderTrendChart();
 }
 
 /* ===================== Toast (thay cho alert() — không block trang) ===================== */
@@ -2772,12 +2990,6 @@ let assetDetailListIds = [];
 let pendingScrollDim = null;
 
 document.addEventListener('click', (e)=>{
-  const rangeBtn = e.target.closest('[data-hm-range]');
-  if(rangeBtn){
-    const r = rangeBtn.dataset.hmRange === 'all' ? 'all' : Number(rangeBtn.dataset.hmRange);
-    setDQHeatmapRange(r);
-    return;
-  }
   const el = e.target.closest('[data-asset-id]');
   if(!el) return;
   pendingScrollDim = el.dataset.scrollDim || null;
@@ -2854,13 +3066,9 @@ document.addEventListener('keydown', (e)=>{
 
 const DIM_TREND_COLORS = {Completeness:'#2f9e5b', Freshness:'#e8912b', Uniqueness:'#9b59b6', Validity:'#e0453f', Accuracy:'#3762d6', Consistency:'#17a2b8'};
 
-const ASSET_TREND_GEO = {x0:10, x1:490, yTop:10, yBottom:130, min:0, max:100};
+const ASSET_TREND_GEO = {x0:34, x1:580, yTop:16, yBottom:195, min:0, max:100};
 
 // Cùng nguyên tắc "1 nguồn toạ độ duy nhất" như Overview Trend chart (TREND_GEO/trendX/trendY):
-// hist.length thay đổi theo từng asset nên không dùng chung closure trendX/trendY của Overview
-// (nó cố định theo trendData.length) — nhưng công thức bên trong giống hệt, không tự bịa cách tính
-// khác. buildPolyline()/valueToY() cũ đã bị xoá khi refactor Overview, đây là bug đã gây crash
-// trang Asset Detail (ReferenceError) — sửa bằng cách định nghĩa lại 2 hàm toạ độ ngay tại đây.
 function assetTrendXY(n){
   const x = i => n<=1 ? ASSET_TREND_GEO.x0 : ASSET_TREND_GEO.x0 + (ASSET_TREND_GEO.x1-ASSET_TREND_GEO.x0) * (i/(n-1));
   const y = v => ASSET_TREND_GEO.yBottom - ((v-ASSET_TREND_GEO.min)/(ASSET_TREND_GEO.max-ASSET_TREND_GEO.min)) * (ASSET_TREND_GEO.yBottom-ASSET_TREND_GEO.yTop);
@@ -2874,42 +3082,76 @@ function buildTrendSvgHtml(asset){
   const overallPts = hist.map((h,i)=> h.healthScore!=null ? `${toX(i).toFixed(1)},${toY(h.healthScore).toFixed(1)}` : null).filter(Boolean).join(' ');
   const dimLines = Object.keys(DIM_TREND_COLORS).map(dim=>{
     const pts = hist.map((h,i)=> h.dimensions && h.dimensions[dim]!=null ? `${toX(i).toFixed(1)},${toY(h.dimensions[dim]).toFixed(1)}` : null).filter(Boolean).join(' ');
-    return `<polyline data-dim-line="${dim}" points="${pts}" fill="none" stroke="${DIM_TREND_COLORS[dim]}" stroke-width="1.4" style="display:none;"/>`;
+    return `<polyline data-dim-line="${dim}" points="${pts}" fill="none" stroke="${DIM_TREND_COLORS[dim]}" stroke-width="1.6" style="display:none;"/>`;
   }).join('');
   const hoverdots = hist.map((h,i)=> h.healthScore!=null
-    ? `<circle cx="${toX(i).toFixed(1)}" cy="${toY(h.healthScore).toFixed(1)}" r="6" fill="transparent" style="cursor:pointer;" data-tooltip="${h.date} — Overall ${h.healthScore}"></circle>`
+    ? `<circle cx="${toX(i).toFixed(1)}" cy="${toY(h.healthScore).toFixed(1)}" r="6" fill="transparent" style="cursor:pointer;" data-tooltip="${fmtTrendDate(h.date)} — Overall: ${h.healthScore}"></circle>`
     : '').join('');
+
+  // 5 mốc ngày trục X
+  const n = hist.length;
+  const xIndices = Array.from(new Set([
+    0,
+    Math.round((n-1)*0.25),
+    Math.round((n-1)*0.5),
+    Math.round((n-1)*0.75),
+    n-1
+  ])).sort((a,b)=>a-b);
+  const xLabelsHtml = xIndices.map(i=>{
+    const x = toX(i);
+    const anchor = i === 0 ? 'start' : (i === n - 1 ? 'end' : 'middle');
+    return `<text x="${x.toFixed(1)}" y="216" font-size="9" fill="#9aa1ab" text-anchor="${anchor}">${fmtTrendDate(hist[i].date)}</text>`;
+  }).join('');
+
   return `
-    <svg viewBox="0 0 500 140" width="100%" height="170">
-      <line x1="10" y1="10" x2="10" y2="130" stroke="#e4e6eb"/>
-      <line x1="10" y1="130" x2="490" y2="130" stroke="#e4e6eb"/>
-      <polyline points="${overallPts}" fill="none" stroke="#3762d6" stroke-width="2"/>
+    <svg viewBox="0 0 600 226" width="100%" style="display:block;width:100%;height:226px;overflow:visible;">
+      <!-- Lưới trục Y & Baseline -->
+      <line x1="34" y1="16" x2="580" y2="16" stroke="#f0f2f5" stroke-dasharray="3,3"/>
+      <line x1="34" y1="60.7" x2="580" y2="60.7" stroke="#f0f2f5" stroke-dasharray="3,3"/>
+      <line x1="34" y1="105.5" x2="580" y2="105.5" stroke="#f0f2f5" stroke-dasharray="3,3"/>
+      <line x1="34" y1="150.3" x2="580" y2="150.3" stroke="#f0f2f5" stroke-dasharray="3,3"/>
+      <line x1="34" y1="195" x2="580" y2="195" stroke="#e4e6eb"/>
+      <line x1="34" y1="16" x2="34" y2="195" stroke="#e4e6eb"/>
+
+      <!-- Ngưỡng Target 90 & Amber 70 -->
+      <line x1="34" y1="${toY(THRESHOLDS.green).toFixed(1)}" x2="580" y2="${toY(THRESHOLDS.green).toFixed(1)}" stroke="#2f9e5b" stroke-width="0.9" stroke-dasharray="4,3" opacity="0.45"/>
+      <line x1="34" y1="${toY(THRESHOLDS.amber).toFixed(1)}" x2="580" y2="${toY(THRESHOLDS.amber).toFixed(1)}" stroke="#e8912b" stroke-width="0.9" stroke-dasharray="4,3" opacity="0.45"/>
+
+      <!-- Nhãn trục Y -->
+      <text x="6" y="20" font-size="9" fill="#9aa1ab">100</text>
+      <text x="12" y="109" font-size="9" fill="#9aa1ab">50</text>
+      <text x="18" y="198" font-size="9" fill="#9aa1ab">0</text>
+
+      <!-- Đường biểu đồ Overall & Dimensions -->
+      <polyline points="${overallPts}" fill="none" stroke="#3762d6" stroke-width="2.2"/>
       ${dimLines}
       <g id="detailHoverdots">${hoverdots}</g>
+
+      <!-- Nhãn trục X (Ngày) -->
+      ${xLabelsHtml}
     </svg>
-    <div id="detailTrendTooltip" style="font-size:11px;color:var(--muted);margin-top:2px;">Di chuột qua đường biểu đồ để xem theo ngày.</div>
-    <div class="legend-row" style="margin-top:8px;">
-      ${Object.entries(DIM_TREND_COLORS).map(([dim,color])=>`<label class="item" style="font-size:11px;">
-        <input type="checkbox" data-toggle-dim="${dim}"><span class="dot" style="background:${color}"></span>${dimLabel(dim)}
+    <div class="legend-row" style="margin-top:10px;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;">
+      <span style="font-size:11.5px;display:inline-flex;align-items:center;gap:4px;font-weight:600;color:#3762d6;">
+        <span class="dot" style="background:#3762d6;width:8px;height:8px;border-radius:50%;"></span>Overall
+      </span>
+      ${Object.entries(DIM_TREND_COLORS).map(([dim,color])=>`<label style="font-size:11.5px;display:inline-flex;align-items:center;gap:4px;cursor:pointer;color:var(--text);">
+        <input type="checkbox" data-toggle-dim="${dim}" style="cursor:pointer;margin:0 1px 0 0;"><span class="dot" style="background:${color};width:7px;height:7px;border-radius:50%;"></span>${dimLabel(dim)}
       </label>`).join('')}
-    </div>`;
+    </div>
+    <div id="detailTrendTooltip" style="font-size:11px;color:var(--muted);margin-top:4px;">Di chuột qua đường biểu đồ để xem điểm số tại ngày đó.</div>`;
 }
 
-// Radar chart 6 trục cho Dimension Breakdown — toạ độ sinh HOÀN TOÀN bằng lượng giác (không còn
-// bảng toạ độ nhãn gõ tay như bản cũ, vốn bị tràn/cắt vì không chừa đủ chỗ cho text). Bán kính
-// polygon (RADAR2_MAX_R) chỉ chiếm ~76% bán kính viewBox, phần còn lại dành cho nhãn trục; viewBox
-// vuông để chart luôn responsive theo container (width:100% + aspect-ratio:1/1 ở CSS ngoài).
-const RADAR2_SIZE = 400;
+// Radar chart 6 trục cho Dimension Breakdown — toạ độ sinh HOÀN TOÀN bằng lượng giác
+const RADAR2_SIZE = 340;
 const RADAR2_CENTER = RADAR2_SIZE / 2;
-const RADAR2_MAX_R = 95;          // 95/200 = 47.5% bán kính viewBox -> chừa ~52% cho nhãn + padding
-const RADAR2_LABEL_R = RADAR2_MAX_R + 18;
+const RADAR2_MAX_R = 85;          // bán kính polygon
+const RADAR2_LABEL_R = RADAR2_MAX_R + 20;
 
 function radar2Angle(i){ return -90 + i * (360 / RADAR_DIMS.length); } // độ, bắt đầu từ đỉnh (12h), thuận chiều kim đồng hồ
 function radar2Point(angleDeg, radius){
   const rad = angleDeg * Math.PI / 180;
   return [RADAR2_CENTER + radius * Math.cos(rad), RADAR2_CENTER + radius * Math.sin(rad)];
 }
-// text-anchor tính theo góc để nhãn không đè ra ngoài 2 bên trái/phải — không dùng bảng anchor cố định.
 function radar2Anchor(angleDeg){
   const cos = Math.cos(angleDeg * Math.PI / 180);
   if(cos > 0.35) return 'start';
@@ -2923,16 +3165,6 @@ function radar2Dy(angleDeg){
   return 4;                    // nhãn 2 bên hông -> căn giữa theo chiều dọc so với điểm
 }
 
-// Filter "Chọn dimension" cho radar Dimension Breakdown — rỗng = hiện đủ 6 chiều (mặc định). Chỉ ẩn
-// nhãn/điểm của chiều KHÔNG được chọn để giảm rối mắt; không đổi hình dạng polygon (vẫn tính đủ 6
-// điểm như cũ) vì polygon biểu diễn điểm số THẬT của asset, không phải thứ nên bị cắt bớt theo filter.
-let dimBreakdownFilter = [];
-let msDimBreakdownFilter = null;
-function initDimBreakdownFilterDropdown(){
-  msDimBreakdownFilter = createMultiSelectDropdown(document.getElementById('ddDimBreakdownFilter'), {
-    label:'Dimension', options:()=>DIMENSION_OPTIONS, getSelected:()=>dimBreakdownFilter,
-    onChange:v=>{ dimBreakdownFilter=v; renderDimBreakdown(); }});
-}
 function renderDimBreakdown(assetParam){
   const asset = assetParam || getAssetById(currentAssetDetailId);
   if(!asset) return;
@@ -2943,12 +3175,11 @@ function renderDimBreakdown(assetParam){
     document.getElementById('dimBreakdown').innerHTML = `<div class="empty-note">${msg}</div>`;
     return;
   }
-  document.getElementById('dimBreakdown').innerHTML = buildDimensionRadarHtml(asset, dimBreakdownFilter);
+  document.getElementById('dimBreakdown').innerHTML = buildDimensionRadarHtml(asset);
   wireDimensionRadarTooltip(document.getElementById('dimBreakdown'), asset);
 }
 
-function buildDimensionRadarHtml(asset, visibleDims){
-  const dimsToShow = (visibleDims && visibleDims.length) ? visibleDims : RADAR_DIMS;
+function buildDimensionRadarHtml(asset){
   const color = scoreColor(healthScore(asset.id).score);
   const rings = [1, 0.66, 0.33].map(frac=>{
     const pts = RADAR_DIMS.map((_,i)=>radar2Point(radar2Angle(i), RADAR2_MAX_R*frac).join(',')).join(' ');
@@ -2960,8 +3191,6 @@ function buildDimensionRadarHtml(asset, visibleDims){
     return `<line x1="${RADAR2_CENTER}" y1="${RADAR2_CENTER}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="#eceef2"/>`;
   }).join('');
 
-  // val==null (dimension chưa có rule đo) vẽ tại tâm (bán kính 0) thay vì coi như điểm 0 (??0 cũ
-  // từng khiến "chưa đo được" trông y hệt "đo được và tệ nhất" trên radar).
   const polyPoints = RADAR_DIMS.map((dim,i)=>{
     const raw = dimensionScore(asset.id, dim);
     const val = raw==null ? 0 : Math.max(0, Math.min(100, raw));
@@ -2975,7 +3204,6 @@ function buildDimensionRadarHtml(asset, visibleDims){
   }).join(', ');
 
   const vertexHtml = RADAR_DIMS.map((dim,i)=>{
-    if(!dimsToShow.includes(dim)) return '';
     const angle = radar2Angle(i);
     const val = dimensionScore(asset.id, dim);
     const failing = asset.failingDimensions.includes(dim);
@@ -2983,28 +3211,25 @@ function buildDimensionRadarHtml(asset, visibleDims){
     const [x,y] = radar2Point(angle, RADAR2_MAX_R * clamped/100);
     const dotColor = val==null ? 'var(--gray)' : failing ? 'var(--red)' : color;
     const label = `${dimLabel(dim)}: ${val==null?'—':val+' / 100'}${failing?' — ⚠ Đang lỗi':''}`;
-    // Chấm nhỏ hiển thị thật + vùng hover/focus lớn hơn vô hình đè lên trên (chấm 4px quá nhỏ để
-    // rê trúng chính xác) — cả 2 đều mang data-dim để JS gắn tooltip theo con trỏ / theo bàn phím.
     return `
-      <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.5" fill="${dotColor}" stroke="#fff" stroke-width="1.4" data-dim="${dim}" data-radar-visible="1"/>
+      <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="${dotColor}" stroke="#fff" stroke-width="1.4" data-dim="${dim}" data-radar-visible="1"/>
       <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="14" fill="transparent" tabindex="0" role="img"
         aria-label="${label}" data-dim="${dim}" data-radar-hit="1" style="cursor:pointer;outline:none;"/>`;
   }).join('');
 
   const axisLabels = RADAR_DIMS.map((dim,i)=>{
-    if(!dimsToShow.includes(dim)) return '';
     const angle = radar2Angle(i);
     const [x,y] = radar2Point(angle, RADAR2_LABEL_R);
     const failing = asset.failingDimensions.includes(dim);
     const val = dimensionScore(asset.id, dim);
     const label = `${dimLabel(dim)}: ${val==null?'—':val+' / 100'}${failing?' — ⚠ Đang lỗi':''}`;
-    return `<text x="${x.toFixed(1)}" y="${(y+radar2Dy(angle)).toFixed(1)}" font-size="12" text-anchor="${radar2Anchor(angle)}"
+    return `<text x="${x.toFixed(1)}" y="${(y+radar2Dy(angle)).toFixed(1)}" font-size="11" text-anchor="${radar2Anchor(angle)}"
       fill="${failing?'var(--red)':'#6b7280'}" font-weight="${failing?700:600}"
       data-dim="${dim}" data-radar-hit="1" style="cursor:pointer;">${dimLabel(dim)}</text>`;
   }).join('');
 
   return `
-    <div style="width:100%;max-width:380px;aspect-ratio:1/1;margin:0 auto;display:flex;align-items:center;justify-content:center;">
+    <div style="width:100%;max-width:270px;aspect-ratio:1/1;margin:0 auto;display:flex;align-items:center;justify-content:center;">
       <svg viewBox="0 0 ${RADAR2_SIZE} ${RADAR2_SIZE}" width="100%" height="100%" role="img"
         aria-label="Biểu đồ radar 6 chiều sức khoẻ dữ liệu: ${ariaSummary}">
         ${rings}
@@ -3126,13 +3351,63 @@ function buildRuleRowsHtml(rules){
   }).join('');
 }
 
+function computeAssetPrimaryReason(asset, rules){
+  const status = computeAssetStatus(asset.id);
+  if(status === 'Notest'){
+    return {
+      text: 'Bảng chưa được cấu hình rule kiểm tra chất lượng nào.',
+      badgeClass: 'unknown'
+    };
+  }
+  if(status === 'Unknow'){
+    return {
+      text: 'Bảng đã có rule cấu hình nhưng engine chưa quét đánh giá lần nào.',
+      badgeClass: 'unknown'
+    };
+  }
+  const failedRules = rules.filter(r => r.latestResult === 'Fail');
+  if(!failedRules.length){
+    return {
+      text: 'Tất cả các test đều đạt (Pass). Không có cảnh báo hay lỗi vi phạm nào.',
+      badgeClass: 'healthy'
+    };
+  }
+  
+  const criticalFails = failedRules.filter(r => r.severity === 'Critical');
+  if(criticalFails.length > 0){
+    const critDims = [...new Set(criticalFails.map(r => dimLabel(r.healthDimension)))];
+    const critNames = criticalFails.map(r => r.ruleName).slice(0, 2);
+    const more = criticalFails.length > 2 ? ` (+${criticalFails.length - 2} rule khác)` : '';
+    return {
+      text: `Có ${criticalFails.length} rule Critical đang Fail (${critNames.join(', ')}${more}) tại ${critDims.join(', ')} — khiến bảng bị đánh giá Unhealthy.`,
+      badgeClass: 'critical'
+    };
+  }
+  
+  const scoredDims = HEALTH_DIMS.map(d => ({ dim: d, score: dimensionScore(asset.id, d) })).filter(x => x.score != null);
+  if(scoredDims.length > 0){
+    const minScore = Math.min(...scoredDims.map(x => x.score));
+    const worstDims = scoredDims.filter(x => x.score === minScore).map(x => dimLabel(x.dim));
+    const failCols = [...new Set(failedRules.map(r => r.column).filter(Boolean))].slice(0, 2);
+    const colStr = failCols.length ? ` trên cột ${failCols.join(', ')}` : '';
+    return {
+      text: `${failedRules.length} rule Fail, điểm thấp nhất tại ${worstDims.join(', ')} (${minScore}/100)${colStr}.`,
+      badgeClass: status === 'Unhealthy' ? 'critical' : 'degraded'
+    };
+  }
+  
+  return {
+    text: `${failedRules.length} rule kiểm tra đang ở trạng thái Fail.`,
+    badgeClass: 'degraded'
+  };
+}
+
 function renderAssetDetailPage(){
   const asset = getAssetById(currentAssetDetailId);
   if(!asset) return;
   const rules = (rulesByAssetId[asset.id] || []).slice();
   const ruleFailCount = rules.filter(r=>r.latestResult==='Fail').length;
-  const chronicCount = rules.filter(r=>r.recurrenceCount>=3).length;
-  const totalRecurrence = rules.reduce((s,r)=>s+r.recurrenceCount, 0);
+  const criticalFailCount = rules.filter(r=>r.severity==='Critical'&&r.latestResult==='Fail').length;
   const uniq = arr => { const s = [...new Set(arr.filter(Boolean))]; return s.length ? s.join(', ') : '—'; };
 
   document.getElementById('detailBreadcrumbName').textContent = asset.name;
@@ -3141,7 +3416,7 @@ function renderAssetDetailPage(){
   document.getElementById('detailDomain').textContent = asset.domain;
   document.getElementById('detailOwner').textContent = asset.owner;
   document.getElementById('detailService').textContent = asset.service;
-  document.getElementById('detailTier').textContent = asset.tier;
+  const elTier = document.getElementById('detailTier'); if(elTier) elTier.textContent = asset.tier;
   document.getElementById('detailLastEval').textContent = fmtRunTs(asset.lastRunAt);
 
   const idx = assetDetailListIds.indexOf(asset.id);
@@ -3160,6 +3435,25 @@ function renderAssetDetailPage(){
     ? 'Asset đã có rule cấu hình nhưng engine chưa quét lần nào. Chưa thể đánh giá chất lượng.'
     : 'Asset này chưa có rule nào. Chưa thể đánh giá chất lượng.';
 
+  // Delta Health Score so với lần chạy trước
+  let scoreDeltaHtml = '';
+  if(!isUnmonitored && asset.history30d && asset.history30d.length >= 2){
+    const hist = asset.history30d;
+    const prevScore = hist[hist.length - 2].healthScore;
+    if(prevScore != null && hs.score != null){
+      const diff = hs.score - prevScore;
+      if(diff > 0){
+        scoreDeltaHtml = `<div class="delta up" style="margin-top:6px;font-size:11.5px;">▲ +${diff} điểm so với lần chạy trước</div>`;
+      } else if(diff < 0){
+        scoreDeltaHtml = `<div class="delta down" style="margin-top:6px;font-size:11.5px;">▼ ${Math.abs(diff)} điểm so với lần chạy trước</div>`;
+      } else {
+        scoreDeltaHtml = `<div class="delta" style="margin-top:6px;font-size:11.5px;color:var(--muted);">● Không đổi so với lần chạy trước</div>`;
+      }
+    }
+  }
+
+  const primaryReason = computeAssetPrimaryReason(asset, rules);
+
   document.getElementById('detailKpiGrid').innerHTML = `
     <div class="card kpi">
       <div class="label">Health Score</div>
@@ -3169,15 +3463,28 @@ function renderAssetDetailPage(){
       ` : `
         <div class="value"><span id="detailScore"></span> <small style="font-size:12px;font-weight:600;color:var(--muted);">/ 100</small> ${lowConfidenceBadgeHtml}</div>
         <div class="mini-track" style="width:100%;height:6px;margin-top:8px;"><div class="mini-fill" id="detailScoreBar" style="height:100%;"></div></div>
+        ${scoreDeltaHtml}
       `}
     </div>
-    <div class="card kpi"><div class="label">Tests fail / tổng</div><div class="value">${asset.testsFailed} / ${asset.testsTotal}</div></div>
-    <div class="card kpi">
-      <div class="label">Số rule đang Fail</div><div class="value">${ruleFailCount}</div>
-      ${ruleFailCount===0 ? `<div class="delta up">✓ Không có rule nào đang fail</div>` : ''}
+    <div class="card kpi" style="display:flex;flex-direction:column;justify-content:flex-start;">
+      <div class="label" style="display:flex;align-items:center;gap:6px;">
+        Primary Reason
+        <span class="badge ${primaryReason.badgeClass}" style="font-size:10px;padding:1px 6px;">${primaryReason.badgeClass.toUpperCase()}</span>
+      </div>
+      <div style="font-size:12px;line-height:1.45;color:var(--text);margin-top:4px;font-weight:500;">
+        ${primaryReason.text}
+      </div>
     </div>
-    <div class="card kpi"><div class="label">Rule chronic (≥3 lần)</div><div class="value">${chronicCount}</div></div>
-    <div class="card kpi"><div class="label">Tổng số lần tái phát</div><div class="value">${totalRecurrence}</div></div>
+    <div class="card kpi">
+      <div class="label">Tests fail / tổng</div>
+      <div class="value">${asset.testsFailed} / ${asset.testsTotal}</div>
+      <div class="delta" style="color:var(--muted);margin-top:6px;font-size:11.5px;">${asset.testsTotal ? Math.round((asset.testsTotal - asset.testsFailed)/asset.testsTotal * 100) : 0}% test đạt chuẩn</div>
+    </div>
+    <div class="card kpi">
+      <div class="label">Số rule đang Fail</div>
+      <div class="value" style="color:${ruleFailCount>0?'var(--red)':'var(--text)'};">${ruleFailCount}</div>
+      ${ruleFailCount===0 ? `<div class="delta up" style="margin-top:6px;font-size:11.5px;">✓ Không có rule nào đang fail</div>` : `<div class="delta ${criticalFailCount>0?'down':''}" style="margin-top:6px;font-size:11.5px;color:${criticalFailCount>0?'var(--red)':'var(--muted)'};">${criticalFailCount>0 ? `● ${criticalFailCount} rule mức Critical` : '● 0 rule Critical'}</div>`}
+    </div>
   `;
 
   document.getElementById('detailStatusBadge').outerHTML = assetStatusBadge(detailStatus).replace('<span class="badge','<span id="detailStatusBadge" class="badge');
@@ -3187,9 +3494,7 @@ function renderAssetDetailPage(){
     document.getElementById('detailScoreBar').style.background = scoreColor(hs.score);
   }
 
-  // Unmonitored = chưa có rule nào -> không vẽ radar/dimension gì cả, thay bằng empty state (khác
-  // hẳn "có rule nhưng điểm 0", không phải overlay lên trên radar rỗng).
-  document.getElementById('ddDimBreakdownFilter').classList.toggle('disabled', isUnmonitored);
+  // Unmonitored = chưa có rule nào -> không vẽ radar/dimension gì cả, thay bằng empty state
   if(isUnmonitored){
     document.getElementById('dimBreakdown').innerHTML = `<div class="empty-note">${noScoreMessage}</div>`;
   } else {
@@ -3243,10 +3548,11 @@ async function bootstrap(){
   }
   buildRulesByAssetIndex();
   assignRuleSeverities();
+  updateTrendDataFromAssets();
+  renderTrendChart();
   initOverviewFilterDropdowns();
   initHealthFilterDropdowns();
   initRuleFilterDropdowns();
-  initDimBreakdownFilterDropdown();
   renderOverview();
   renderHealthTable();
   renderRuleLifecycle();
