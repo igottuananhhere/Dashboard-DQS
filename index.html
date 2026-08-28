@@ -3375,11 +3375,8 @@ function computeAssetPrimaryReason(asset, rules){
   
   const criticalFails = failedRules.filter(r => r.severity === 'Critical');
   if(criticalFails.length > 0){
-    const critDims = [...new Set(criticalFails.map(r => dimLabel(r.healthDimension)))];
-    const critNames = criticalFails.map(r => r.ruleName).slice(0, 2);
-    const more = criticalFails.length > 2 ? ` (+${criticalFails.length - 2} rule khác)` : '';
     return {
-      text: `Có ${criticalFails.length} rule Critical đang Fail (${critNames.join(', ')}${more}) tại ${critDims.join(', ')} — khiến bảng bị đánh giá Unhealthy.`,
+      text: `Có ${criticalFails.length} rule Critical đang bị fail.`,
       badgeClass: 'critical'
     };
   }
